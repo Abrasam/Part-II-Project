@@ -1,0 +1,140 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[hidelinks]{hyperref}
+
+\begin{document}
+	\title{Project Proposal -- A Decentralised Peer-to-Peer World}
+	\author{Samuel J. Sully}
+	\date{14 October 2019}
+	\maketitle
+	\thispagestyle{empty}
+	
+	\noindent
+	\textbf{Project Supervisor:} Prof. Jon Crowcroft\\
+	\textbf{Director of Studies:} Prof. Alan Mycroft\\
+	\textbf{Project Overseers:} Prof. Marcelo Fiore \&  Dr. Amanda Prorok
+
+	\section{Introduction}
+	
+	The Massively Multiplayer Online game genre is popular in modern gaming, often involving thousands of concurrent players~\cite{wowstat}. These games are typically implemented using a client-server model, requiring some form of `sharding'~\cite{shard} whereby players are separated into independent instances of the same world meaning that players can only interact with others connected to the same instance (shard) as them.
+	
+	An alternative approach is to distribute the game world over a peer-to-peer network, where each peer (or group of peers) is responsible for managing a small part of the game world. This helps with load balancing, while ensuring that all players are -- effectively -- in the same virtual world. It also has the advantage of decentralising the game world, increasing its resilience to some failure modes.
+	
+	One issue with this approach is that, if a rogue server operator decides to behave maliciously, they could modify their server to -- for example -- give themselves an unfair advantage when in territory managed by their server. To combat this one could include a consensus/voting system~\cite{peerreview}.
+	
+	\section{Starting Point}
+	
+	Creation of the distributed world will rely mostly on two Part IB course:
+	\begin{itemize}
+		\item Concurrent and Distributed Systems
+		\item Computer Networking
+	\end{itemize}
+	as well as drawing on material from the Part II course Principles of Communication.
+	
+	The Concurrent and Distributed Systems course will be useful as this project is an example of a distributed system. I will be making use of Remote Procedure Calls (RPCs) in my project which are covered in this course, one of my proposed extensions aims to include a consensus or voting system -- these topics are covered extensively in the CDS course.
+	
+	The Computer Networking course will be relevant as it covers Distributed Hash Tables (DHTs) which I intend to use as the fundamental basis for my project. Other concepts introduced in this course, and further developed in the Part II course Principles of Communications (such as routing) will also be relevant to my project.
+	
+	Additionally, the Part IA course Introduction to Graphics and the Part IB course Further Graphics will be useful in the development of a simple client to connect to and interact with my distributed world, this client would likely be written using OpenGL which is covered extensively in these two courses. It will, however, be very primitive indeed as it will be only a prototype.
+	
+	\section{Substance and Structure}
+	
+	My core project consists of three main parts, they are:
+	\begin{itemize}
+		\item The DHT
+		\item The 3D World
+		\item The Graphical Client
+	\end{itemize}
+	I have researched a number of potential implementations for the DHT including Kademlia~\cite{kademlia} and OpenDHT~\cite{odht} (which has an open source implementation with convenient Python bindings). I plan to implement my own based on the Kademlia whitepaper~\cite{kademlia}, potentially with some minor extensions (i.e. extra RPCs). This will be used as the basis for my distributed world.
+	
+	The 3D world will be a simple voxel-based one. With clients able to place and remove voxels from the world. The world will consist of a number of discrete `chunks' of voxels. These chunks will re represented as a simple 3D array and will represent a contiguous $x*y*z$ compartment of the world (where $z$ is the height of the world). This is the approach taken in games such as Minecraft~\cite{mc}. The world will also allow `entities' which are not part of the voxel array but are objects which can move freely in the 3D space (e.g. the player). Chunks will have a separate list to store any entities in that chunk along with their position. It might be worthwhile to explore usage of an kd-tree (or equivalent) for storage of entities but this would be a minor extension and is not required.
+	
+	Usage of the DHT to aid in locating entities as well as chunks in the network will be necessary, as when a client connects to the world looking for a particular player to take control of, they will need a way to find which chunk that player is currently in. In the event that the player is in no chunk (i.e. either the chunks they were in have been lost or they are new), then a random chunk can be selected as a spawn location.
+	
+	As this is a distributed system I will need some form of synchronisation between nodes; a logical ordering system such as a vector clock is unlikely to be appropriate as the system is operating in real time and the real time between events is relevant to the computation. So I intend to use NTP for synchronisation, as minor clock skew will not affect the system to a significant degree. I will be using an existing NTP library for this as it is likely to be more robust than any implementation I can produce.
+	
+	Additionally, there will be a client able to connect to this distributed 3D world and to interact with it. This will be a simple game client which displays the world and allows basic interaction with the world (likely little more than placing and destroying voxels). This could be implemented in OpenGL~\cite{opengl} either directly in C++ or using a library such as LWJGL~\cite{lwjgl}. Alternatively, it could be written using an existing engine such as Unity.
+	
+	Finally, I will need to write a very simple test agent which connects to the server and performs some example gameplay activity, such as constructing a basic structure. This will be needed to test the performance of the system in the evaluation phase. This will be a paired down version of the above client so will require little work.
+	
+	\subsection{Possible Extensions}
+	
+	\begin{itemize}
+		\item \textbf{Weak Consensus/Voting System:} as mentioned in my introduction I propose the inclusion of a weak consensus or voting system to aid in the detection of rogue peers and, similarly, rogue clients. This would work by replicating each chunk over $n$ nodes where $n>=3$ and having each of the n peers review the activities of the others to ensure that they are acting correctly. If a large enough nodes were able to agree that a node is acting maliciously, they could blacklist it from the network.
+		\item \textbf{3D Terrain Generation:} rather than having a bland, flat world, it would be nice to have some variable terrain. This could easily be achieved using Perlin noise~\cite{perlin}, a type of gradient noise commonly used in video games for realistic terrain generation.
+		\item \textbf{Further World Features:} including other gameplay, for example a basic mob\cite{mob}, would enable me to more accurately test the performance of the system at a large scale.
+	\end{itemize}
+	
+	\section{Evaluation and Success Criteria}
+	
+	\subsection{Methodology}
+	
+	This project's success will be gauged entirely quantitatively, no human participants will be required.\\
+	My project will be evaluated in the following ways:
+	\begin{itemize}
+		\item My DHT implementation will be compared to the Kademlia specification~\cite{kademlia}.
+		\item I will containerise the peer-to-peer server and deploy it on a small to medium scale. I will then test it by connecting a number of my test agents to the server to see how it performs. I will be testing both the network performance and the performance of the individual machines. These figures will be used as a baseline for the next section.
+		\item I will then attempt to estimate how well the system will perform at scale by extrapolating from the baseline acquired in the previous section. I will use some higher level reasoning to compare the performance of my system with large contemporary systems such as the games World of Warcraft~\cite{wow}, EVE Online~\cite{eve} and Runescape~\cite{rune}.
+	\end{itemize}
+
+	\subsection{Success Criteria}
+	
+	\begin{enumerate}
+		\item My DHT must adhere to the Kademlia specification. It is possible I will need to make some changes to fit the specification better to my needs and this is acceptable.
+		\item The peer-to-peer node program must join the network, bootstrapping via some known node, and then will be able to participate in hosting the game world as it becomes part of the DHT.
+		\item It must be possible to interact with the world using a simple 3D graphical client, which is able to place and remove voxels from the world. These changes must persist.
+		\item The system must handle player moving between separate chunks (and thus, separate peers) seamlessly, with no loading screen.
+		\item There must be a simple test agent which connects to and interacts with the world in some notional way to emulate the behaviour of a human user. This is for the purposes of my above quantitative evaluation methodology.
+	\end{enumerate}
+	
+	\section{Timetable}
+	
+	\begin{enumerate}
+		\item \textbf{Michaelmas Weeks 3-5:} Study and implement the Kademlia DHT to specification~\cite{kademlia}.\\
+		\textbf{Deliverable:} DHT which can be demonstrated with a toy system and tested with appropriate unit tests.
+		\item \textbf{Michaelmas Weeks 6-8:} Server-side 3D world implementation. This will involve setting up the state representation for the 3D world; making a server able to load a chunk from disk and then to complete the necessary processing to update the game state while a player is using to this chunk (processing will include, physics calculations such as collisions, handling interaction with the voxels and -- if implemented -- processing mobs). It will also need to be possible for a user to connect to the server and load a chunk which is stored in that node. The protocol for interaction between client and server will need to be established here.\\
+		\textbf{Deliverable:} 3D world server, again to be tested using appropriate unit tests.
+		\item \textbf{Christmas Vacation Weeks 1-3:} Implement 3D graphical client. This will be a simple 3D client used to interact with the world, written, most likely, in OpenGL. The client will connect to the DHT, locate the relevant chunk(s) to be rendered, load these by connecting to the relevant server(s) and provide an interactable display of the world. It will make use of the above protocol for communication between client and server.\\
+		\textbf{Deliverable:} Graphical client program.
+		\item \textbf{Christmas Vacation Weeks 4:} Implement test agent. This should be a fairly easy task as it will be a paired down version of the client developed earlier in the vacation. This is to be used in the evaluation stage and will have no graphical interface by default (though one may be pertinent for testing purposes).\\
+		\textbf{Deliverable:} Test agent program.
+		\item \textbf{Christmas Vacation Weeks 5-6:} Begin evaluation testing of system on a small scale using the test agent developed in the previous section.\\
+		\textbf{Deliverable:} Baseline test data.
+		\item \textbf{Lent Weeks 1-2:} If time allows, then implement extensions which are feasible in remaining time. Additionally, write progress report demonstrating completion of project core and evaluation data acquired in previous section.\\
+		\textbf{Deliverable:} Progress report and extensions if time allows.
+		\item \textbf{Lent Week 3:} Work on chapters introduction and preparation, adjust code from evaluation data and further work on extensions.\\
+		\textbf{Deliverable:} Introduction and preparation chapter drafts and further work on extensions.
+		\item \textbf{Lent Week 4:} Work on implementation chapter and further work on extensions.\\
+		\textbf{Deliverable:} Implementation chapter draft.
+		\item \textbf{Lent Week 5:} Work on evaluations and conclusions chapters.\\
+		\textbf{Deliverable:} Entire dissertation first draft to be submitted to supervisor and DoS by March 20th.
+		\item \textbf{Remaining Time:} Refining dissertation and, time permitting, further extension work.\\
+		\textbf{Deliverable:} Dissertation final draft to be submitted to supervisor and DoS by April 20th.\\
+		\textbf{Deliverable:} Dissertation due on 8th May.
+	\end{enumerate}
+	
+	\section{Resource Declaration}
+	
+	I will be using my own computer for development, I am about to get a new computer, so I cannot comment on the exact specification yet, but I will be using the new one for the majority of the project. In the event of this failing, I have several fallback machines. Firstly my current laptop running Ubuntu 18.04 is still operational. Additionally, I have a desktop PC which is also with me at university which I can use in the event of both other computers failing. Furthermore, in the unlikely event that all of these fail I can use the MCS machines in the Computer Lab, my college computer room and my college library.
+	
+	I will be using Git for version control of my project and dissertation, these will be regularly pushed to GitHub. Additionally, I will be pulling th GitHub repository automatically to an external server I possess on a regular basis and also to MCS machines on a regular basis.
+	
+	I will also be making use of my own dedicated server for some of the testing of the project. This is an OVH dedicated server hosted in Roubaix, France. In the event of this failing, I propose to use several Raspberry Pis for my testing.
+	
+	\begin{thebibliography}{9}
+		\bibitem{wowstat} ``World of Warcraft subscriptions fall to 7.7 million''. \url{https://www.gameinformer.com/b/news/archive/2013/07/26/world-of-warcraft-subscriptions-fall-to-7-7-million.aspx}. Accessed: 2019-10-16.
+		\bibitem{shard} ``Sharding'' on Wikipedia. \url{https://en.wikipedia.org/wiki/Shard_(database_architecture)}. Accessed: 2019-10-15.
+		\bibitem{peerreview} Miller, J. Distributed virtual environment
+		scalability and security, chapter 5. \url{https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-809.pdf}. Accessed: 2019-10-15.
+		\bibitem{kademlia} Maymounkov, P. and Mazières, D. Kademlia: A Peer-to-peer Information System Based on the XOR Metric. \url{https://pdos.csail.mit.edu/~petar/papers/maymounkov-kademlia-lncs.pdf}. Accessed: 2019-10-16.
+		\bibitem{odht} OpenDHT. \url{https://github.com/savoirfairelinux/opendht}. Accessed: 2019-10-16.
+		\bibitem{mc} ``Chunk'' on the Minecraft Wiki. \url{https://minecraft.gamepedia.com/Chunk}. Accessed: 2019-10-17.
+		\bibitem{opengl} OpenGL. \url{https://www.opengl.org/}. Accessed: 2019-10-17.
+		\bibitem{lwjgl} LWJGL: Lightweight Java Game Library. \url{https://www.lwjgl.org/}. Accessed: 2019-10-17.
+		\bibitem{perlin} ``Perlin Noise'' on Wikipedia. \url{https://en.wikipedia.org/wiki/Perlin_noise}. Accessed: 2019-10-17.
+		\bibitem{mob} ``Mob'' on Wikipedia. \url{https://en.wikipedia.org/wiki/Mob_(gaming)}. Accessed: 2019-10-17.
+		\bibitem{wow} World of Warcraft. \url{https://worldofwarcraft.com/}. Accessed: 2019-10-17.
+		\bibitem{eve} EVE Online. \url{https://www.eveonline.com/}. Accessed: 2019-10-17.
+		\bibitem{rune} Runescape. \url{https://www.runescape.com/}. Accessed: 2019-10-17.
+	\end{thebibliography}
+\end{document} 
