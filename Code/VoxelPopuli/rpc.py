@@ -4,15 +4,18 @@ import msgpack
 
 
 def rpc(func):
-    async def rpc_func(self, *args, sender_id=None, msg_id=None, addr=None):
-        msg = msgpack.packb([sender_id, msg_id, False, None, await func(self, *args)])
-        print("wibble")
-        self.transport.sendto(msg, addr)
-        print(addr)
+    def rpc_func(*args, **kwargs):
+        return func(*args, **kwargs)
     return rpc_func
 
 
-class KademliaServer(asyncio.DatagramProtocol):
+def stub(func):
+    async def rpc_stub(self, addr, *args, **kwargs):
+        return await func(*args, **kwargs)
+    return rpc_stub
+
+
+class RPCServer(asyncio.DatagramProtocol):
     def __init__(self, loop):
         self.transport = None
         self.loop = loop
@@ -22,31 +25,36 @@ class KademliaServer(asyncio.DatagramProtocol):
         self.transport = transport
 
     def datagram_received(self, data, addr):
-        msg = msgpack.unpackb(data)
-        print(msg)
-        sender_id = msg[0]
-        msg_id = msg[1]
-        call = msg[2]  # or response?
-        rpc = msg[3]
-        args = msg[4:]
-        if rpc == 0:
-            asyncio.ensure_future(self.ping(sender_id=sender_id, msg_id=msg_id, addr=addr))
-        elif rpc == 1:
-            pass
-        elif rpc == 2:
-            pass
-        elif rpc == 3:
-            pass
+        msg = msgpack.unpackb(data,raw=False)
+        if msg["type"] == 0:
+            func = getattr(self, msg["rpc"], None)
+            if func is None or not callable(func) or not func.__name__ == "rpc_func":
+                print("dropping invalid call")
+                return
+            response = msgpack.packb({"type" : 1, "id" : msg[id], "rep" : func(*msg["args"])})
+            self.transport.sendto(response, addr)
 
-    @rpc
-    async def ping(self):
-        print("called")
-        return str(self.id)
+
+class RPCClient(asyncio.DatagramProtocol):
+    def __init__(self, loop):
+        self.transport = None
+        self.loop = loop
+        self.id = 0
+        self.waiting = {}
+
+    def connection_made(self, transport):
+        self.transport = transport
+
+    def datagram_received(self, data, addr):
+        msg = msgpack.unpackb(data,raw=False)
+        if msg["type"] == 1:
+            if msg["id"] in self.waiting:
+                self.waiting[msg["id"]] = msg
 
 
 async def main():
     loop = asyncio.get_event_loop()
-    transport,protocol = await loop.create_datagram_endpoint(lambda: KademliaServer(loop), local_addr=('127.0.0.1', 25565))
+    transport,protocol = await loop.create_datagram_endpoint(lambda: RPCServer(loop), local_addr=('127.0.0.1', 25565))
     try:
         await asyncio.sleep(3600)  # Serve for 1 hour.
     finally:

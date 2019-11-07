@@ -1,22 +1,33 @@
+import json
+from random import getrandbits
+
+
 def xor_distance(id1, id2):
     return id1 ^ id2
 
+
+def rpc(func):
+    def rpc_func(self, *args):
+         msg = json.dumps({"id" : getrandbits(32), "rpc" : func.__name__,  "arg" : args})
+    return rpc_func
+
+
 class Node:
-    def __init__(self, id, ip, port):
+    def __init__(self, id, addr):
         self.id = id
-        self.ip = ip
-        self.port = port
-        self.storage = {}
+        self.address = addr
 
-    def _ping(self, source):
+    async def ping(self, source):
         pass
 
-    def _find_node(self, id, source):
+    async def find_node(self, id, source):
         pass
 
-    def _find_value(self, id, source):
+    async def find_value(self, id, source):
         pass
 
-    def _store(self, key, value, source):
+    async def store(self, key, value, source):
         pass
+
+
 
