@@ -1,63 +1,88 @@
 import asyncio
+import json
 import socket
-import msgpack
+import random
+from node import Node
 
 
-def rpc(func):
-    def rpc_func(*args, **kwargs):
-        return func(*args, **kwargs)
-    return rpc_func
+TIMEOUT = 10  # RPC timeout.
 
 
 def stub(func):
-    async def rpc_stub(self, addr, *args, **kwargs):
-        return await func(*args, **kwargs)
+    async def rpc_stub(self, *args):
+        loop = asyncio.get_event_loop()
+        msg = json.dumps({"id": random.getrandbits(32), "node": self.id, "call": True, "rpc": func.__name__, "arg": args})
+        self.socket.sendto(msg.encode("UTF-8"), self.addr)
+        f = asyncio.Future()
+        self.waiting[msg["id"]] = (f, loop.call_later(TIMEOUT, self._timeout, msg["id"]))
+        await f
+        return f.result()
     return rpc_stub
 
 
-class RPCServer(asyncio.DatagramProtocol):
-    def __init__(self, loop):
-        self.transport = None
-        self.loop = loop
-        self.id = 0
-
-    def connection_made(self, transport):
-        self.transport = transport
-
-    def datagram_received(self, data, addr):
-        msg = msgpack.unpackb(data,raw=False)
-        if msg["type"] == 0:
-            func = getattr(self, msg["rpc"], None)
-            if func is None or not callable(func) or not func.__name__ == "rpc_func":
-                print("dropping invalid call")
-                return
-            response = msgpack.packb({"type" : 1, "id" : msg[id], "rep" : func(*msg["args"])})
-            self.transport.sendto(response, addr)
+def rpc(func):
+    def rpc_func(self, *args):
+        return func(self, *args)
+    return rpc_func
 
 
-class RPCClient(asyncio.DatagramProtocol):
-    def __init__(self, loop):
-        self.transport = None
-        self.loop = loop
-        self.id = 0
+class KademliaServer:
+    def __init__(self, node_id, addr):
+        self.id = node_id
+        self.addr = addr
         self.waiting = {}
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.socket.bind(addr)
 
-    def connection_made(self, transport):
-        self.transport = transport
+    async def run(self):
+        while True:
+            data,addr = self.socket.recvfrom(1024)
+            msg = json.loads(data.decode("UTF-8"))
+            node = Node(msg["node"], addr)
+            if msg["call"]:
+                func = getattr("_"+msg["rpc"], None)
+                if func is None or not callable(func) and func.__name__ == "rpc_func":
+                    continue
+                res = json.dumps({"id": msg["id"], "node": self.id, "call": False, "rpc": msg["rpc"], "ret": func(*msg["args"], node)})
+                self.socket.sendto(res.encode("UTF-8"), addr)
+            else:
+                if msg["id"] in self.waiting:
+                    self.waiting[msg["id"]][1].cancel()
+                    self.waiting[msg["id"]][0].set_result((True, msg["ret"]))
+                    del self.waiting[msg["id"]]
 
-    def datagram_received(self, data, addr):
-        msg = msgpack.unpackb(data,raw=False)
-        if msg["type"] == 1:
-            if msg["id"] in self.waiting:
-                self.waiting[msg["id"]] = msg
+    async def _timeout(self, msg_id):
+        self.waiting[msg_id][0].set_result((False, None))
+        del self.waiting[msg_id]
 
+    @stub
+    async def ping(self):
+        pass
 
-async def main():
-    loop = asyncio.get_event_loop()
-    transport,protocol = await loop.create_datagram_endpoint(lambda: RPCServer(loop), local_addr=('127.0.0.1', 25565))
-    try:
-        await asyncio.sleep(3600)  # Serve for 1 hour.
-    finally:
-        transport.close()
+    @stub
+    async def find_node(self, node_id):
+        pass
 
-asyncio.run(main())
+    @stub
+    async def find_value(self, key):
+        pass
+
+    @stub
+    async def store(self, key, value):
+        pass
+
+    @rpc
+    def _ping(self, source):
+        pass
+
+    @rpc
+    def _find_node(self, node_id, source):
+        pass
+
+    @rpc
+    def _find_value(self, key, source):
+        pass
+
+    @rpc
+    def _store(self, key, value, source):
+        pass
