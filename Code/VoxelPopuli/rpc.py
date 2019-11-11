@@ -1,6 +1,5 @@
 import asyncio
 import json
-import socket
 import random
 import sys
 from node import Node
@@ -50,12 +49,12 @@ class KademliaServer(asyncio.DatagramProtocol):
         else:
             if msg["id"] in self.waiting:
                 self.waiting[msg["id"]][1].cancel()
-                self.waiting[msg["id"]][0].set_result((True, msg["ret"]))
+                self.waiting[msg["id"]][0].set_result(msg["ret"])
                 del self.waiting[msg["id"]]
 
     def _timeout(self, msg_id):
         print("timed out")
-        self.waiting[msg_id][0].set_result((False, None))
+        self.waiting[msg_id][0].set_result()
         del self.waiting[msg_id]
 
     @stub
