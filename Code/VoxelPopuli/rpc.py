@@ -3,10 +3,11 @@ import json
 import random
 import sys
 from node import Node
-
+from routing import RoutingTable, KBucket
 
 PYTHONASYNCIODEBUG = 1
 TIMEOUT = 10  # RPC timeout.
+K = 20
 
 
 def stub(func):
@@ -28,10 +29,11 @@ def rpc(func):
 
 
 class KademliaServer(asyncio.DatagramProtocol):
-    def __init__(self, node_id):
-        self.id = node_id
+    def __init__(self, node):
+        self.id = node.id
         self.waiting = {}
         self.transport = None
+        self.table = RoutingTable(self, K)
 
     def connection_made(self, transport):
         self.transport = transport
