@@ -16,7 +16,7 @@ def stub(func):
         msg = {"id": random.getrandbits(32), "node": self.id, "call": True, "rpc": func.__name__, "args": args}
         self.transport.sendto(json.dumps(msg).encode("UTF-8"), node.addr)
         f = asyncio.Future()
-        self.waiting[msg["id"]] = (f, loop.call_later(TIMEOUT, self._timeout, msg["id"]))
+        self.waiting[msg["id"]] = (f, loop.call_later(TIMEOUT, self._timeout, msg["id"]), node)
         await f
         return f.result()
     return rpc_stub
@@ -53,42 +53,49 @@ class KademliaServer(asyncio.DatagramProtocol):
                 self.waiting[msg["id"]][1].cancel()
                 self.waiting[msg["id"]][0].set_result(msg["ret"])
                 del self.waiting[msg["id"]]
+                if self.table.get_node_if_contact(msg["node"]) is None:
+                    self.table.add_contact(Node(msg["node"], addr))
 
     def _timeout(self, msg_id):
         print("timed out")
+        node = self.waiting[msg_id][2]
         self.waiting[msg_id][0].set_result()
         del self.waiting[msg_id]
+        self.table.remove_contact(node)  # this is not correct to kademlia implementation, need to add 5 failure removal
 
     @stub
-    async def ping(self, node):
+    async def ext_ping(self, node):
         pass
 
     @stub
-    async def find_node(self, node, node_id):
+    async def ext_find_node(self, node, node_id):
         pass
 
     @stub
-    async def find_value(self, node, key):
+    async def ext_find_value(self, node, key):
         pass
 
     @stub
-    async def store(self, node, key, value):
+    async def ext_store(self, node, key, value):
         pass
 
     @rpc
-    def _ping(self, source):
+    def ping(self):
         return self.id
 
     @rpc
-    def _find_node(self, node_id, source):
+    def find_node(self, node_id):
+        return list(map(lambda node: (node.id, node.ip, node.port), self.table.nearest_nodes_to(node_id)))
+
+    @rpc
+    def find_value(self, key):
         pass
 
     @rpc
-    def _find_value(self, key, source):
+    def store(self, key, value):
         pass
 
-    @rpc
-    def _store(self, key, value, source):
+    async def lookup(self, key):
         pass
 
 
@@ -111,7 +118,7 @@ async def test1(port1, port2):
 async def test2(port1):
     loop = asyncio.get_running_loop()
 
-    transport, protocol = await loop.create_datagram_endpoint(lambda: KademliaServer(2), local_addr=('127.0.0.1', 25567))
+    t, p = await loop.create_datagram_endpoint(lambda: KademliaServer(2), local_addr=('127.0.0.1', 25567))
 
 
 if len(sys.argv) > 1:
