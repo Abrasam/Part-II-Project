@@ -1,7 +1,5 @@
 import asyncio
 import time
-from node import Node
-from rpc import KademliaServer
 from random import randint
 
 

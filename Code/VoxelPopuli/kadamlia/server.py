@@ -2,12 +2,13 @@ import asyncio
 import json
 import random
 import sys
-from node import Node
-from routing import RoutingTable, KBucket
+from kadamlia.node import Node
+from kadamlia.routing import RoutingTable
 
 PYTHONASYNCIODEBUG = 1
 TIMEOUT = 10  # RPC timeout.
 K = 20
+ALPHA = 3
 
 
 def stub(func):
@@ -96,7 +97,9 @@ class KademliaServer(asyncio.DatagramProtocol):
         pass
 
     async def lookup(self, key):
-        pass
+        consideration = self.table.nearest_nodes_to(key)
+        while True:
+            pass
 
 
 async def main():
