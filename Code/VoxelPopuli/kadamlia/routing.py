@@ -93,7 +93,7 @@ class RoutingTable:
                 candidates += self.buckets[i+j].nodes[:]
         candidates = list(filter(lambda x: x.id != node_id, candidates))
         candidates.sort(key=lambda x: x.id ^ node_id)
-        return candidates[:min(len(candidates), self.k)]
+        return candidates[:self.k]
 
     def refresh_buckets(self):
         now = time.time()

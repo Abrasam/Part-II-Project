@@ -54,8 +54,7 @@ class KademliaServer(asyncio.DatagramProtocol):
                 self.waiting[msg["id"]][1].cancel()
                 self.waiting[msg["id"]][0].set_result(msg["ret"])
                 del self.waiting[msg["id"]]
-                if self.table.get_node_if_contact(msg["node"]) is None:
-                    self.table.add_contact(Node(msg["node"], addr))
+                self.table.add_contact(self.table.get_node_if_contact(msg["node"]))
 
     def _timeout(self, msg_id):
         print("timed out")
@@ -97,9 +96,26 @@ class KademliaServer(asyncio.DatagramProtocol):
         pass
 
     async def lookup(self, key):
-        consideration = self.table.nearest_nodes_to(key)
+        nodes = self.table.nearest_nodes_to(key)
+        queried = []
         while True:
-            pass
+            best = nodes[0]
+            multicast = []
+            unqueried = list(filter(lambda n: n not in queried, nodes))
+            for i in range(0, min(ALPHA, len(unqueried))):
+                node = unqueried.pop(0)
+                multicast.append(node)
+            queried += multicast
+            res = await asyncio.gather([self.ext_find_node(n, key) for n in multicast])
+            for i in range(0, len(res)):
+                if res[i] is None:
+                    continue
+                nodes += list(map(lambda x: self.table.get_node_if_contact(x[0]) if self.table.get_node_if_contact(x[0]) is not None else Node(x[0], (x[1], x[2])), res[i]))
+            nodes.sort(key=lambda n: n.id ^ key)
+            nodes = nodes[:K]  # only keep K best.
+            if best == nodes[0]:
+                break
+        return nodes
 
 
 async def main():
