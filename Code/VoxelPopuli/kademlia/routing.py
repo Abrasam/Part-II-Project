@@ -50,11 +50,17 @@ class KBucket:
     def __len__(self):
         return len(self.nodes)
 
+    def __str__(self):
+        return "KBucket("+str(self.nodes)+")"
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class RoutingTable:
     def __init__(self, server, k):
         self.server = server
-        self.buckets = [KBucket(0, 256, k)]
+        self.buckets = [KBucket(0, 2**160, k)]
         self.k = k
 
     def get_bucket(self, id):
@@ -73,7 +79,7 @@ class RoutingTable:
             l, r = self.buckets[i].split()
             self.buckets[i] = l
             self.buckets.insert(i+1, r)
-            await self.add_contact(node)
+            self.add_contact(node)
         else:  # no need to check if self.buckets[0] exists cause if it didn't then we would not be here.
             asyncio.ensure_future(self.server.ext_ping(self.buckets[0]))  # call ping to force staleness check.
 
@@ -86,11 +92,17 @@ class RoutingTable:
         j = 1
         self.buckets[i].update()
         candidates = self.buckets[i].nodes[:]
-        while len(candidates) < self.k and (self.buckets[i-j] is not None or self.buckets[i+j] is not None):
-            if self.buckets[i-j] is not None:
+        print(candidates)
+        print(len(self.buckets))
+        while len(candidates) < self.k and (0 <= i-j < len(self.buckets) or 0 <= i+j < len(self.buckets)):
+            print(i-j)
+            print(i+j)
+            print(len(self.buckets))
+            if 0 <= i-j < len(self.buckets):
                 candidates += self.buckets[i-j].nodes[:]
-            if self.buckets[i+j] is not None:
+            if 0 <= i+j < len(self.buckets):
                 candidates += self.buckets[i+j].nodes[:]
+            j += 1
         candidates = list(filter(lambda x: x.id != node_id, candidates))
         candidates.sort(key=lambda x: x.id ^ node_id)
         return candidates[:self.k]
