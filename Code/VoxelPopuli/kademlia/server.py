@@ -37,20 +37,25 @@ class KademliaServer(asyncio.DatagramProtocol):
         self.waiting = {}
         self.transport = None
         self.table = RoutingTable(self, K)
+        self.storage = {}
 
     def connection_made(self, transport):
         self.transport = transport
 
     def datagram_received(self, data, addr):
         msg = json.loads(data.decode("UTF-8"))
+        asyncio.ensure_future(self._handle_message(msg, addr))
+
+    async def _handle_message(self, msg, addr):
         print(msg)
         node = self.table.get_node_if_contact(msg["node"])
         node = Node(msg["node"], addr) if node is None else node
         if msg["call"]:
-            func = getattr(self,msg["rpc"], None)
+            func = getattr(self, msg["rpc"], None)
             if func is None or not callable(func) or func.__name__ != "rpc_func":
                 return
-            res = json.dumps({"id": msg["id"], "node": self.id, "call": False, "rpc": msg["rpc"], "ret": func(*msg["args"])})
+            res = json.dumps(
+                {"id": msg["id"], "node": self.id, "call": False, "rpc": msg["rpc"], "ret": func(*msg["args"])})
             self.transport.sendto(res.encode("UTF-8"), addr)
         else:
             if msg["id"] in self.waiting:
@@ -92,18 +97,20 @@ class KademliaServer(asyncio.DatagramProtocol):
 
     @rpc
     def find_node(self, node_id):
-        return list(map(lambda node: (node.id, node.ip, node.port), self.table.nearest_nodes_to(node_id)))
+        return list(map(lambda node: (node.id, node.addr[0], node.addr[1]), self.table.nearest_nodes_to(node_id)))
 
     @rpc
     def find_value(self, key):
-        pass
+        if key in self.storage:
+            return self.storage[key]
+        return self.find_node(key)
 
     @rpc
     def store(self, key, value):
-        pass
+        self.storage[key] = value
 
-    async def lookup(self, key):
-        nodes = self.table.nearest_nodes_to(key)
+    async def lookup(self, key_or_id, value=False):
+        nodes = self.table.nearest_nodes_to(key_or_id)
         queried = []
         while True:
             best = nodes[0]
@@ -113,16 +120,21 @@ class KademliaServer(asyncio.DatagramProtocol):
                 node = unqueried.pop(0)
                 multicast.append(node)
             queried += multicast
-            res = await asyncio.gather(*[self.ext_find_node(n, key) for n in multicast])
+            res = await asyncio.gather(*[self.ext_find_value(n, key_or_id) if value else self.ext_find_node(n, key_or_id) for n in multicast])
             for i in range(0, len(res)):
                 if res[i] is None:
                     continue
+                if value and type(res[i]) != list:  # this means we cannot store lists in DHT.
+                    return res[i] # have found value, return it.
                 nodes += list(map(lambda x: self.table.get_node_if_contact(x[0]) if self.table.get_node_if_contact(x[0]) is not None else Node(x[0], (x[1], x[2])), res[i]))
-            nodes.sort(key=lambda n: n.id ^ key)
+            print(type(nodes))
+            nodes = list(set(nodes))
+            nodes.sort(key=lambda n: n.id ^ key_or_id)
             nodes = nodes[:K]  # only keep K best.
             if best == nodes[0]:
                 break
-        return nodes
+        print("RETURNING LOOKING: " + str(nodes))
+        return None if value else nodes
 
     async def bootstrap(self, node):
         self.table.add_contact(node)

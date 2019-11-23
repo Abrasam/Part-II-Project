@@ -1,6 +1,4 @@
-import asyncio
-from kademlia.kademlia import Kademlia
-from kademlia.node import Node
+from server.server import Kademlia
 from kademlia.routing import *
 
 
@@ -12,6 +10,7 @@ async def test():
 
     while True:
         print(k1.server.table.buckets)
+        print(len(k1.server.table))
         await asyncio.sleep(1)
 
 asyncio.run(test())

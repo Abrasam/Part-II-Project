@@ -56,6 +56,9 @@ class KBucket:
     def __repr__(self):
         return self.__str__()
 
+    def __getitem__(self, item):
+        return self.nodes[item]
+
 
 class RoutingTable:
     def __init__(self, server, k):
@@ -81,7 +84,7 @@ class RoutingTable:
             self.buckets.insert(i+1, r)
             self.add_contact(node)
         else:  # no need to check if self.buckets[0] exists cause if it didn't then we would not be here.
-            asyncio.ensure_future(self.server.ext_ping(self.buckets[0]))  # call ping to force staleness check.
+            asyncio.ensure_future(self.server.ext_ping(self.buckets[i][0]))  # call ping to force staleness check.
 
     def remove_contact(self, node):
         i = self.get_bucket(node.id)
@@ -92,12 +95,7 @@ class RoutingTable:
         j = 1
         self.buckets[i].update()
         candidates = self.buckets[i].nodes[:]
-        print(candidates)
-        print(len(self.buckets))
         while len(candidates) < self.k and (0 <= i-j < len(self.buckets) or 0 <= i+j < len(self.buckets)):
-            print(i-j)
-            print(i+j)
-            print(len(self.buckets))
             if 0 <= i-j < len(self.buckets):
                 candidates += self.buckets[i-j].nodes[:]
             if 0 <= i+j < len(self.buckets):
@@ -121,3 +119,5 @@ class RoutingTable:
         else:  # should never be anything other than 1 or 0 so treat >1 as failure case as something sure is wrong there
             return None
 
+    def __len__(self):
+        return sum(map(lambda b: len(b.nodes), self.buckets))

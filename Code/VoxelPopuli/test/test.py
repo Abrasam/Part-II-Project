@@ -1,5 +1,4 @@
-import asyncio
-from kademlia.kademlia import Kademlia
+from server.server import Kademlia
 from kademlia.node import Node
 from kademlia.routing import *
 
