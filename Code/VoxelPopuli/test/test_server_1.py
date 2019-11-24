@@ -3,7 +3,7 @@ from kademlia.routing import *
 
 
 async def test():
-    k1 = Kademlia(('127.0.0.1', 25569),id=5)
+    k1 = Kademlia(('127.0.0.1', 25569),id=90000000000000000000000000000000000000000000000)
 
     await k1.run()
     print("yeet")

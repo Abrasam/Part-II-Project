@@ -37,5 +37,7 @@ rt.add_contact(Node(1,addr))
 
 for i in range(1, 100):
     rt.add_contact(Node(getrandbits(160), addr))
+rt.add_contact(Node(rt.server.id+1,addr))
 print(rt.buckets)
+print(rt.server.id)
 print(rt.get_node_if_contact(1))

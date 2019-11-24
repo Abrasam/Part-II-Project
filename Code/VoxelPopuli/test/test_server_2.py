@@ -6,18 +6,15 @@ from kademlia.routing import *
 async def test(port):
     k1 = Kademlia(('127.0.0.1', port))
 
-    await k1.run(Node(5, ('127.0.0.1', 25569)))
+    await k1.run(Node(90000000000000000000000000000000000000000000000, ('127.0.0.1', 25569)))
 
     nodes = [None for i in range(0,100)]
 
-    for i in range(0,100):
+    for i in range(0,0):
         nodes[i] = Kademlia(('127.0.0.1', port+i+1))
         await nodes[i].run(Node(5, ('127.0.0.1', 25569)))
 
     await asyncio.sleep(10)
-
-    for n in nodes:
-        print(len(n.server.table))
 
     while True:
         action = input("(g)et or (s)et: ")

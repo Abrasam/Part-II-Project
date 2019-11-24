@@ -22,7 +22,6 @@ class Kademlia:
         key = int(hashlib.sha1(key).hexdigest(), 16)  # sha1 is 160 bits so useful for kademlia.
         if key in self.server.storage:
             return self.server.storage[key]
-        print("We didn't have it so we'll ask someone else")
         value = await self.server.lookup(key, value=True)
         return value
 

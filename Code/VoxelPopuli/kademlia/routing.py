@@ -36,16 +36,7 @@ class KBucket:
             del self.nodes[self.nodes.index(node)]
 
             if len(self.replacement) > 0:
-                self.add_node(self.replacement.pop())  # this may not accurately do LRU.
-
-    def split(self):
-        l, r = KBucket(self.lower, (self.lower+self.upper)/2, self.k), KBucket((self.lower+self.upper)/2, self.upper, self.k)
-        for node in (self.nodes + self.replacement):
-            if node.id < l.upper:
-                l.add_node(node)
-            else:
-                r.add_node(node)
-        return l, r
+                self.add_node(self.replacement.pop())  # this may not accurately do LRU entirely correctly.
 
     def __len__(self):
         return len(self.nodes)
@@ -63,12 +54,12 @@ class KBucket:
 class RoutingTable:
     def __init__(self, server, k):
         self.server = server
-        self.buckets = [KBucket(0, 2**160, k)]
+        self.buckets = [KBucket(2**i - 1, 2**(i+1), k) for i in range(0, 160)]
         self.k = k
 
     def get_bucket(self, id):
         for i in range(0, len(self.buckets)):
-            if self.buckets[i].lower <= id < self.buckets[i].upper:
+            if self.buckets[i].lower <= id ^ self.server.id < self.buckets[i].upper:
                 return i
         return None  # should get be here.
 
@@ -77,39 +68,25 @@ class RoutingTable:
         if self.buckets[i].add_node(node):
             return
 
-        if self.buckets[i].lower <= self.server.id < self.buckets[i].upper:
-            # if bucket has range of current node then split.
-            l, r = self.buckets[i].split()
-            self.buckets[i] = l
-            self.buckets.insert(i+1, r)
-            self.add_contact(node)
-        else:  # no need to check if self.buckets[0] exists cause if it didn't then we would not be here.
-            print("dropped node")
-            asyncio.ensure_future(self.server.ext_ping(self.buckets[i][0]))  # call ping to force staleness check.
+        print("dropped node")
+        asyncio.ensure_future(self.server.ext_ping(self.buckets[i][0]))  # call ping to force staleness check.
 
     def remove_contact(self, node):
         i = self.get_bucket(node.id)
         self.buckets[i].remove_node(node)
 
-    def nearest_nodes_to(self, node_id):
-        i = self.get_bucket(node_id)
-        j = 1
-        self.buckets[i].update()
-        candidates = self.buckets[i].nodes[:]
-        while len(candidates) < self.k and (0 <= i-j < len(self.buckets) or 0 <= i+j < len(self.buckets)):
-            if 0 <= i-j < len(self.buckets):
-                candidates += self.buckets[i-j].nodes[:]
-            if 0 <= i+j < len(self.buckets):
-                candidates += self.buckets[i+j].nodes[:]
-            j += 1
-        candidates = list(filter(lambda x: x.id != node_id, candidates))
-        candidates.sort(key=lambda x: x.id ^ node_id)
+    def nearest_nodes_to(self, key):
+        candidates = [node for bucket in self.buckets for node in bucket]
+        candidates.sort(key=lambda x: x.id ^ key)
+        print("CANDIDATES:" + str(candidates))
         return candidates[:self.k]
 
-    def refresh_buckets(self, all=False):
+    def get_stale_nodes(self):
         now = time.time()
-        stale = list(filter(lambda b: (now - b.updated > 60*60) or all, self.buckets))
-        for b in stale:
+        return list(filter(lambda b: (now - b.updated > 60 * 60) or all, self.buckets))
+
+    def refresh_buckets(self, nodes):
+        for b in nodes:
             random_id = randint(b.lower, b.upper)
             asyncio.ensure_future(self.server.lookup(random_id))
 
@@ -119,6 +96,12 @@ class RoutingTable:
             return buckets[0]
         else:  # should never be anything other than 1 or 0 so treat >1 as failure case as something sure is wrong there
             return None
+
+    def get_first_nonempty_bucket(self):
+        for i in range(0,len(self.buckets)):
+            if len(self.buckets[i]) > 0:
+                return i
+        return -1
 
     def __len__(self):
         return sum(map(lambda b: len(b.nodes), self.buckets))
