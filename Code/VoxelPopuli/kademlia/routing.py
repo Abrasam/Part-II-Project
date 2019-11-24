@@ -84,6 +84,7 @@ class RoutingTable:
             self.buckets.insert(i+1, r)
             self.add_contact(node)
         else:  # no need to check if self.buckets[0] exists cause if it didn't then we would not be here.
+            print("dropped node")
             asyncio.ensure_future(self.server.ext_ping(self.buckets[i][0]))  # call ping to force staleness check.
 
     def remove_contact(self, node):
@@ -105,12 +106,12 @@ class RoutingTable:
         candidates.sort(key=lambda x: x.id ^ node_id)
         return candidates[:self.k]
 
-    def refresh_buckets(self):
+    def refresh_buckets(self, all=False):
         now = time.time()
-        stale = list(filter(lambda b: now - b.updated > 60*60, self.buckets))
+        stale = list(filter(lambda b: (now - b.updated > 60*60) or all, self.buckets))
         for b in stale:
             random_id = randint(b.lower, b.upper)
-            asyncio.ensure_future(self.server.find_node(random_id))
+            asyncio.ensure_future(self.server.lookup(random_id))
 
     def get_node_if_contact(self, node_id):
         buckets = list(filter(lambda b: b.id == node_id, self.buckets[self.get_bucket(node_id)].nodes))

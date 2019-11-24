@@ -29,4 +29,6 @@ class Kademlia:
     async def set(self, key, value):
         key = int(hashlib.sha1(key).hexdigest(), 16)
         nodes = await self.server.lookup(key)
+        if self.id ^ key <= max(map(lambda n: n.id ^ key, nodes)):
+            self.server.storage[key] = value
         asyncio.ensure_future(asyncio.gather(*[self.server.ext_store(n, key, value) for n in nodes]))

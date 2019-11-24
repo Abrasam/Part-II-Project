@@ -69,7 +69,7 @@ class KademliaServer(asyncio.DatagramProtocol):
         # send values that need to be sent.
 
     def _timeout(self, msg_id):
-        print("timed out")
+        print("RPC call timed out")
         node = self.waiting[msg_id][2]
         self.waiting[msg_id][0].set_result(None)
         del self.waiting[msg_id]
@@ -127,17 +127,14 @@ class KademliaServer(asyncio.DatagramProtocol):
                 if value and type(res[i]) != list:  # this means we cannot store lists in DHT.
                     return res[i] # have found value, return it.
                 nodes += list(map(lambda x: self.table.get_node_if_contact(x[0]) if self.table.get_node_if_contact(x[0]) is not None else Node(x[0], (x[1], x[2])), res[i]))
-            print(type(nodes))
             nodes = list(set(nodes))
             nodes.sort(key=lambda n: n.id ^ key_or_id)
             nodes = nodes[:K]  # only keep K best.
             if best == nodes[0]:
                 break
-        print("RETURNING LOOKING: " + str(nodes))
         return None if value else nodes
 
     async def bootstrap(self, node):
         self.table.add_contact(node)
-        print("added contact")
         await self.lookup(self.id)
-        self.table.refresh_buckets()  # should this be different?
+        self.table.refresh_buckets(all=True)  # should this be different?
