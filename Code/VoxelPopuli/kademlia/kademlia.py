@@ -1,12 +1,14 @@
 import asyncio
 import json
 import random
+import time
 from kademlia.node import Node
 from kademlia.routing import RoutingTable
+from kademlia.storage import Storage
 
 PYTHONASYNCIODEBUG = 1
 TIMEOUT = 10  # RPC timeout.
-K = 20
+K = 5
 ALPHA = 3
 
 
@@ -37,7 +39,16 @@ class KademliaServer(asyncio.DatagramProtocol):
         self.waiting = {}
         self.transport = None
         self.table = RoutingTable(self, K)
-        self.storage = {}
+        self.storage = Storage()
+        loop = asyncio.get_running_loop()
+
+        def refresh():
+            print("Refreshing stale buckets and republishing kv pairs.")
+            self.table.refresh_buckets(self.table.get_stale_buckets())
+            self.republish_keys()
+            self.refresh = loop.call_later(3600, refresh)
+
+        self.refresh = loop.call_later(3600, refresh)
 
     def connection_made(self, transport):
         self.transport = transport
@@ -65,12 +76,25 @@ class KademliaServer(asyncio.DatagramProtocol):
         self._message_received(node)
 
     def _message_received(self, node):
+        if node.id == self.id:
+            return
+
         self.table.add_contact(node)
         # send values that need to be sent.
+        if self.table.get_node_if_contact(node.id) is not None:  # if node is not new then there's nawt to do.
+            return
+
+        # send all values it needs
+        for key in self.storage:
+            nearby = self.table.nearest_nodes_to(key)
+            if len(nearby) > 0:
+                if not (node.id ^ key < nearby[-1].id ^ key and self.id ^ key < nearby[0].id ^ key):
+                    return
+            asyncio.ensure_future(self.ext_store(node, key, self.storage[key]))
 
     def _timeout(self, msg_id):
-        print("RPC call timed out")
         node = self.waiting[msg_id][2]
+        print("RPC call timed out to " + str(node.id) + " from " + str(self.id))
         self.waiting[msg_id][0].set_result(None)
         del self.waiting[msg_id]
         self.table.remove_contact(node)  # this is not correct to kademlia implementation, need to add 5 failure removal
@@ -112,7 +136,7 @@ class KademliaServer(asyncio.DatagramProtocol):
     async def lookup(self, key_or_id, value=False):
         nodes = self.table.nearest_nodes_to(key_or_id)
         queried = []
-        while True:
+        while len(nodes) > 0:
             best = nodes[0]
             multicast = []
             unqueried = list(filter(lambda n: n not in queried, nodes))
@@ -134,7 +158,21 @@ class KademliaServer(asyncio.DatagramProtocol):
                 break
         return None if value else nodes
 
+    async def insert(self, key, value):
+        nodes = await self.lookup(key)
+        asyncio.ensure_future(asyncio.gather(*[self.ext_store(n, key, value) for n in nodes]))
+
     async def bootstrap(self, node):
         self.table.add_contact(node)
         await self.lookup(self.id)
         self.table.refresh_buckets(self.table.buckets[i] for i in range(self.table.get_first_nonempty_bucket()+1, len(self.table.buckets)))  # should this be different?
+
+    def republish_keys(self):
+        now = time.time()
+        for key in self.storage:
+            value = self.storage[key]
+            t = self.storage.time[key]
+            if now - t > 30:
+                del self.storage[key]
+                asyncio.ensure_future(self.insert(key, value))
+

@@ -1,10 +1,11 @@
 import asyncio
 import hashlib
-from kademlia.server import KademliaServer
+from kademlia.kademlia import KademliaServer
 from kademlia.node import Node
 from random import getrandbits
 
-class Kademlia:
+
+class Server:
     def __init__(self, addr, id=None):
         self.id = id if id is not None else getrandbits(160)
         self.server = None
@@ -18,16 +19,21 @@ class Kademlia:
         if bootstrap is not None:
             await self.server.bootstrap(bootstrap)
 
+    def kill(self):
+        self.server.transport.close()
+        self.server.refresh.cancel()
+
     async def get(self, key):
         key = int(hashlib.sha1(key).hexdigest(), 16)  # sha1 is 160 bits so useful for kademlia.
+        print("wib?")
         if key in self.server.storage:
             return self.server.storage[key]
+        print("wub")
         value = await self.server.lookup(key, value=True)
         return value
 
     async def set(self, key, value):
+        if type(key) == str:
+            key = key.encode()
         key = int(hashlib.sha1(key).hexdigest(), 16)
-        nodes = await self.server.lookup(key)
-        if self.id ^ key <= max(map(lambda n: n.id ^ key, nodes)):
-            self.server.storage[key] = value
-        asyncio.ensure_future(asyncio.gather(*[self.server.ext_store(n, key, value) for n in nodes]))
+        await self.server.insert(key, value)

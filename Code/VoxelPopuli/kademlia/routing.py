@@ -42,7 +42,7 @@ class KBucket:
         return len(self.nodes)
 
     def __str__(self):
-        return "KBucket("+str(self.nodes)+")"
+        return "KBucket("+str(self.nodes)+")" if len(self) > 0 else ""
 
     def __repr__(self):
         return self.__str__()
@@ -78,15 +78,14 @@ class RoutingTable:
     def nearest_nodes_to(self, key):
         candidates = [node for bucket in self.buckets for node in bucket]
         candidates.sort(key=lambda x: x.id ^ key)
-        print("CANDIDATES:" + str(candidates))
         return candidates[:self.k]
 
-    def get_stale_nodes(self):
+    def get_stale_buckets(self):
         now = time.time()
-        return list(filter(lambda b: (now - b.updated > 60 * 60) or all, self.buckets))
+        return list(filter(lambda b: (now - b.updated > 3600), self.buckets))
 
-    def refresh_buckets(self, nodes):
-        for b in nodes:
+    def refresh_buckets(self, buckets):
+        for b in buckets:
             random_id = randint(b.lower, b.upper)
             asyncio.ensure_future(self.server.lookup(random_id))
 

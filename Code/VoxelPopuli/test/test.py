@@ -1,11 +1,11 @@
-from server.server import Kademlia
+from server.server import Server
 from kademlia.node import Node
 from kademlia.routing import *
 
 
 async def test():
-    k1 = Kademlia(('localhost', 25565))
-    k2 = Kademlia(('localhost', 25566))
+    k1 = Server(('localhost', 25565))
+    k2 = Server(('localhost', 25566))
 
     await asyncio.ensure_future(k1.run())
     print("yeet")
