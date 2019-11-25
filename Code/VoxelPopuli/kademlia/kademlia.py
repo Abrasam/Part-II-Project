@@ -56,10 +56,10 @@ class KademliaServer(asyncio.DatagramProtocol):
         print(f"we died somehow? {exc}")
 
     def datagram_received(self, data, addr):
-        msg = json.loads(data.decode("UTF-8"))
-        asyncio.ensure_future(self._handle_message(msg, addr))
+        asyncio.ensure_future(self._handle_datagram(data, addr))
 
-    async def _handle_message(self, msg, addr):
+    async def _handle_datagram(self, data, addr):
+        msg = json.loads(data.decode("UTF-8"))
         print("received " + str(msg) + " at " + str(self.id))
         node = self.table.get_node_if_contact(msg["node"])
         node = Node(msg["node"], addr) if node is None else node
