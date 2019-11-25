@@ -6,9 +6,8 @@ from kademlia.node import Node
 from kademlia.routing import RoutingTable
 from kademlia.storage import Storage
 
-PYTHONASYNCIODEBUG = 1
-TIMEOUT = 10  # RPC timeout.
-K = 5
+TIMEOUT = 2  # RPC timeout.
+K = 1
 ALPHA = 3
 
 
@@ -19,9 +18,9 @@ def stub(func):
         loop = asyncio.get_event_loop()
         msg = {"id": random.getrandbits(32), "node": self.id, "call": True, "rpc": func.__name__[4:], "args": args}
         self.transport.sendto(json.dumps(msg).encode("UTF-8"), node.addr)
-        print("sent rpc " + json.dumps(msg) + " to " + str(node.addr))
+        print("sent rpc " + json.dumps(msg) + " to " + str(node.addr) + " id: " + str(node.id))
         f = asyncio.Future()
-        self.waiting[msg["id"]] = (f, loop.call_later(TIMEOUT, self._timeout, msg["id"]), node)
+        self.waiting[msg["id"]] = (f, loop.call_later(TIMEOUT+random.randint(0,10), self._timeout, msg["id"]), node)
         await f
         return f.result()
     return rpc_stub
@@ -44,7 +43,7 @@ class KademliaServer(asyncio.DatagramProtocol):
 
         def refresh():
             print("Refreshing stale buckets and republishing kv pairs.")
-            self.table.refresh_buckets(self.table.get_stale_buckets())
+            asyncio.ensure_future(self.table.refresh_buckets(self.table.get_stale_buckets()))
             self.republish_keys()
             self.refresh = loop.call_later(3600, refresh)
 
@@ -53,12 +52,15 @@ class KademliaServer(asyncio.DatagramProtocol):
     def connection_made(self, transport):
         self.transport = transport
 
+    def connection_lost(self, exc):
+        print(f"we died somehow? {exc}")
+
     def datagram_received(self, data, addr):
         msg = json.loads(data.decode("UTF-8"))
         asyncio.ensure_future(self._handle_message(msg, addr))
 
     async def _handle_message(self, msg, addr):
-        print(msg)
+        print("received " + str(msg) + " at " + str(self.id))
         node = self.table.get_node_if_contact(msg["node"])
         node = Node(msg["node"], addr) if node is None else node
         if msg["call"]:
@@ -67,15 +69,16 @@ class KademliaServer(asyncio.DatagramProtocol):
                 return
             res = json.dumps(
                 {"id": msg["id"], "node": self.id, "call": False, "rpc": msg["rpc"], "ret": func(*msg["args"])})
+            print("return to sender " + res + " " + str(node.id))
             self.transport.sendto(res.encode("UTF-8"), addr)
         else:
             if msg["id"] in self.waiting:
                 self.waiting[msg["id"]][1].cancel()
                 self.waiting[msg["id"]][0].set_result(msg["ret"])
                 del self.waiting[msg["id"]]
-        self._message_received(node)
+        self._process_contact(node)
 
-    def _message_received(self, node):
+    def _process_contact(self, node):
         if node.id == self.id:
             return
 
@@ -94,10 +97,11 @@ class KademliaServer(asyncio.DatagramProtocol):
 
     def _timeout(self, msg_id):
         node = self.waiting[msg_id][2]
-        print("RPC call timed out to " + str(node.id) + " from " + str(self.id))
+        print("RPC call timed out to " + str(node.id) + " from " + str(self.id) + " msgid: " + str(msg_id))
         self.waiting[msg_id][0].set_result(None)
         del self.waiting[msg_id]
         self.table.remove_contact(node)  # this is not correct to kademlia implementation, need to add 5 failure removal
+        print("timed out done now yeet")
 
     @stub
     async def ext_ping(self, node):
@@ -141,10 +145,10 @@ class KademliaServer(asyncio.DatagramProtocol):
             multicast = []
             unqueried = list(filter(lambda n: n not in queried, nodes))
             for i in range(0, min(ALPHA, len(unqueried))):
-                node = unqueried.pop(0)
-                multicast.append(node)
-            queried += multicast
+                multicast.append(unqueried.pop(0))
+            print("ASKING: " + str(multicast))
             res = await asyncio.gather(*[self.ext_find_value(n, key_or_id) if value else self.ext_find_node(n, key_or_id) for n in multicast])
+            queried += multicast
             for i in range(0, len(res)):
                 if res[i] is None:
                     continue
@@ -164,8 +168,12 @@ class KademliaServer(asyncio.DatagramProtocol):
 
     async def bootstrap(self, node):
         self.table.add_contact(node)
+        self.transport.sendto("wibble".encode(), ('127.0.0.1',12345))
         await self.lookup(self.id)
-        self.table.refresh_buckets(self.table.buckets[i] for i in range(self.table.get_first_nonempty_bucket()+1, len(self.table.buckets)))  # should this be different?
+        self.transport.sendto("wobble".encode(), ('127.0.0.1',12345))
+        await self.table.refresh_buckets(self.table.buckets[i] for i in range(self.table.get_first_nonempty_bucket()+1, len(self.table.buckets)))  # should this be different?
+        self.transport.sendto("wabble".encode(), ('127.0.0.1',12345))
+        print("this terminated")
 
     def republish_keys(self):
         now = time.time()

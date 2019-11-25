@@ -15,13 +15,10 @@ class Server:
         loop = asyncio.get_running_loop()
         print(self.addr)
         self.server = KademliaServer(self.id)
-        await loop.create_datagram_endpoint(lambda: self.server, local_addr=self.addr)
+        transport, protocol = await loop.create_datagram_endpoint(lambda: self.server, local_addr=self.addr)
+        print(transport)
         if bootstrap is not None:
             await self.server.bootstrap(bootstrap)
-
-    def kill(self):
-        self.server.transport.close()
-        self.server.refresh.cancel()
 
     async def get(self, key):
         key = int(hashlib.sha1(key).hexdigest(), 16)  # sha1 is 160 bits so useful for kademlia.

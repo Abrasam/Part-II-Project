@@ -36,6 +36,7 @@ class KBucket:
             del self.nodes[self.nodes.index(node)]
 
             if len(self.replacement) > 0:
+                print("added from replacement " + str(self.replacement[-1]))
                 self.add_node(self.replacement.pop())  # this may not accurately do LRU entirely correctly.
 
     def __len__(self):
@@ -69,6 +70,7 @@ class RoutingTable:
             return
 
         print("dropped node")
+
         asyncio.ensure_future(self.server.ext_ping(self.buckets[i][0]))  # call ping to force staleness check.
 
     def remove_contact(self, node):
@@ -85,9 +87,7 @@ class RoutingTable:
         return list(filter(lambda b: (now - b.updated > 3600), self.buckets))
 
     def refresh_buckets(self, buckets):
-        for b in buckets:
-            random_id = randint(b.lower, b.upper)
-            asyncio.ensure_future(self.server.lookup(random_id))
+        return asyncio.gather(*[self.server.lookup(randint(b.lower, b.upper)) for b in buckets])
 
     def get_node_if_contact(self, node_id):
         buckets = list(filter(lambda b: b.id == node_id, self.buckets[self.get_bucket(node_id)].nodes))
