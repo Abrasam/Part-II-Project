@@ -58,6 +58,9 @@ class KademliaServer(asyncio.DatagramProtocol):
     def datagram_received(self, data, addr):
         asyncio.ensure_future(self._handle_datagram(data, addr))
 
+    def error_received(self, exc: Exception):
+        print(exc)
+
     async def _handle_datagram(self, data, addr):
         msg = json.loads(data.decode("UTF-8"))
         print("received " + str(msg) + " at " + str(self.id))
