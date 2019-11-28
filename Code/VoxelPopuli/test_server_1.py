@@ -12,12 +12,14 @@ async def test():
     print("yeet")
 
     def got_input():
-        s = sys.stdin.readline()
+        s = sys.stdin.readline()[:-1]
         if s.startswith("s"):
-            s=s[1:].split(",")
+            s=s[2:].split(",")
+            print(s)
             asyncio.ensure_future(k1.set(s[0].encode(),s[1]))
         elif s.startswith("g"):
-            s=s[1:]
+            s=s[2:]
+            print(s)
             asyncio.ensure_future(k1.get(s.encode()))
 
     asyncio.get_running_loop().add_reader(sys.stdin, got_input)
