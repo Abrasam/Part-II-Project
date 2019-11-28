@@ -22,15 +22,11 @@ class Server:
 
     async def get(self, key):
         key = int(hashlib.sha1(key).hexdigest(), 16)  # sha1 is 160 bits so useful for kademlia.
-        print("wib?")
         if key in self.server.storage:
             return self.server.storage[key]
-        print("wub")
         value = await self.server.lookup(key, value=True)
         return value
 
     async def set(self, key, value):
-        if type(key) == str:
-            key = key.encode()
         key = int(hashlib.sha1(key).hexdigest(), 16)
         await self.server.insert(key, value)

@@ -15,16 +15,16 @@ async def test():
         s = sys.stdin.readline()
         if s.startswith("s"):
             s=s[1:].split(",")
-            await k1.set(s[0],s[1])
+            asyncio.ensure_future(k1.set(s[0].encode(),s[1]))
         elif s.startswith("g"):
             s=s[1:]
-            await k1.get(s)
+            asyncio.ensure_future(k1.get(s.encode()))
 
     asyncio.get_running_loop().add_reader(sys.stdin, got_input)
 
     while True:
-        await asyncio.sleep(5)
-        print(k1.server.table.buckets)
-        print(len(k1.server.table))
+        await asyncio.sleep(3600)
+#        print(k1.server.table.buckets)
+#        print(len(k1.server.table))
 
 asyncio.run(test())
