@@ -6,9 +6,9 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 async def test(port):
-    k1 = Server(('127.0.0.1', port), id=6)
-
-    await k1.run(Node(90000000000000000000000000000000000000000000000, ('127.0.0.1', 25570)))
+    for i in range(0,100):
+        k1 = Server(('127.0.0.1', port+i))
+        await k1.run(Node(90000000000000000000000000000000000000000000000, ('127.0.0.1', 25499)))
 
     while True:
         await asyncio.sleep(3600)
