@@ -14,5 +14,6 @@ async def test():
     while True:
         await asyncio.sleep(5)
         print(k1.server.table.buckets)
+        print(len(k1.server.table))
 
 asyncio.run(test())
