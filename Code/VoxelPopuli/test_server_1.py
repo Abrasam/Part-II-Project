@@ -15,10 +15,10 @@ async def test():
         s = sys.stdin.readline()
         if s.startswith("s"):
             s=s[1:].split(",")
-            k1.set(s[0],s[1])
+            await k1.set(s[0],s[1])
         elif s.startswith("g"):
             s=s[1:]
-            k1.get(s)
+            await k1.get(s)
 
     asyncio.get_running_loop().add_reader(sys.stdin, got_input)
 
