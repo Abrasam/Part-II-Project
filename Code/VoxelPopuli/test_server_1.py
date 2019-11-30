@@ -5,6 +5,7 @@ import logging, sys
 
 logging.basicConfig(level=logging.DEBUG)
 
+
 async def test():
     k1 = Server(('127.0.0.1', 25499), id=90000000000000000000000000000000000000000000000)
 

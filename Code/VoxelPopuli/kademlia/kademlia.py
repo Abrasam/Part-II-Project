@@ -186,4 +186,3 @@ class KademliaServer(asyncio.DatagramProtocol):
             if now - t > 30:
                 del self.storage[key]
                 asyncio.ensure_future(self.insert(key, value))
-
