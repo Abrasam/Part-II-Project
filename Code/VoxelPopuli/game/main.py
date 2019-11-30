@@ -1,12 +1,12 @@
 import socket
-import threading
+from threading import Thread
 
 chunks = {}
 
 
-class ClientThread(threading.Thread):
+class ClientThread(Thread):
     def __init__(self, socket, events):
-        threading.Thread.__init__(self)
+        Thread.__init__(self)
         self.socket = socket
         self.queue = events
 
