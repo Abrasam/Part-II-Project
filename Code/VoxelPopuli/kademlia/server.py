@@ -1,11 +1,10 @@
 import asyncio
 import hashlib
-from kademlia.kademlia import KademliaServer
-from kademlia.node import Node
+from kademlia.protocol import KademliaNode
 from random import getrandbits
 
 
-class Server:
+class DHTServer:
     def __init__(self, addr, id=None):
         self.id = id if id is not None else getrandbits(160)
         self.server = None
@@ -14,7 +13,7 @@ class Server:
     async def run(self, bootstrap=None):
         loop = asyncio.get_running_loop()
         print(self.addr)
-        self.server = KademliaServer(self.id)
+        self.server = KademliaNode(self.id)
         transport, protocol = await loop.create_datagram_endpoint(lambda: self.server, local_addr=self.addr)
         print(transport)
         if bootstrap is not None:
@@ -30,3 +29,7 @@ class Server:
     async def set(self, key, value):
         key = int(hashlib.sha1(key).hexdigest(), 16)
         await self.server.insert(key, value)
+
+    async def get_nearest_server(self, id):
+        nodes = await self.server.lookup(id)
+        return nodes[0].addr if len(nodes) > 0 else None

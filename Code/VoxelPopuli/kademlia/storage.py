@@ -4,17 +4,23 @@ class Storage:
     def __init__(self):
         self.data = {}
         self.time = {}
+        self.orig = {}
 
     def __getitem__(self, item):
         return self.data[item]
 
     def __setitem__(self, key, value):
+        if key in self.data and self.data[key] == value:
+            self.time[key] = time.time()
+            return
         self.data[key] = value
         self.time[key] = time.time()
+        self.orig[key] = time.time()
 
     def __delitem__(self, key):
         del self.data[key]
         del self.time[key]
+        del self.orig[key]
 
     def __contains__(self, item):
         return item in self.data

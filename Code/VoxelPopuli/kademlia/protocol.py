@@ -3,7 +3,7 @@ import json
 import random
 import time
 from kademlia.node import Node
-from kademlia.routing import RoutingTable
+from kademlia.router import RoutingTable
 from kademlia.storage import Storage
 
 TIMEOUT = 2  # RPC timeout.
@@ -32,7 +32,7 @@ def rpc(func):
     return rpc_func
 
 
-class KademliaServer(asyncio.DatagramProtocol):
+class KademliaNode(asyncio.DatagramProtocol):
     def __init__(self, id):
         self.id = id
         self.waiting = {}
@@ -85,17 +85,18 @@ class KademliaServer(asyncio.DatagramProtocol):
         if node.id == self.id:
             return
 
-        self.table.add_contact(node)
         # send values that need to be sent.
         if self.table.get_node_if_contact(node.id) is not None:  # if node is not new then there's nawt to do.
             return
+
+        self.table.add_contact(node)
 
         # send all values it needs
         for key in self.storage:
             nearby = self.table.nearest_nodes_to(key)
             if len(nearby) > 0:
                 if not (node.id ^ key < nearby[-1].id ^ key and self.id ^ key < nearby[0].id ^ key):
-                    return
+                    continue
             asyncio.ensure_future(self.ext_store(node, key, self.storage[key]))
 
     def _timeout(self, msg_id):
@@ -171,11 +172,8 @@ class KademliaServer(asyncio.DatagramProtocol):
 
     async def bootstrap(self, node):
         self.table.add_contact(node)
-        self.transport.sendto("wibble".encode(), ('127.0.0.1',12345))
         await self.lookup(self.id)
-        self.transport.sendto("wobble".encode(), ('127.0.0.1',12345))
         await self.table.refresh_buckets(self.table.buckets[i] for i in range(self.table.get_first_nonempty_bucket()+1, len(self.table.buckets)))  # should this be different?
-        self.transport.sendto("wabble".encode(), ('127.0.0.1',12345))
         print("this terminated")
 
     def republish_keys(self):
