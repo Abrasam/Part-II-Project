@@ -1,12 +1,13 @@
 from enum import Enum
 
 
-class Commands(Enum):
+class PacketType(Enum):
     FIND_CHUNK = 0
     PLAYER_REGISTER = 1
     PLAYER_DEREGISTER = 2
     PLAYER_MOVE = 2
     FIND_PLAYER = 4
+    CHUNK_DATA = 5
 
 
 class ClientType(Enum):

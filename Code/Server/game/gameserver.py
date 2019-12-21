@@ -7,13 +7,6 @@ from game.const import *
 from kademlia.server import DHTServer
 
 
-class Event:
-    def __init__(self, client, command, args):
-        self.client = client
-        self.command = command
-        self.args = args
-
-
 class ChunkThread(threading.Thread):
     def __init__(self, chunk, dht: DHTServer):
         threading.Thread.__init__(self)
@@ -28,12 +21,12 @@ class ChunkThread(threading.Thread):
 
     def run(self):
         while True:
-            event = self.q.get()
-            self._process_event(event)
+            packet = self.q.get()
+            self._process_packet(packet)
 
-    def _process_event(self, event):
-        if event.command == Commands.PLAYER_REGISTER.value:
-            event.client.send(self.chunk.encode())
+    def _process_packet(self, packet):
+        if packet["type"] == PacketType.PLAYER_REGISTER.value:
+            packet.client.send(self.chunk.encode())
 
     def register(self, client):
         self.lock.acquire()
@@ -74,7 +67,7 @@ class ClientHandler:
                     char = self.socket.recv(1)
                     data += char
                 print("Received:" + str(data))
-                self.q.put(Event(self, data[0], json.loads(data[1:].decode())))
+                self.q.put(json.loads(data[1:].decode()))
 
         self.send_thread = threading.Thread(target=send_loop)
         self.send_thread.setDaemon(True)

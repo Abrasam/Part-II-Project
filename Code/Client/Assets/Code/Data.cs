@@ -5,8 +5,8 @@ using UnityEngine;
 public static class Data {
     //Class adapted from https://github.com/b3agz/Code-A-Game-Like-Minecraft-In-Unity/blob/master/02-the-first-chunk/Assets/Scripts/VoxelData.cs
 
-    public static readonly int ChunkWidth = 32;
-    public static readonly int ChunkHeight = 32;
+    public static readonly int ChunkSize = 32;
+    public static readonly float TickLength = 1 / 20;
 
     public static readonly Vector3[] vertices = new Vector3[8] {
         new Vector3(0.0f, 0.0f, 0.0f),

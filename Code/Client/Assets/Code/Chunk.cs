@@ -22,7 +22,7 @@ public class Chunk {
         meshRenderer.material = world.material;
 
         me.transform.SetParent(world.transform);
-        me.transform.position = new Vector3(chunkPos.x * Data.ChunkWidth, 0, chunkPos.y * Data.ChunkWidth);
+        me.transform.position = new Vector3(chunkPos.x * Data.ChunkSize, 0, chunkPos.y * Data.ChunkSize);
 
         RefreshMesh();
     }
@@ -33,7 +33,7 @@ public class Chunk {
         int y = Mathf.FloorToInt(pos.y);
         int z = Mathf.FloorToInt(pos.z);
 
-        if (x < 0 || x >= Data.ChunkWidth || z < 0 || z >= Data.ChunkWidth || y < 0 || y >= Data.ChunkHeight) return false;
+        if (x < 0 || x >= Data.ChunkSize || z < 0 || z >= Data.ChunkSize || y < 0 || y >= Data.ChunkSize) return false;
 
         return blocks[x, y, z] != 0;
     }
@@ -46,9 +46,9 @@ public class Chunk {
 
         int t = 0;
 
-        for (int y = 0; y < Data.ChunkHeight; y++) {
-            for (int x = 0; x < Data.ChunkWidth; x++) {
-                for (int z = 0; z < Data.ChunkWidth; z++) {
+        for (int y = 0; y < Data.ChunkSize; y++) {
+            for (int x = 0; x < Data.ChunkSize; x++) {
+                for (int z = 0; z < Data.ChunkSize; z++) {
                     Vector3 delta = new Vector3(x, y, z);
                     for (int i = 0; i < 6; i++) {
 
@@ -58,7 +58,7 @@ public class Chunk {
 
                         if (blocks[x, y, z] == 0 || IsSolid(pos + Data.faceChecks[i])) continue;
 
-                        if (y == Data.ChunkHeight - 1 && i == 2) {
+                        if (y == Data.ChunkSize - 1 && i == 2) {
                             t += 1;
                         }
 
