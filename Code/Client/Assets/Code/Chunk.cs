@@ -11,10 +11,12 @@ public class Chunk {
     private Vector2 chunkPos;
     private byte[,,] blocks;
 
-    public Chunk(World world, Vector2 chunkPos, byte[,,] blocks) {
+    public Chunk(Vector2 chunkPos, byte[,,] blocks) {
         this.chunkPos = chunkPos;
         this.blocks = blocks;
+    }
 
+    public void AddToWorld(World world) {
         me = new GameObject();
         meshFilter = me.AddComponent<MeshFilter>();
         meshRenderer = me.AddComponent<MeshRenderer>();
@@ -25,6 +27,8 @@ public class Chunk {
         me.transform.position = new Vector3(chunkPos.x * Data.ChunkSize, 0, chunkPos.y * Data.ChunkSize);
 
         RefreshMesh();
+
+        me.AddComponent<MeshCollider>().sharedMesh = meshFilter.mesh;
     }
 
     private bool IsSolid(Vector3 pos) {
@@ -85,8 +89,6 @@ public class Chunk {
                 }
             }
         }
-
-        Debug.Log(t);
 
         Mesh mesh = new Mesh();
         mesh.vertices = verts.ToArray();

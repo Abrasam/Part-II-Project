@@ -21,12 +21,12 @@ class ChunkThread(threading.Thread):
 
     def run(self):
         while True:
-            packet = self.q.get()
-            self._process_packet(packet)
+            packet_data = self.q.get()
+            self._process_packet(*packet_data)
 
-    def _process_packet(self, packet):
+    def _process_packet(self, packet, sender):
         if packet["type"] == PacketType.PLAYER_REGISTER.value:
-            packet.client.send(self.chunk.encode())
+            sender.send(self.chunk.encode())
 
     def register(self, client):
         self.lock.acquire()
@@ -53,7 +53,7 @@ class ClientHandler:
             while True:
                 if self.stop.is_set():
                     return
-                data = self.to_send.get()
+                data = self.to_send.get() + b"\n"
                 print("Sending: " + str(data))
                 self.socket.send(data)
 
@@ -64,10 +64,12 @@ class ClientHandler:
                 data = b''
                 char = b''
                 while char != b'\n':
-                    char = self.socket.recv(1)
                     data += char
+                    char = self.socket.recv(1)
+
                 print("Received:" + str(data))
-                self.q.put(json.loads(data[1:].decode()))
+                print(data.decode())
+                self.q.put((json.loads(data.decode()), self))
 
         self.send_thread = threading.Thread(target=send_loop)
         self.send_thread.setDaemon(True)

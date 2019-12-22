@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using UnityEngine;
+using System.Threading;
 
 public class World : MonoBehaviour {
 
     public Material material;
     private float tickTimer = 0;
-    private ConcurrentQueue<Update> updateQueue = new ConcurrentQueue<Update>();
+    private ConcurrentQueue<Update> updates = new ConcurrentQueue<Update>();
 
     // Start is called before the first frame update
     void Start() {
@@ -26,28 +27,45 @@ public class World : MonoBehaviour {
                 }
             }
         }
-        new Chunk(this, new Vector2(0, 0), blocks);
-        new Chunk(this, new Vector2(1, 0), blocks);
-        new Chunk(this, new Vector2(1, 1), blocks);
+        NetworkThread nt = new NetworkThread(this, updates);
     }
 
     // Update is called once per frame
     void Update() {
         tickTimer += Time.deltaTime;
         if (tickTimer > Data.TickLength) {
-            //Push events to queue.
+            //Push events to queue. (todo)
+            //Pop packets from queue.
+            int cnt = updates.Count;
+            for (int i = 0; i < cnt; i++) {
+                Update update;
+                if (updates.TryDequeue(out update)) {
+                    switch(update.type) {
+                        case UpdateType.CHUNK_DATA:
+                            Chunk newChunk = (Chunk)update.arg;
+                            newChunk.AddToWorld(this);
+                            break;
+                        default:
+                            Debug.Log("Invalid update type received?");
+                            break;
+                    }
+                }
+            }
         }
     }
 }
 
-class Update {
-    private UpdateType type;
+public class Update {
+    public readonly UpdateType type;
+    public readonly object arg;
 
-    public Update(UpdateType type) {
+    public Update(UpdateType type, object arg) {
         this.type = type;
+        this.arg = arg;
     }
 }
 
-enum UpdateType {
-    PLAYER_MOVE = 1
+public enum UpdateType {
+    PLAYER_MOVE = 1,
+    CHUNK_DATA = 2
 }
