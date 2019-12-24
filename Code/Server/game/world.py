@@ -1,7 +1,7 @@
 import random
 import json
 
-from noise import snoise2
+from noise import snoise2,snoise3
 from game.const import PacketType
 
 CHUNK_SIZE = 32
@@ -18,8 +18,9 @@ class Chunk:
             for j in range(0, CHUNK_SIZE):
                 for k in range(0, CHUNK_SIZE):
                     x = self.location[0]*CHUNK_SIZE+i
+                    y = j
                     z = self.location[1]*CHUNK_SIZE+k
-                    height = int(0.5*(1+snoise2(x/100,z/100,octaves=3, lacunarity=2, persistence=0.5))*32)
+                    height = int(0.5*(1+snoise2(x/100, z/100, octaves=3, lacunarity=2, persistence=0.5))*32)
                     if height > j:
                         if height - 4 > j:
                             self.data[i][j][k] = 1
@@ -27,6 +28,7 @@ class Chunk:
                             self.data[i][j][k] = 3
                     elif height == j:
                         self.data[i][j][k] = 2
+        print("wibble")
 
     def encode(self):
         def pack(l):

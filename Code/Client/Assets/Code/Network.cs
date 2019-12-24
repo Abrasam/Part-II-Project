@@ -11,7 +11,7 @@ public class ServerRejectedException : Exception {
     public ServerRejectedException(string msg) : base(msg) {}
 }
 
-public class SocketThread {
+public class ChunkThread {
 
     private readonly string address;
     private readonly int port;
@@ -24,7 +24,7 @@ public class SocketThread {
     public readonly BlockingCollection<Packet> recv;
     private readonly BlockingCollection<Packet> send;
     
-    public SocketThread(string address, int port, int chunkX, int chunkY) {
+    public ChunkThread(string address, int port, int chunkX, int chunkY) {
         this.address = address;
         this.port = port;
         this.chunkCoord = new int[2] {chunkX, chunkY};
@@ -86,37 +86,113 @@ public class SocketThread {
     public void Send(Packet p) {
         send.Add(p);
     }
+
+    public Vector2 GetChunkCoord() {
+        return new Vector2(chunkCoord[0], chunkCoord[1]);
+    }
 }
 
 public class NetworkThread {
 
     private World world;
-    private ConcurrentQueue<Update> updates;
-    private List<SocketThread> clients = new List<SocketThread>();
-    private Thread thread;
+    private ConcurrentQueue<Update> incomingUpdates;
+    private ConcurrentQueue<Update> outgoingUpdates;
+    private string bootstrapAddress;
+    private int bootstrapPort;
+    private Socket socket;
+    private List<ChunkThread> servers = new List<ChunkThread>();
+    private Thread eventThread;
+    private Thread ctrlThread;
 
-    public NetworkThread(World world, ConcurrentQueue<Update> updates) {
+    public NetworkThread(World world, ConcurrentQueue<Update> remote, ConcurrentQueue<Update> local, string bootstrapAddress, int bootstrapPort) {
         this.world = world;
-        this.updates = updates;
+        this.incomingUpdates = remote;
+        this.outgoingUpdates = local;
+        this.bootstrapAddress = bootstrapAddress;
+        this.bootstrapPort = bootstrapPort;
+
+        IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(bootstrapAddress), bootstrapPort);
+
+        socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+        socket.ReceiveTimeout = 1000;
+
+        socket.Connect(ipe);
+
+        socket.Send(System.Text.Encoding.UTF8.GetBytes("{\"type\": \"dht\"}"));
+
+        byte[] ok = new byte[2];
+
+        socket.Receive(ok);
+
+        socket.ReceiveTimeout = 0;
+
+        if (System.Text.Encoding.UTF8.GetString(ok) != "ok") {
+            throw new ServerRejectedException("Server did not accept connection.");
+        }
+
+        eventThread = new Thread(EventHandler);
+        eventThread.IsBackground = true;
+        eventThread.Start();
+
+        
+    }
+
+    private void UpdateChunks(Vector3 pos) {
+        int chunkX = Mathf.FloorToInt(pos.x / Data.ChunkSize);
+        int chunkY = Mathf.FloorToInt(pos.z / Data.ChunkSize);
+        foreach (ChunkThread ct in servers) {
+            Vector2 chunk = ct.GetChunkCoord();
+            if (!(Math.Abs(chunk.x - chunkX) < 2 && Math.Abs(chunk.y - chunkY) < 2)) {
+                servers.Remove(ct);
+            }
+        }
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
-                try {
-                SocketThread st = new SocketThread("127.0.0.1", 25566, i, j);
-                st.Send(new Packet((int)PacketType.PLAYER_REGISTER, new int[0]));
-                clients.Add(st);
-                } catch (ServerRejectedException e) {
-                    Debug.Log("Chunk not on this server.");
+                bool found = false;
+                foreach (ChunkThread ct in servers) {
+                    Vector2 chunk = ct.GetChunkCoord();
+                    if (chunkX + i == chunk.x && chunkY + j == chunk.y) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    socket.Send(System.Text.Encoding.UTF8.GetBytes("[" + (chunkX + i) + "," + (chunkY + j) + "]"));
+                    byte[] buf = new byte[1];
+                    List<byte> msg = new List<byte>();
+                    socket.Receive(buf);
+                    while (buf[0] != (byte)'\n') {
+                        msg.Add(buf[0]);
+                        socket.Receive(buf);
+                    }
+                    byte[] data = msg.ToArray();
+                    Address addr = JsonUtility.FromJson<Address>(System.Text.Encoding.UTF8.GetString(data));
+                    ChunkThread ct = new ChunkThread(addr.ip, addr.port, chunkX + i, chunkY + j);
+                    ct.Send(new Packet((int)PacketType.PLAYER_REGISTER, new int[0]));
+                    servers.Add(ct);
                 }
             }
         }
-        thread = new Thread(Run);
-        thread.IsBackground = true;
-        thread.Start();
     }
 
-    private void Run() {
+    private void EventHandler() {
         while (true) {
-            foreach (SocketThread s in clients) {
+            int localUpdates = outgoingUpdates.Count;
+            for (int i = 0; i < localUpdates; i++) {
+                Update u;
+                if (outgoingUpdates.TryDequeue(out u)) {
+                    switch(u.type) {
+                        case UpdateType.PLAYER_MOVE:
+                            Vector3 pos = (Vector3)u.arg;
+                            UpdateChunks(pos);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            foreach (ChunkThread s in servers) {
                 int cnt = s.recv.Count;
                 for (int i = 0; i < cnt; i++) {
                     Packet p = s.recv.Take();
@@ -131,7 +207,7 @@ public class NetworkThread {
                                     }
                                 }
                             }
-                            updates.Enqueue(new Update(UpdateType.CHUNK_DATA, new Chunk(new Vector2(p.args[0], p.args[1]), chunkData)));
+                            incomingUpdates.Enqueue(new Update(UpdateType.LOAD_CHUNK, new Chunk(new Vector2(p.args[0], p.args[1]), chunkData)));
                             break;
                         default:
                             break;
@@ -140,6 +216,12 @@ public class NetworkThread {
             }
             Thread.Sleep((int)(Data.TickLength * 1000));
         }
+    }
+
+    [Serializable]
+    private class Address {
+        public string ip;
+        public int port;
     }
 }
 

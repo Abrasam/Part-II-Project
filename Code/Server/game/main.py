@@ -22,7 +22,7 @@ class DHTThread:
             if addr is None:
                 future = asyncio.run_coroutine_threadsafe(self.dht.generate_chunk(msg), dht.loop)
                 addr = future.result()
-            self.socket.send(addr.encode())
+            self.socket.send(addr.encode() + b'\n')
 
 
 if len(sys.argv) != 2:
@@ -52,6 +52,7 @@ def ctrl_loop():
         s, addr = ss.accept()
         data = s.recv(1024)
         msg = json.loads(data.decode())
+        print(msg)
         if msg["type"] == "connect":
             chunk_coord = tuple(msg["chunk"])
             print(f"Client @ {addr} connecting to chunk {chunk_coord}.")
@@ -70,6 +71,7 @@ def ctrl_loop():
             s.send(b'ok')
         elif msg["type"] == "dht":
             clients.append(DHTThread(s, dht))
+            s.send(b'ok')
 
 
 game_server_ctrl_thread = threading.Thread(target=ctrl_loop)

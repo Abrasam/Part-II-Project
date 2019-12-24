@@ -9,10 +9,12 @@ public class World : MonoBehaviour {
     public Material material;
     private float tickTimer = 0;
     private ConcurrentQueue<Update> updates = new ConcurrentQueue<Update>();
+    private ConcurrentQueue<Update> events = new ConcurrentQueue<Update>();
+    private GameObject player;
 
     // Start is called before the first frame update
     void Start() {
-        byte[,,] blocks = new byte[Data.ChunkSize,Data.ChunkSize, Data.ChunkSize];
+        byte[,,] blocks = new byte[Data.ChunkSize, Data.ChunkSize, Data.ChunkSize];
         for (int i = 0; i < Data.ChunkSize; i++) {
             for (int j = 0; j < Data.ChunkSize; j++) {
                 for (int k = 0; k < Data.ChunkSize; k++) {
@@ -27,24 +29,28 @@ public class World : MonoBehaviour {
                 }
             }
         }
-        NetworkThread nt = new NetworkThread(this, updates);
+        player = GameObject.Find("Player");
+        NetworkThread nt = new NetworkThread(this, updates, events, "127.0.0.1", 25566);
     }
 
     // Update is called once per frame
     void Update() {
         tickTimer += Time.deltaTime;
         if (tickTimer > Data.TickLength) {
-            //Push events to queue. (todo)
+            //Push events to queue.
+            events.Enqueue(new Update(UpdateType.PLAYER_MOVE, player.transform.position));
             //Pop packets from queue.
             int cnt = updates.Count;
             for (int i = 0; i < cnt; i++) {
                 Update update;
                 if (updates.TryDequeue(out update)) {
                     switch(update.type) {
-                        case UpdateType.CHUNK_DATA:
+                        case UpdateType.LOAD_CHUNK:
                             Chunk newChunk = (Chunk)update.arg;
                             newChunk.AddToWorld(this);
                             break;
+                        case UpdateType.UNLOAD_CHUNK:
+                            //todo
                         default:
                             Debug.Log("Invalid update type received?");
                             break;
@@ -67,5 +73,6 @@ public class Update {
 
 public enum UpdateType {
     PLAYER_MOVE = 1,
-    CHUNK_DATA = 2
+    LOAD_CHUNK = 2,
+    UNLOAD_CHUNK = 3
 }
