@@ -80,9 +80,7 @@ class ClientHandler:
         self.recv_thread.start()
 
     def send(self, data):
-        print("Sending...")
         self.to_send.put(data)
-        print("Sending...")
 
     def kill(self):
         self.stop.set()

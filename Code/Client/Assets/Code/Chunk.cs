@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -98,5 +99,9 @@ public class Chunk {
         mesh.RecalculateNormals();
 
         meshFilter.mesh = mesh;
+    }
+
+    public Vector2 GetPosition() {
+        return chunkPos;
     }
 }

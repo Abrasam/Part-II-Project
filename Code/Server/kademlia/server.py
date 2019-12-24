@@ -35,10 +35,11 @@ class DHTServer:
         print(nodes)
         if len(nodes) > 0:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect(nodes[0].addr)
-            s.send(json.dumps({"type": "generate", "chunk": coord}))
+            addr = (nodes[0].addr[0], nodes[0].addr[1]+1)
+            s.connect(addr)
+            s.send(json.dumps({"type": "generate", "chunk": coord}).encode())
             if s.recv(2) == b'ok':
-                addr = json.dumps({"ip": nodes[0].addr[0], "port": nodes[0].addr[1]+1})
+                addr = json.dumps({"ip": addr[0], "port": addr[1]})
                 # incremented port because game port = kademlia port + 1 for simplicity's sake.
                 await self.server.insert(key, addr)
                 return addr

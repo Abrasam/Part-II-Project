@@ -11,6 +11,7 @@ public class World : MonoBehaviour {
     private ConcurrentQueue<Update> updates = new ConcurrentQueue<Update>();
     private ConcurrentQueue<Update> events = new ConcurrentQueue<Update>();
     private GameObject player;
+    private List<Chunk> chunks = new List<Chunk>();
 
     // Start is called before the first frame update
     void Start() {
@@ -48,9 +49,22 @@ public class World : MonoBehaviour {
                         case UpdateType.LOAD_CHUNK:
                             Chunk newChunk = (Chunk)update.arg;
                             newChunk.AddToWorld(this);
+                            chunks.Add(newChunk);
                             break;
                         case UpdateType.UNLOAD_CHUNK:
-                            //todo
+                            Vector2 pos = (Vector2)update.arg;
+                            List<Chunk> rem = new List<Chunk>();
+                            foreach (Chunk c in chunks) {
+                                if (c.GetPosition().Equals(pos)) {
+                                    Destroy(c.me);
+                                    rem.Add(c);
+                                    break;
+                                }
+                            }
+                            foreach(Chunk r in rem) {
+                                chunks.Remove(r);
+                            }
+                            break;
                         default:
                             Debug.Log("Invalid update type received?");
                             break;

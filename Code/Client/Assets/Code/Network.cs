@@ -90,6 +90,12 @@ public class ChunkThread {
     public Vector2 GetChunkCoord() {
         return new Vector2(chunkCoord[0], chunkCoord[1]);
     }
+
+    public void Abort() {
+        sendThread.Abort();
+        recvThread.Abort();
+        socket.Close();
+    }
 }
 
 public class NetworkThread {
@@ -141,11 +147,17 @@ public class NetworkThread {
     private void UpdateChunks(Vector3 pos) {
         int chunkX = Mathf.FloorToInt(pos.x / Data.ChunkSize);
         int chunkY = Mathf.FloorToInt(pos.z / Data.ChunkSize);
+        List<ChunkThread> rem = new List<ChunkThread>();
         foreach (ChunkThread ct in servers) {
             Vector2 chunk = ct.GetChunkCoord();
             if (!(Math.Abs(chunk.x - chunkX) < 2 && Math.Abs(chunk.y - chunkY) < 2)) {
-                servers.Remove(ct);
+                rem.Add(ct);
             }
+        }
+        foreach (ChunkThread r in rem) {
+            servers.Remove(r);
+            r.Abort();
+            incomingUpdates.Enqueue(new Update(UpdateType.UNLOAD_CHUNK, r.GetChunkCoord()));
         }
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {

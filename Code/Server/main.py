@@ -25,8 +25,8 @@ class DHTThread:
             self.socket.send(addr.encode() + b'\n')
 
 
-if len(sys.argv) != 2:
-    print("Usage: <command> <base port>")
+if len(sys.argv) < 2:
+    print("Usage: <command> <base port> <bootstrap address> <bootstrap port>")
     sys.exit()
 
 base_port = int(sys.argv[1])
