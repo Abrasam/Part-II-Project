@@ -1,5 +1,7 @@
 import asyncio
-import hashlib
+import socket
+import json
+from hashlib import sha1
 from kademlia.protocol import KademliaNode
 from random import getrandbits
 
@@ -7,29 +9,34 @@ from random import getrandbits
 class DHTServer:
     def __init__(self, addr, id=None):
         self.id = id if id is not None else getrandbits(160)
-        self.server = None
+        self.server : KademliaNode = None
         self.addr = addr
+        self.loop = None
 
     async def run(self, bootstrap=None):
-        loop = asyncio.get_running_loop()
-        print(self.addr)
+        self.loop = asyncio.get_running_loop()
         self.server = KademliaNode(self.id)
-        transport, protocol = await loop.create_datagram_endpoint(lambda: self.server, local_addr=self.addr)
-        print(transport)
+        _, _ = await self.loop.create_datagram_endpoint(lambda: self.server, local_addr=self.addr)
         if bootstrap is not None:
             await self.server.bootstrap(bootstrap)
 
-    async def get(self, key):
-        key = int(hashlib.sha1(key).hexdigest(), 16)  # sha1 is 160 bits so useful for kademlia.
+    async def get_chunk(self, key):
+        key = int(sha1(key).hexdigest(), 16)  # sha1 is 160 bits so useful for kademlia.
         if key in self.server.storage:
             return self.server.storage[key]
         value = await self.server.lookup(key, value=True)
         return value
 
-    async def set(self, key, value):
-        key = int(hashlib.sha1(key).hexdigest(), 16)
-        await self.server.insert(key, value)
-
-    async def get_nearest_server(self, id):
-        nodes = await self.server.lookup(id)
-        return nodes[0].addr if len(nodes) > 0 else None
+    async def generate_chunk(self, coord):
+        key = int(sha1(bytes(coord)))
+        nodes = await self.server.lookup(key)
+        if len(nodes) > 0:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect(nodes[0].addr)
+            s.send(json.dumps({"type": "generate", "chunk": coord}))
+            if s.recv(2) == b'ok':
+                addr = json.dumps({"ip": nodes[0].addr[0], "port": nodes[0].addr[1]+1})
+                # incremented port because game port = kademlia port + 1 for simplicity's sake.
+                await self.server.insert(key, addr)
+                return addr
+        return None

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveScript : MonoBehaviour {
+public class Movement : MonoBehaviour {
 
     private float horizontal;
     private float vertical;

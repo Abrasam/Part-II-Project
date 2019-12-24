@@ -19,8 +19,14 @@ class Chunk:
                 for k in range(0, CHUNK_SIZE):
                     x = self.location[0]*CHUNK_SIZE+i
                     z = self.location[1]*CHUNK_SIZE+k
-                    if 0.5*(1+snoise2(x/100,z/100,octaves=3, lacunarity=2, persistence=0.5))*32 > j:
-                        self.data[i][j][k] = 1
+                    height = int(0.5*(1+snoise2(x/100,z/100,octaves=3, lacunarity=2, persistence=0.5))*32)
+                    if height > j:
+                        if height - 4 > j:
+                            self.data[i][j][k] = 1
+                        else:
+                            self.data[i][j][k] = 3
+                    elif height == j:
+                        self.data[i][j][k] = 2
 
     def encode(self):
         def pack(l):

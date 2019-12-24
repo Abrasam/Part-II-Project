@@ -1,6 +1,8 @@
 import json
 import threading
 import time
+import socket
+import asyncio
 from queue import Queue
 
 from game.const import *
@@ -8,11 +10,10 @@ from kademlia.server import DHTServer
 
 
 class ChunkThread(threading.Thread):
-    def __init__(self, chunk, dht: DHTServer):
+    def __init__(self, chunk):
         threading.Thread.__init__(self)
         self.chunk = chunk
         self.players = []
-        self.dht = dht
         self.clients = []
         self.q = Queue()
         self.lock = threading.Lock()
@@ -40,7 +41,7 @@ class ChunkThread(threading.Thread):
 
 
 class ClientHandler:
-    def __init__(self, type, chunk_thread, socket):
+    def __init__(self, type, chunk_thread, socket : socket.socket):
         self.type = type  # 1 = player, 2 = other server.
         self.socket = socket
         self.q = chunk_thread.q
@@ -53,7 +54,7 @@ class ClientHandler:
             while True:
                 if self.stop.is_set():
                     return
-                data = self.to_send.get() + b"\n"
+                data = self.to_send.get() + b'\n'
                 print("Sending: " + str(data))
                 self.socket.send(data)
 
@@ -86,3 +87,4 @@ class ClientHandler:
     def kill(self):
         self.stop.set()
         self.chunk_thread.deregister(self)
+

@@ -7,6 +7,10 @@ using System.Threading;
 using System.Collections.Concurrent;
 using System;
 
+public class ServerRejectedException : Exception {
+    public ServerRejectedException(string msg) : base(msg) {}
+}
+
 public class SocketThread {
 
     private readonly string address;
@@ -31,16 +35,20 @@ public class SocketThread {
 
         socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
+        socket.ReceiveTimeout = 1000;
+
         socket.Connect(ipe);
 
-        socket.Send(System.Text.Encoding.UTF8.GetBytes("[" + chunkCoord[0] + "," + chunkCoord[1] + "]"));
+        socket.Send(System.Text.Encoding.UTF8.GetBytes("{\"type\": \"connect\", \"chunk\": [" + chunkCoord[0] + "," + chunkCoord[1] + "]}"));
 
         byte[] ok = new byte[2];
 
         socket.Receive(ok);
 
+        socket.ReceiveTimeout = 0;
+
         if (System.Text.Encoding.UTF8.GetString(ok) != "ok") {
-            throw new Exception("Server did not accept connection.");
+            throw new ServerRejectedException("Server did not accept connection.");
         }
 
         recvThread = new Thread(RecvLoop);
@@ -78,13 +86,6 @@ public class SocketThread {
     public void Send(Packet p) {
         send.Add(p);
     }
-
-    public void Abort() {
-        recvThread.Abort();
-        sendThread.Abort();
-        socket.Shutdown(SocketShutdown.Both);
-        socket.Close();
-    }
 }
 
 public class NetworkThread {
@@ -99,9 +100,13 @@ public class NetworkThread {
         this.updates = updates;
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
+                try {
                 SocketThread st = new SocketThread("127.0.0.1", 25566, i, j);
                 st.Send(new Packet((int)PacketType.PLAYER_REGISTER, new int[0]));
                 clients.Add(st);
+                } catch (ServerRejectedException e) {
+                    Debug.Log("Chunk not on this server.");
+                }
             }
         }
         thread = new Thread(Run);
