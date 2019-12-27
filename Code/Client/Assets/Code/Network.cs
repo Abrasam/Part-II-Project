@@ -150,7 +150,7 @@ public class NetworkThread {
         List<ChunkThread> rem = new List<ChunkThread>();
         foreach (ChunkThread ct in servers) {
             Vector2 chunk = ct.GetChunkCoord();
-            if (!(Math.Abs(chunk.x - chunkX) < 2 && Math.Abs(chunk.y - chunkY) < 2)) {
+            if (!(Math.Abs(chunk.x - chunkX) < 5 && Math.Abs(chunk.y - chunkY) < 5)) {
                 rem.Add(ct);
             }
         }
@@ -159,8 +159,8 @@ public class NetworkThread {
             r.Abort();
             incomingUpdates.Enqueue(new Update(UpdateType.UNLOAD_CHUNK, r.GetChunkCoord()));
         }
-        for (int i = -1; i < 2; i++) {
-            for (int j = -1; j < 2; j++) {
+        for (int i = -2; i < 3; i++) {
+            for (int j = -2; j < 3; j++) {
                 bool found = false;
                 foreach (ChunkThread ct in servers) {
                     Vector2 chunk = ct.GetChunkCoord();

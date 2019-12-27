@@ -12,15 +12,23 @@ public class Chunk {
     private Vector2 chunkPos;
     private byte[,,] blocks;
 
+    private List<Vector3> verts = new List<Vector3>();
+    private List<int> triangles = new List<int>();
+    private List<Vector2> uvs = new List<Vector2>();
+
     public Chunk(Vector2 chunkPos, byte[,,] blocks) {
         this.chunkPos = chunkPos;
         this.blocks = blocks;
+        RefreshMeshData();
     }
 
     public void AddToWorld(World world) {
+        long t = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        
         me = new GameObject();
         meshFilter = me.AddComponent<MeshFilter>();
         meshRenderer = me.AddComponent<MeshRenderer>();
+        
 
         meshRenderer.material = world.material;
 
@@ -28,8 +36,6 @@ public class Chunk {
         me.transform.position = new Vector3(chunkPos.x * Data.ChunkSize, 0, chunkPos.y * Data.ChunkSize);
 
         RefreshMesh();
-
-        me.AddComponent<MeshCollider>().sharedMesh = meshFilter.mesh;
     }
 
     private bool IsSolid(Vector3 pos) {
@@ -43,11 +49,11 @@ public class Chunk {
         return blocks[x, y, z] != 0;
     }
 
-    void RefreshMesh() {
+    private void RefreshMeshData() {
         int vertexIndex = 0;
-        List<Vector3> verts = new List<Vector3>();
-        List<int> triangles = new List<int>();
-        List<Vector2> uvs = new List<Vector2>();
+        verts = new List<Vector3>();
+        triangles = new List<int>();
+        uvs = new List<Vector2>();
 
         int t = 0;
 
@@ -90,7 +96,9 @@ public class Chunk {
                 }
             }
         }
+    }
 
+    private void RefreshMesh() {
         Mesh mesh = new Mesh();
         mesh.vertices = verts.ToArray();
         mesh.triangles = triangles.ToArray();
