@@ -1,9 +1,13 @@
+import select
+from queue import Empty
+
 from game.gameserver import *
 from game.world import *
 from kademlia.node import Node
 import socket, sys, json
 
-class DHTThread:
+
+class DHTThread:  # todo: make this gracefully die/integrate it into the select stuff
     def __init__(self, socket, dht : DHTServer):
         self.socket = socket
         self.dht = dht
@@ -39,39 +43,84 @@ def ctrl_loop():
     dht_ready.wait()
     ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ss.bind(('0.0.0.0', base_port + 1))
+    ss.setblocking(0)
 
-    ss.listen()
+    ss.listen(5)
 
     chunks = {}
-
     loaded = {}
-    clients = []
+
+    clients = {}
 
     print("initialising game server")
+
     while True:
-        s, addr = ss.accept()
-        data = s.recv(1024)
-        msg = json.loads(data.decode())
-        print(msg)
-        if msg["type"] == "connect":
-            chunk_coord = tuple(msg["chunk"])
-            print(f"Client @ {addr} connecting to chunk {chunk_coord}.")
-            if chunk_coord not in chunks:  # if chunk doesn't exist
-                s.send(b'no')
-                s.close()
+        print(f"Thread Count: {threading.active_count()}")
+        sockets = list(clients.keys()) + [ss]
+        for s in sockets:
+            if s.fileno() == -1:
+                print(clients[s])
+        readable, writable, exceptional = select.select(sockets, sockets, sockets)
+        for r in readable:
+            if r == ss:
+                s, addr = ss.accept()
+                s.setblocking(1)
+                data = s.recv(1024)
+                msg = json.loads(data.decode())
+                #print(msg)
+                if msg["type"] == "connect":
+                    chunk_coord = tuple(msg["chunk"])
+                    #print(f"Client @ {addr} connecting to chunk {chunk_coord}.")
+                    if chunk_coord not in chunks:  # if chunk doesn't exist
+                        s.send(b'no')
+                        s.close()
+                    else:
+                        if chunk_coord not in loaded:  # if chunk not loaded then load it
+                            loaded[chunk_coord] = ChunkThread(chunks[chunk_coord])
+                        s.send(b'ok')  # start normal game comms
+                        s.setblocking(0)
+                        client = Client(ClientType.PLAYER, loaded[chunk_coord])
+                        loaded[chunk_coord].register(client)  # register to chunk
+                        clients[s] = client
+                elif msg["type"] == "generate":
+                    chunk_coord = tuple(msg["chunk"])
+                    if chunk_coord not in chunks:
+                        chunks[chunk_coord] = Chunk(*chunk_coord)
+                    s.send(b'ok')
+                elif msg["type"] == "dht":
+                    DHTThread(s, dht)
+                    s.send(b'ok')
             else:
-                if chunk_coord not in loaded:  # if chunk not loaded then load it
-                    loaded[chunk_coord] = ChunkThread(chunks[chunk_coord])
-                s.send(b'ok')  # start normal game comms
-                loaded[chunk_coord].register(ClientHandler(ClientType.PLAYER, loaded[chunk_coord], s))  # register to chunk
-        elif msg["type"] == "generate":
-            chunk_coord = tuple(msg["chunk"])
-            if chunk_coord not in chunks:
-                chunks[chunk_coord] = Chunk(*chunk_coord)
-            s.send(b'ok')
-        elif msg["type"] == "dht":
-            clients.append(DHTThread(s, dht))
-            s.send(b'ok')
+                data = r.recv(1024)
+                if data:
+                    client = clients[r]
+                    for c in [data[i:i+1] for i in range(len(data))]:
+                        if c == b'\n':
+                            client.recv(client)
+                        else:
+                            client.buf += c
+                else:
+                    clients[r].chunk_thread.deregister(clients[r])
+                    del clients[r]
+                    if r in writable:
+                        writable.remove(r)
+                    if r in exceptional:
+                        exceptional.remove(r)
+                    r.close()
+
+        for w in writable:
+            client = clients[w]
+            try:
+                data = client.to_send.get_nowait()
+                #print(f"Sending: {data}")
+                w.send(data)
+            except Empty:
+                pass
+
+        for e in exceptional:
+            clients[e].chunk_thread.deregister(clients[e])
+            del clients[e]
+            e.close()
 
 
 game_server_ctrl_thread = threading.Thread(target=ctrl_loop)

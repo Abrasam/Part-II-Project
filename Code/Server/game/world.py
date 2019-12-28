@@ -28,7 +28,6 @@ class Chunk:
                             self.data[i][j][k] = 3
                     elif height == j:
                         self.data[i][j][k] = 2
-        print("wibble")
 
     def encode(self):
         def pack(l):
@@ -37,7 +36,7 @@ class Chunk:
                 out += i
             return out
         compress = pack(list(map(lambda x: pack(x), self.data)))
-        return json.dumps({"type" : PacketType.CHUNK_DATA.value, "args" : list(self.location) + compress}).encode()
+        return {"type": PacketType.CHUNK_DATA.value, "args": list(self.location) + compress}
 
 
 class Player:

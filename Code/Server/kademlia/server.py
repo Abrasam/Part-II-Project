@@ -21,7 +21,6 @@ class DHTServer:
             await self.server.bootstrap(bootstrap)
 
     async def get_chunk(self, coord):
-        print(coord)
         key = int(sha1(str(coord).encode()).hexdigest(), 16)  # sha1 is 160 bits so useful for kademlia.
         if key in self.server.storage:
             return self.server.storage[key]
@@ -29,10 +28,8 @@ class DHTServer:
         return value
 
     async def generate_chunk(self, coord):
-        print(coord)
         key = int(sha1(str(coord).encode()).hexdigest(), 16)
         nodes = await self.server.lookup(key)
-        print(nodes)
         if len(nodes) > 0:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             addr = (nodes[0].addr[0], nodes[0].addr[1]+1)
