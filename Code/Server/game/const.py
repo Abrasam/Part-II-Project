@@ -5,7 +5,7 @@ class PacketType(Enum):
     FIND_CHUNK = 0
     PLAYER_REGISTER = 1
     PLAYER_DEREGISTER = 2
-    PLAYER_MOVE = 2
+    PLAYER_MOVE = 3
     FIND_PLAYER = 4
     CHUNK_DATA = 5
 

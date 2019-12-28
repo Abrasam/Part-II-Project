@@ -37,7 +37,7 @@ public class World : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         tickTimer += Time.deltaTime;
-        if (tickTimer > Data.TickLength) {
+        if (tickTimer > 10*Data.TickLength) {
             //Push events to queue.
             events.Enqueue(new Update(UpdateType.PLAYER_MOVE, player.transform.position));
             //Pop packets from queue.
