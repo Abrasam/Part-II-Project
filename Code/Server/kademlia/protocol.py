@@ -18,7 +18,7 @@ def stub(func):
         loop = asyncio.get_event_loop()
         msg = {"id": random.getrandbits(32), "node": self.id, "call": True, "rpc": func.__name__[4:], "args": args}
         self.transport.sendto(json.dumps(msg).encode("UTF-8"), node.addr)
-        #print("sent rpc " + json.dumps(msg) + " to " + str(node.addr) + " id: " + str(node.id))
+        print("sent rpc " + json.dumps(msg) + " to " + str(node.addr) + " id: " + str(node.id))
         f = asyncio.Future()
         self.waiting[msg["id"]] = (f, loop.call_later(TIMEOUT+random.randint(0,10), self._timeout, msg["id"]), node)
         await f
@@ -63,7 +63,7 @@ class KademliaNode(asyncio.DatagramProtocol):
 
     async def _handle_datagram(self, data, addr):
         msg = json.loads(data.decode("UTF-8"))
-        #print("received " + str(msg) + " at " + str(self.id))
+        print("received " + str(msg) + " at " + str(self.id))
         node = self.table.get_node_if_contact(msg["node"])
         node = Node(msg["node"], addr) if node is None else node
         if msg["call"]:
@@ -72,7 +72,7 @@ class KademliaNode(asyncio.DatagramProtocol):
                 return
             res = json.dumps(
                 {"id": msg["id"], "node": self.id, "call": False, "rpc": msg["rpc"], "ret": func(*msg["args"])})
-            #print("return to sender " + res + " " + str(node.id))
+            print("return to sender " + res + " " + str(node.id))
             self.transport.sendto(res.encode("UTF-8"), addr)
         else:
             if msg["id"] in self.waiting:
@@ -101,11 +101,11 @@ class KademliaNode(asyncio.DatagramProtocol):
 
     def _timeout(self, msg_id):
         node = self.waiting[msg_id][2]
-        #print("RPC call timed out to " + str(node.id) + " from " + str(self.id) + " msgid: " + str(msg_id))
+        print("RPC call timed out to " + str(node.id) + " from " + str(self.id) + " msgid: " + str(msg_id))
         self.waiting[msg_id][0].set_result(None)
         del self.waiting[msg_id]
         self.table.remove_contact(node)  # this is not correct to kademlia implementation, need to add 5 failure removal
-        #print("timed out done now yeet")
+        print("timed out done now yeet")
 
     @stub
     async def ext_ping(self, node):
@@ -150,6 +150,7 @@ class KademliaNode(asyncio.DatagramProtocol):
             unqueried = list(filter(lambda n: n not in queried, nodes))
             for i in range(0, min(ALPHA, len(unqueried))):
                 multicast.append(unqueried.pop(0))
+            print("ASKING: " + str(multicast))
             res = await asyncio.gather(*[self.ext_find_value(n, key_or_id) if value else self.ext_find_node(n, key_or_id) for n in multicast])
             queried += multicast
             for i in range(0, len(res)):
@@ -173,7 +174,7 @@ class KademliaNode(asyncio.DatagramProtocol):
         self.table.add_contact(node)
         await self.lookup(self.id)
         await self.table.refresh_buckets(self.table.buckets[i] for i in range(self.table.get_first_nonempty_bucket()+1, len(self.table.buckets)))  # should this be different?
-        print("bootstrap terminated")
+        print("this terminated")
 
     def republish_keys(self):
         now = time.time()

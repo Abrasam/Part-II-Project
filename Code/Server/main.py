@@ -74,14 +74,6 @@ def ctrl_loop():
             s.send(b'ok')
 
 
-def test():
-    while True:
-        print("THREADS: " + str(threading.active_count()))
-        time.sleep(1)
-
-
-threading.Thread(target=test).start()
-
 game_server_ctrl_thread = threading.Thread(target=ctrl_loop)
 game_server_ctrl_thread.setDaemon(True)
 game_server_ctrl_thread.start()
