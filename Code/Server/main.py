@@ -117,10 +117,12 @@ def ctrl_loop():
         for w in writable:
             client = clients[w]
             try:
-                data = client.to_send.get_nowait()
+                data = client.to_send.pop()
                 #print(f"Sending: {data}")
-                w.send(data)
-            except Empty:
+                sent = w.send(data)
+                if sent != len(data):
+                    client.to_send.appendleft(data[sent:])
+            except IndexError:
                 pass
 
         for e in exceptional:

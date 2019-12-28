@@ -31,7 +31,7 @@ public class World : MonoBehaviour {
             }
         }
         player = GameObject.Find("Player");
-        NetworkThread nt = new NetworkThread(this, updates, events, "127.0.0.1", 25566);
+        NetworkThread nt = new NetworkThread(this, updates, events, "5.135.160.191", 24003);
     }
 
     // Update is called once per frame

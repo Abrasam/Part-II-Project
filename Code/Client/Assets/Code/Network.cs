@@ -31,6 +31,8 @@ public class ChunkThread {
         recv = new BlockingCollection<Packet>(new ConcurrentQueue<Packet>());
         send = new BlockingCollection<Packet>(new ConcurrentQueue<Packet>());
 
+        Debug.Log(address);
+
         IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(address), port);
 
         socket = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -60,15 +62,21 @@ public class ChunkThread {
     }
 
     private void RecvLoop() {
+        byte newLine = System.Text.Encoding.UTF8.GetBytes("\n")[0];
+        Debug.Log(newLine);
         while (true) {
             byte[] buf = new byte[1];
             List<byte> msg = new List<byte>();
             socket.Receive(buf);
-            while (buf[0] != (byte)'\n') {
+            while (buf[0] != newLine) {
                 msg.Add(buf[0]);
                 socket.Receive(buf);
             }
+            Debug.Log(buf[0]);
+            Debug.Log("Received a newline apparently.");
             byte[] data = msg.ToArray();
+            string oot = System.Text.Encoding.UTF8.GetString(data);
+            Debug.Log(oot.Substring(oot.Length-10));
             recv.Add(JsonUtility.FromJson<Packet>(System.Text.Encoding.UTF8.GetString(data)));
         }
     }
@@ -178,6 +186,7 @@ public class NetworkThread {
                     }
                     byte[] data = msg.ToArray();
                     Address addr = JsonUtility.FromJson<Address>(System.Text.Encoding.UTF8.GetString(data));
+                    Debug.Log(addr.port);
                     ChunkThread ct = new ChunkThread(addr.ip, addr.port, chunkX + i, chunkY + j);
                     ct.Send(new Packet((int)PacketType.PLAYER_REGISTER, new float[0]));
                     servers.Add(ct);

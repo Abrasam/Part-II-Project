@@ -3,7 +3,8 @@ import threading
 import time
 import socket
 import asyncio
-from queue import Queue, Empty
+from collections import deque
+from queue import Empty, Queue
 
 from game.const import *
 from kademlia.server import DHTServer
@@ -52,11 +53,11 @@ class Client:
     def __init__(self, type, chunk_thread):
         self.type = type  # 1 = player, 2 = other server.
         self.chunk_thread = chunk_thread
-        self.to_send = Queue()
+        self.to_send = deque()
         self.buf = b''
 
     def send(self, packet):
-        self.to_send.put(json.dumps(packet).encode() + b'\n')
+        self.to_send.append(json.dumps(packet).encode() + b'\n')
 
     def recv(self, sender):
         self.chunk_thread.q.put((json.loads(self.buf.decode()), sender))
