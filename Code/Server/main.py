@@ -54,8 +54,12 @@ def ctrl_loop():
 
     print("initialising game server")
 
+    t = time.time()
+
     while True:
-        print(f"Thread Count: {threading.active_count()}")
+        if time.time() - t > 5:
+            t = time.time()
+            print(f"Thread Count: {threading.active_count()}")
         sockets = list(clients.keys()) + [ss]
         for s in sockets:
             if s.fileno() == -1:
@@ -100,7 +104,9 @@ def ctrl_loop():
                         else:
                             client.buf += c
                 else:
-                    clients[r].chunk_thread.deregister(clients[r])
+                    if clients[r].chunk_thread.deregister(clients[r]):
+                        clients[r].chunk_thread.stop()
+                        del loaded[clients[r].chunk_thread.chunk.location]
                     del clients[r]
                     if r in writable:
                         writable.remove(r)
@@ -118,7 +124,9 @@ def ctrl_loop():
                 pass
 
         for e in exceptional:
-            clients[e].chunk_thread.deregister(clients[e])
+            if clients[e].chunk_thread.deregister(clients[e]):
+                clients[e].chunk_thread.stop()
+                del loaded[clients[e].chunk_thread.chunk.location]
             del clients[e]
             e.close()
 

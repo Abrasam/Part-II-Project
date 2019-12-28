@@ -3,7 +3,7 @@ import threading
 import time
 import socket
 import asyncio
-from queue import Queue
+from queue import Queue, Empty
 
 from game.const import *
 from kademlia.server import DHTServer
@@ -15,29 +15,37 @@ class ChunkThread(threading.Thread):
         self.chunk = chunk
         self.players = []
         self.clients = []
+        self.done = False
         self.q = Queue()
-        self.lock = threading.Lock()
         self.setDaemon(True)
         self.start()
 
     def run(self):
         while True:
-            packet_data = self.q.get()
-            self._process_packet(*packet_data)
+            if self.done:
+                return
+            try:
+                packet_data = self.q.get(timeout=5)
+                self._process_packet(*packet_data)
+            except Empty:
+                pass
 
     def _process_packet(self, packet, sender):
         if packet["type"] == PacketType.PLAYER_REGISTER.value:
             sender.send(self.chunk.encode())
+        if packet["type"] == PacketType.PLAYER_MOVE.value:
+            for c in self.clients:
+                c.send(packet)
 
     def register(self, client):
-        self.lock.acquire()
         self.clients.append(client)
-        self.lock.release()
 
     def deregister(self, client):
-        self.lock.acquire()
         self.clients.remove(client)
-        self.lock.release()
+        return len(self.clients) == 0
+
+    def stop(self):  # maybe need a lock on this?
+        self.done = True
 
 
 class Client:

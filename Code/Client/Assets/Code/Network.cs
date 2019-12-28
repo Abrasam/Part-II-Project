@@ -76,7 +76,7 @@ public class ChunkThread {
     private void SendLoop() {
         while (true) {
             Packet p = send.Take();
-            Debug.Log("Packet outgoing!");
+            //Debug.Log("Packet outgoing!");
             string json = JsonUtility.ToJson(p) + "\n";
             byte[] toSend = System.Text.Encoding.UTF8.GetBytes(json);
             socket.Send(toSend);
@@ -110,10 +110,10 @@ public class NetworkThread {
     private Thread eventThread;
     private Thread ctrlThread;
 
-    public NetworkThread(World world, ConcurrentQueue<Update> remote, ConcurrentQueue<Update> local, string bootstrapAddress, int bootstrapPort) {
+    public NetworkThread(World world, ConcurrentQueue<Update> incoming, ConcurrentQueue<Update> outgoing, string bootstrapAddress, int bootstrapPort) {
         this.world = world;
-        this.incomingUpdates = remote;
-        this.outgoingUpdates = local;
+        this.incomingUpdates = incoming;
+        this.outgoingUpdates = outgoing;
         this.bootstrapAddress = bootstrapAddress;
         this.bootstrapPort = bootstrapPort;
 
@@ -140,8 +140,6 @@ public class NetworkThread {
         eventThread = new Thread(EventHandler);
         eventThread.IsBackground = true;
         eventThread.Start();
-
-        
     }
 
     private void UpdateChunks(Vector3 pos) {
@@ -181,7 +179,7 @@ public class NetworkThread {
                     byte[] data = msg.ToArray();
                     Address addr = JsonUtility.FromJson<Address>(System.Text.Encoding.UTF8.GetString(data));
                     ChunkThread ct = new ChunkThread(addr.ip, addr.port, chunkX + i, chunkY + j);
-                    ct.Send(new Packet((int)PacketType.PLAYER_REGISTER, new int[0]));
+                    ct.Send(new Packet((int)PacketType.PLAYER_REGISTER, new float[0]));
                     servers.Add(ct);
                 }
             }
@@ -198,6 +196,9 @@ public class NetworkThread {
                         case UpdateType.PLAYER_MOVE:
                             Vector3 pos = (Vector3)u.arg;
                             UpdateChunks(pos);
+                            foreach (ChunkThread ct in servers) {
+                                ct.Send(new Packet((int)PacketType.PLAYER_MOVE, new float[] { pos.x, pos.y, pos.z }));
+                            }
                             break;
                         default:
                             break;
@@ -208,7 +209,7 @@ public class NetworkThread {
                 int cnt = s.recv.Count;
                 for (int i = 0; i < cnt; i++) {
                     Packet p = s.recv.Take();
-                    Debug.Log("Received packet");
+                    //Debug.Log("Received packet");
                     switch (p.type) {
                         case (int)PacketType.CHUNK_DATA:
                             byte[,,] chunkData = new byte[Data.ChunkSize, Data.ChunkSize, Data.ChunkSize];
@@ -240,9 +241,9 @@ public class NetworkThread {
 [Serializable]
 public class Packet {
     public int type;
-    public int[] args;
+    public float[] args;
     
-    public Packet(int type, int[] args) {
+    public Packet(int type, float[] args) {
         this.type = type;
         this.args = args;
     }
