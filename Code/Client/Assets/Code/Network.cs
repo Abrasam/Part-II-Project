@@ -160,7 +160,7 @@ public class NetworkThread {
         List<ChunkThread> rem = new List<ChunkThread>();
         foreach (ChunkThread ct in servers) {
             Vector2 chunk = ct.GetChunkCoord();
-            if (!(Math.Abs(chunk.x - chunkX) < 2 && Math.Abs(chunk.y - chunkY) < 2)) {
+            if (!(Math.Abs(chunk.x - chunkX) < 5 && Math.Abs(chunk.y - chunkY) < 5)) {
                 rem.Add(ct);
             }
         }
