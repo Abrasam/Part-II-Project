@@ -15,6 +15,7 @@ public class Movement : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         cam = GameObject.Find("Main Camera").transform;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
