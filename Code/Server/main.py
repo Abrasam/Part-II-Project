@@ -35,7 +35,7 @@ if len(sys.argv) < 2:
 
 base_port = int(sys.argv[1])
 
-dht = DHTServer(('5.135.160.191', base_port))
+dht = DHTServer(('0.0.0.0', base_port))
 dht_ready = threading.Event()
 
 

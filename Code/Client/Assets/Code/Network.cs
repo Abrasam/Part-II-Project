@@ -223,6 +223,9 @@ public class NetworkThread {
                             }
                             incomingUpdates.Enqueue(new Update(UpdateType.LOAD_CHUNK, new Chunk(new Vector2(p.args[0], p.args[1]), chunkData)));
                             break;
+                        case (int)PacketType.PLAYER_MOVE:
+                            incomingUpdates.Enqueue(new Update(UpdateType.PLAYER_MOVE, new Vector3(p.args[0], p.args[1], p.args[2])));
+                            break;
                         default:
                             break;
                     }

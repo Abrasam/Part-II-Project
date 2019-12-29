@@ -11,6 +11,7 @@ public class World : MonoBehaviour {
     private ConcurrentQueue<Update> updates = new ConcurrentQueue<Update>();
     private ConcurrentQueue<Update> events = new ConcurrentQueue<Update>();
     private GameObject player;
+    private GameObject player2;
     private List<Chunk> chunks = new List<Chunk>();
 
     // Start is called before the first frame update
@@ -30,14 +31,15 @@ public class World : MonoBehaviour {
                 }
             }
         }
+        player2 = GameObject.Find("player2");
         player = GameObject.Find("Player");
-        NetworkThread nt = new NetworkThread(this, updates, events, "5.135.160.191", 24003);
+        NetworkThread nt = new NetworkThread(this, updates, events, "127.0.0.1", 25566);
     }
 
     // Update is called once per frame
     void Update() {
         tickTimer += Time.deltaTime;
-        if (tickTimer > 20*Data.TickLength) {
+        if (tickTimer > Data.TickLength) {
             //Push events to queue.
             events.Enqueue(new Update(UpdateType.PLAYER_MOVE, player.transform.position));
             //Pop packets from queue.
@@ -46,6 +48,9 @@ public class World : MonoBehaviour {
                 Update update;
                 if (updates.TryDequeue(out update)) {
                     switch(update.type) {
+                        case UpdateType.PLAYER_MOVE:
+                            player2.transform.position = (Vector3)update.arg;
+                            break;
                         case UpdateType.LOAD_CHUNK:
                             Chunk newChunk = (Chunk)update.arg;
                             newChunk.AddToWorld(this);
