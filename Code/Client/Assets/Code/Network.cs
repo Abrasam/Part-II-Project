@@ -60,27 +60,39 @@ public class ChunkThread {
     }
 
     private void RecvLoop() {
-        byte newLine = System.Text.Encoding.UTF8.GetBytes("\n")[0];
-        while (true) {
-            byte[] buf = new byte[1];
-            List<byte> msg = new List<byte>();
-            socket.Receive(buf);
-            while (buf[0] != newLine) {
-                msg.Add(buf[0]);
+        try {
+            byte newLine = System.Text.Encoding.UTF8.GetBytes("\n")[0];
+            while (true) {
+                byte[] buf = new byte[1];
+                List<byte> msg = new List<byte>();
                 socket.Receive(buf);
+                while (buf[0] != newLine) {
+                    msg.Add(buf[0]);
+                    socket.Receive(buf);
+                }
+                byte[] data = msg.ToArray();
+                recv.Add(JsonUtility.FromJson<Packet>(System.Text.Encoding.UTF8.GetString(data)));
             }
-            byte[] data = msg.ToArray();
-            recv.Add(JsonUtility.FromJson<Packet>(System.Text.Encoding.UTF8.GetString(data)));
+        } catch (SocketException) {
+            return;
+        } catch (ObjectDisposedException) {
+            return;
         }
     }
 
     private void SendLoop() {
-        while (true) {
-            Packet p = send.Take();
-            //Debug.Log("Packet outgoing!");
-            string json = JsonUtility.ToJson(p) + "\n";
-            byte[] toSend = System.Text.Encoding.UTF8.GetBytes(json);
-            socket.Send(toSend);
+        try {
+            while (true) {
+                Packet p = send.Take();
+                //Debug.Log("Packet outgoing!");
+                string json = JsonUtility.ToJson(p) + "\n";
+                byte[] toSend = System.Text.Encoding.UTF8.GetBytes(json);
+                socket.Send(toSend);
+            }
+        } catch (SocketException) {
+            return;
+        } catch (ObjectDisposedException) {
+            return;
         }
     }
 
@@ -93,8 +105,6 @@ public class ChunkThread {
     }
 
     public void Abort() {
-        sendThread.Abort();
-        recvThread.Abort();
         socket.Close();
     }
 }
@@ -150,8 +160,8 @@ public class NetworkThread {
         List<ChunkThread> rem = new List<ChunkThread>();
         foreach (ChunkThread ct in servers) {
             Vector2 chunk = ct.GetChunkCoord();
-            if (!(Math.Abs(chunk.x - chunkX) < 1 && Math.Abs(chunk.y - chunkY) < 1)) {
-                //rem.Add(ct);
+            if (!(Math.Abs(chunk.x - chunkX) < 2 && Math.Abs(chunk.y - chunkY) < 2)) {
+                rem.Add(ct);
             }
         }
         foreach (ChunkThread r in rem) {
@@ -181,7 +191,6 @@ public class NetworkThread {
                     byte[] data = msg.ToArray();
                     Address addr = JsonUtility.FromJson<Address>(System.Text.Encoding.UTF8.GetString(data));
                     ChunkThread ct = new ChunkThread(addr.ip, addr.port, chunkX + i, chunkY + j);
-                    ct.Send(new Packet((int)PacketType.PLAYER_REGISTER, new float[0]));
                     servers.Add(ct);
                 }
             }
@@ -228,7 +237,7 @@ public class NetworkThread {
                             for (int x = 0; x < Data.ChunkSize; x++) {
                                 for (int y = 0; y < Data.ChunkSize; y++) {
                                     for (int z = 0; z < Data.ChunkSize; z++) {
-                                        chunkData[x, y, z] = (byte)p.args[2 + 32 * 32 * x + 32 * y + z];
+                                        chunkData[x, y, z] = (byte)p.args[2 + Data.ChunkSize * Data.ChunkSize * x + Data.ChunkSize * y + z];
                                     }
                                 }
                             }

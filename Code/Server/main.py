@@ -17,16 +17,23 @@ class DHTThread:  # todo: make this gracefully die/integrate it into the select 
 
     def mainloop(self):
         while True:
-            data = self.socket.recv(1024)
-            msg = json.loads(data.decode())
-            #  assume is find chunk for now.
-            msg = tuple(msg)
-            future = asyncio.run_coroutine_threadsafe(self.dht.get_chunk(msg), dht.loop)
-            addr = future.result()
-            if addr is None:
-                future = asyncio.run_coroutine_threadsafe(self.dht.generate_chunk(msg), dht.loop)
-                addr = future.result()
-            self.socket.send(addr.encode() + b'\n')
+            try:
+                data = self.socket.recv(1024)
+                if data:
+                    msg = json.loads(data.decode())
+                    #  assume is find chunk for now.
+                    msg = tuple(msg)
+                    future = asyncio.run_coroutine_threadsafe(self.dht.get_chunk(msg), dht.loop)
+                    addr = future.result()
+                    if addr is None:
+                        future = asyncio.run_coroutine_threadsafe(self.dht.generate_chunk(msg), dht.loop)
+                        addr = future.result()
+                    self.socket.send(addr.encode() + b'\n')
+                else:
+                    self.socket.close()
+                    return
+            except ConnectionError:
+                return
 
 
 if len(sys.argv) < 2:
@@ -95,25 +102,27 @@ def ctrl_loop():
                     DHTThread(s, dht)
                     s.send(b'ok')
             else:
-                data = r.recv(1024)
-                if data:
-                    client = clients[r]
-                    for c in [data[i:i+1] for i in range(len(data))]:
-                        if c == b'\n':
-                            client.recv(client)
-                        else:
-                            client.buf += c
-                else:
-                    if clients[r].chunk_thread.deregister(clients[r]):
-                        clients[r].chunk_thread.stop()
-                        del loaded[clients[r].chunk_thread.chunk.location]
-                    del clients[r]
-                    if r in writable:
-                        writable.remove(r)
-                    if r in exceptional:
-                        exceptional.remove(r)
-                    r.close()
-
+                try:
+                    data = r.recv(1024)
+                    if data:
+                        client = clients[r]
+                        for c in [data[i:i+1] for i in range(len(data))]:
+                            if c == b'\n':
+                                client.recv(client)
+                            else:
+                                client.buf += c
+                    else:
+                        if clients[r].chunk_thread.deregister(clients[r]):
+                            clients[r].chunk_thread.stop()
+                            del loaded[clients[r].chunk_thread.chunk.location]
+                        del clients[r]
+                        if r in writable:
+                            writable.remove(r)
+                        if r in exceptional:
+                            exceptional.remove(r)
+                        r.close()
+                except ConnectionError:
+                    pass
         for w in writable:
             client = clients[w]
             try:
@@ -123,6 +132,8 @@ def ctrl_loop():
                 if sent != len(data):
                     client.to_send.appendleft(data[sent:])
             except IndexError:
+                pass
+            except ConnectionError:
                 pass
 
         for e in exceptional:
