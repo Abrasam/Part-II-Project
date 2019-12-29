@@ -4,7 +4,7 @@ import json
 from noise import snoise2,snoise3
 from game.const import PacketType
 
-CHUNK_SIZE = 16
+CHUNK_SIZE = 32
 
 
 class Chunk:
