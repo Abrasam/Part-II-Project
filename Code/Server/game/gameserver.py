@@ -36,6 +36,7 @@ class ChunkThread(threading.Thread):
             sender.send(self.chunk.encode())
         if packet["type"] == PacketType.PLAYER_MOVE.value:
             for c in self.clients:
+                if c == sender: continue
                 c.send(packet)
 
     def register(self, client):
