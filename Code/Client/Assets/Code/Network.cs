@@ -108,8 +108,9 @@ public class NetworkThread {
     private int bootstrapPort;
     private Socket socket;
     private List<ChunkThread> servers = new List<ChunkThread>();
+
     private Thread eventThread;
-    private Thread ctrlThread;
+    private ChunkThread current;
 
     public NetworkThread(World world, ConcurrentQueue<Update> incoming, ConcurrentQueue<Update> outgoing, string bootstrapAddress, int bootstrapPort) {
         this.world = world;
@@ -185,6 +186,18 @@ public class NetworkThread {
                 }
             }
         }
+        if (current == null || !current.GetChunkCoord().Equals(new Vector2(chunkX, chunkY))) {
+            foreach (ChunkThread ct in servers) {
+                if (ct.GetChunkCoord().Equals(new Vector2(chunkX, chunkY))) {
+                    if (current != null) {
+                        current.Send(new Packet((int)PacketType.PLAYER_DEREGISTER, new float[] { }));
+                    }
+                    current = ct;
+                    current.Send(new Packet((int)PacketType.PLAYER_REGISTER, new float[] { }));
+                    break;
+                }
+            }
+        }
     }
 
     private void EventHandler() {
@@ -197,9 +210,7 @@ public class NetworkThread {
                         case UpdateType.PLAYER_MOVE:
                             Vector3 pos = (Vector3)u.arg;
                             UpdateChunks(pos);
-                            foreach (ChunkThread ct in servers) {
-                                ct.Send(new Packet((int)PacketType.PLAYER_MOVE, new float[] { pos.x, pos.y, pos.z }));
-                            }
+                            current.Send(new Packet((int)PacketType.PLAYER_MOVE, new float[] { pos.x, pos.y, pos.z }));
                             break;
                         default:
                             break;
@@ -232,6 +243,13 @@ public class NetworkThread {
                 }
             }
             Thread.Sleep((int)(Data.TickLength * 1000));
+        }
+    }
+
+    public void Abort() {
+        eventThread.Abort();
+        foreach (ChunkThread ct in servers) {
+            ct.Abort();
         }
     }
 

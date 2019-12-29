@@ -33,7 +33,13 @@ class ChunkThread(threading.Thread):
 
     def _process_packet(self, packet, sender):
         if packet["type"] == PacketType.PLAYER_REGISTER.value:
-            sender.send(self.chunk.encode())
+            print("REGISTERING")
+            if sender not in self.players:
+                self.players.append(sender)
+        elif packet["type"] == PacketType.PLAYER_DEREGISTER.value:
+            print("DEREGESTERING")
+            if sender in self.players:
+                self.players.remove(sender)
         if packet["type"] == PacketType.PLAYER_MOVE.value:
             for c in self.clients:
                 if c == sender: continue
@@ -41,6 +47,7 @@ class ChunkThread(threading.Thread):
 
     def register(self, client):
         self.clients.append(client)
+        client.send(self.chunk.encode())
 
     def deregister(self, client):
         self.clients.remove(client)

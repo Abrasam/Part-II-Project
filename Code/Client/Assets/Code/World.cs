@@ -14,6 +14,8 @@ public class World : MonoBehaviour {
     private GameObject player2;
     private List<Chunk> chunks = new List<Chunk>();
 
+    private NetworkThread nt;
+
     // Start is called before the first frame update
     void Start() {
         byte[,,] blocks = new byte[Data.ChunkSize, Data.ChunkSize, Data.ChunkSize];
@@ -33,7 +35,7 @@ public class World : MonoBehaviour {
         }
         player2 = GameObject.Find("player2");
         player = GameObject.Find("Player");
-        NetworkThread nt = new NetworkThread(this, updates, events, "127.0.0.1", 25566);
+        nt = new NetworkThread(this, updates, events, "127.0.0.1", 25566);
     }
 
     // Update is called once per frame
@@ -77,6 +79,10 @@ public class World : MonoBehaviour {
                 }
             }
         }
+    }
+
+    void OnApplicationQuit() {
+        nt.Abort();
     }
 }
 
