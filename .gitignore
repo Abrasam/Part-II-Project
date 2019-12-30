@@ -1,7 +1,3 @@
-
-*.pyc
-*.pyc
 Code/Server/game/__pycache__/const.cpython-38.pyc
 *.pyc
-*.pyc
-*.pyc
+Build/*

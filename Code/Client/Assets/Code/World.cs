@@ -78,7 +78,7 @@ public class World : MonoBehaviour {
                             Vector3 pos = (Vector3)update.arg;
                             if (chunks.TryGetValue(new Vector2(Mathf.FloorToInt(pos.x / Data.ChunkSize), Mathf.FloorToInt(pos.z / Data.ChunkSize)), out chunk3)) {
                                 GameObject moved = chunk3.GetPlayer(update.player);
-                                if (moved != null) moved.transform.position = pos;
+                                if (moved != null) moved.transform.position = pos + Vector3.up;
                             }
                             break;
                         case UpdateType.LOAD_CHUNK:
