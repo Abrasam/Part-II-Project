@@ -16,6 +16,8 @@ public class Chunk {
     private List<int> triangles = new List<int>();
     private List<Vector2> uvs = new List<Vector2>();
 
+    private Dictionary<string, GameObject> players;
+
     public Chunk(Vector2 chunkPos, byte[,,] blocks) {
         this.chunkPos = chunkPos;
         this.blocks = blocks;
@@ -24,11 +26,11 @@ public class Chunk {
 
     public void AddToWorld(World world) {
         long t = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        
+
         me = new GameObject();
         meshFilter = me.AddComponent<MeshFilter>();
         meshRenderer = me.AddComponent<MeshRenderer>();
-        
+
 
         meshRenderer.material = world.material;
 
@@ -36,15 +38,19 @@ public class Chunk {
         me.transform.position = new Vector3(chunkPos.x * Data.ChunkSize, 0, chunkPos.y * Data.ChunkSize);
 
         RefreshMesh();
+
+        players = new Dictionary<string, GameObject>();
     }
 
-    private bool IsSolid(Vector3 pos) {
+    public bool IsSolid(Vector3 localPos) {
 
-        int x = Mathf.FloorToInt(pos.x);
-        int y = Mathf.FloorToInt(pos.y);
-        int z = Mathf.FloorToInt(pos.z);
+        int x = Mathf.FloorToInt(localPos.x);
+        int y = Mathf.FloorToInt(localPos.y);
+        int z = Mathf.FloorToInt(localPos.z);
 
-        if (x < 0 || x >= Data.ChunkSize || z < 0 || z >= Data.ChunkSize || y < 0 || y >= Data.ChunkSize) return false;
+        if (x < 0 || x >= Data.ChunkSize || z < 0 || z >= Data.ChunkSize || y < 0 || y >= Data.ChunkSize) {
+            return false;
+        }
 
         return blocks[x, y, z] != 0;
     }
@@ -65,7 +71,7 @@ public class Chunk {
 
                         Vector3 pos = new Vector3(x, y, z);
 
-                        
+
 
                         if (blocks[x, y, z] == 0 || IsSolid(pos + Data.faceChecks[i])) continue;
 
@@ -111,5 +117,26 @@ public class Chunk {
 
     public Vector2 GetPosition() {
         return chunkPos;
+    }
+
+    public void AddPlayer(string name, GameObject player) {
+        players.Add(name, player);
+    }
+
+    public GameObject GetAndRemovePlayer(string name) {
+        GameObject remove;
+        if (players.TryGetValue(name, out remove)) {
+            players.Remove(name);
+            return remove;
+        }
+        return null;
+    }
+
+    public GameObject GetPlayer(string name) {
+        GameObject remove;
+        if (players.TryGetValue(name, out remove)) {
+            return remove;
+        }
+        return null;
     }
 }

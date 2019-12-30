@@ -24,7 +24,7 @@ public class ChunkThread {
     public readonly BlockingCollection<Packet> recv;
     private readonly BlockingCollection<Packet> send;
     
-    public ChunkThread(string address, int port, int chunkX, int chunkY) {
+    public ChunkThread(string address, int port, string player, int chunkX, int chunkY) {
         this.address = address;
         this.port = port;
         this.chunkCoord = new int[2] {chunkX, chunkY};
@@ -39,7 +39,7 @@ public class ChunkThread {
 
         socket.Connect(ipe);
 
-        socket.Send(System.Text.Encoding.UTF8.GetBytes("{\"type\": \"connect\", \"chunk\": [" + chunkCoord[0] + "," + chunkCoord[1] + "]}"));
+        socket.Send(System.Text.Encoding.UTF8.GetBytes("{\"type\": \"connect\", \"chunk\": [" + chunkCoord[0] + "," + chunkCoord[1] + "], \"player\":\"" + player + "\"}"));
 
         byte[] ok = new byte[2];
 
@@ -118,16 +118,18 @@ public class NetworkThread {
     private int bootstrapPort;
     private Socket socket;
     private List<ChunkThread> servers = new List<ChunkThread>();
+    private string player;
 
     private Thread eventThread;
     private ChunkThread current;
 
-    public NetworkThread(World world, ConcurrentQueue<Update> incoming, ConcurrentQueue<Update> outgoing, string bootstrapAddress, int bootstrapPort) {
+    public NetworkThread(World world, string player, ConcurrentQueue<Update> incoming, ConcurrentQueue<Update> outgoing, string bootstrapAddress, int bootstrapPort) {
         this.world = world;
         this.incomingUpdates = incoming;
         this.outgoingUpdates = outgoing;
         this.bootstrapAddress = bootstrapAddress;
         this.bootstrapPort = bootstrapPort;
+        this.player = player;
 
         IPEndPoint ipe = new IPEndPoint(IPAddress.Parse(bootstrapAddress), bootstrapPort);
 
@@ -167,7 +169,7 @@ public class NetworkThread {
         foreach (ChunkThread r in rem) {
             servers.Remove(r);
             r.Abort();
-            incomingUpdates.Enqueue(new Update(UpdateType.UNLOAD_CHUNK, r.GetChunkCoord()));
+            incomingUpdates.Enqueue(new Update(UpdateType.UNLOAD_CHUNK, "", r.GetChunkCoord()));
         }
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
@@ -190,7 +192,7 @@ public class NetworkThread {
                     }
                     byte[] data = msg.ToArray();
                     Address addr = JsonUtility.FromJson<Address>(System.Text.Encoding.UTF8.GetString(data));
-                    ChunkThread ct = new ChunkThread(addr.ip, addr.port, chunkX + i, chunkY + j);
+                    ChunkThread ct = new ChunkThread(addr.ip, addr.port, player, chunkX + i, chunkY + j);
                     servers.Add(ct);
                 }
             }
@@ -199,10 +201,11 @@ public class NetworkThread {
             foreach (ChunkThread ct in servers) {
                 if (ct.GetChunkCoord().Equals(new Vector2(chunkX, chunkY))) {
                     if (current != null) {
-                        current.Send(new Packet((int)PacketType.PLAYER_DEREGISTER, new float[] { }));
+                        Vector2 coord = current.GetChunkCoord();
+                        current.Send(new Packet((int)PacketType.PLAYER_DEREGISTER, new float[] {coord.x, coord.y}, player));
                     }
                     current = ct;
-                    current.Send(new Packet((int)PacketType.PLAYER_REGISTER, new float[] { }));
+                    current.Send(new Packet((int)PacketType.PLAYER_REGISTER, new float[] {Mathf.FloorToInt(pos.x/Data.ChunkSize), Mathf.FloorToInt(pos.z/Data.ChunkSize)}, player));
                     break;
                 }
             }
@@ -219,7 +222,7 @@ public class NetworkThread {
                         case UpdateType.PLAYER_MOVE:
                             Vector3 pos = (Vector3)u.arg;
                             UpdateChunks(pos);
-                            current.Send(new Packet((int)PacketType.PLAYER_MOVE, new float[] { pos.x, pos.y, pos.z }));
+                            current.Send(new Packet((int)PacketType.PLAYER_MOVE, new float[] { pos.x, pos.y, pos.z }, player));
                             break;
                         default:
                             break;
@@ -233,6 +236,7 @@ public class NetworkThread {
                     //Debug.Log("Received packet");
                     switch (p.type) {
                         case (int)PacketType.CHUNK_DATA:
+                            Debug.Log("CHUNK DATA");
                             byte[,,] chunkData = new byte[Data.ChunkSize, Data.ChunkSize, Data.ChunkSize];
                             for (int x = 0; x < Data.ChunkSize; x++) {
                                 for (int y = 0; y < Data.ChunkSize; y++) {
@@ -241,10 +245,18 @@ public class NetworkThread {
                                     }
                                 }
                             }
-                            incomingUpdates.Enqueue(new Update(UpdateType.LOAD_CHUNK, new Chunk(new Vector2(p.args[0], p.args[1]), chunkData)));
+                            incomingUpdates.Enqueue(new Update(UpdateType.LOAD_CHUNK, "", new Chunk(new Vector2(p.args[0], p.args[1]), chunkData)));
                             break;
                         case (int)PacketType.PLAYER_MOVE:
-                            incomingUpdates.Enqueue(new Update(UpdateType.PLAYER_MOVE, new Vector3(p.args[0], p.args[1], p.args[2])));
+                            incomingUpdates.Enqueue(new Update(UpdateType.PLAYER_MOVE, p.player, new Vector3(p.args[0], p.args[1], p.args[2])));
+                            break;
+                        case (int)PacketType.PLAYER_REGISTER:
+                            Debug.Log("REGISTER");
+                            incomingUpdates.Enqueue(new Update(UpdateType.PLAYER_ADD, p.player, new Vector2(p.args[0], p.args[1])));
+                            break;
+                        case (int)PacketType.PLAYER_DEREGISTER:
+                            Debug.Log("DEREGISTER");
+                            incomingUpdates.Enqueue(new Update(UpdateType.PLAYER_REMOVE, p.player, new Vector2(p.args[0], p.args[1])));
                             break;
                         default:
                             break;
@@ -273,10 +285,12 @@ public class NetworkThread {
 public class Packet {
     public int type;
     public float[] args;
+    public string player;
     
-    public Packet(int type, float[] args) {
+    public Packet(int type, float[] args, string player) {
         this.type = type;
         this.args = args;
+        this.player = player;
     }
 }
 

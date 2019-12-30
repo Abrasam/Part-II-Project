@@ -16,3 +16,5 @@ class ClientType(Enum):
 
 
 TICK_LENGTH = 1/20
+
+CHUNK_SIZE = 32

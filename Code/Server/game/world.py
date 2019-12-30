@@ -2,9 +2,7 @@ import random
 import json
 
 from noise import snoise2,snoise3
-from game.const import PacketType
-
-CHUNK_SIZE = 32
+from game.const import PacketType, CHUNK_SIZE
 
 
 class Chunk:
@@ -18,7 +16,6 @@ class Chunk:
             for j in range(0, CHUNK_SIZE):
                 for k in range(0, CHUNK_SIZE):
                     x = self.location[0]*CHUNK_SIZE+i
-                    y = j
                     z = self.location[1]*CHUNK_SIZE+k
                     height = int(0.5*(1+snoise2(x/100, z/100, octaves=3, lacunarity=2, persistence=0.5))*CHUNK_SIZE)
                     if height > j:
@@ -36,7 +33,7 @@ class Chunk:
                 out += i
             return out
         compress = pack(list(map(lambda x: pack(x), self.data)))
-        return {"type": PacketType.CHUNK_DATA.value, "args": list(self.location) + compress}
+        return {"type": PacketType.CHUNK_DATA.value, "args": list(self.location) + compress, "player":""}
 
 
 class Player:

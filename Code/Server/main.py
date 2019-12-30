@@ -81,6 +81,7 @@ def ctrl_loop():
                 #print(msg)
                 if msg["type"] == "connect":
                     chunk_coord = tuple(msg["chunk"])
+                    player = msg["player"]
                     #print(f"Client @ {addr} connecting to chunk {chunk_coord}.")
                     if chunk_coord not in chunks:  # if chunk doesn't exist
                         s.send(b'no')
@@ -90,7 +91,7 @@ def ctrl_loop():
                             loaded[chunk_coord] = ChunkThread(chunks[chunk_coord])
                         s.send(b'ok')  # start normal game comms
                         s.setblocking(0)
-                        client = Client(ClientType.PLAYER, loaded[chunk_coord])
+                        client = Client(ClientType.PLAYER, loaded[chunk_coord], msg["player"])
                         loaded[chunk_coord].register(client)  # register to chunk
                         clients[s] = client
                 elif msg["type"] == "generate":
@@ -126,7 +127,7 @@ def ctrl_loop():
         for w in writable:
             client = clients[w]
             try:
-                data = client.to_send.pop()
+                data = client.to_send.popleft()
                 #print(f"Sending: {data}")
                 sent = w.send(data)
                 if sent != len(data):
