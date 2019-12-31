@@ -8,6 +8,7 @@ class PacketType(Enum):
     PLAYER_MOVE = 3
     FIND_PLAYER = 4
     CHUNK_DATA = 5
+    TIME = 6
 
 
 class ClientType(Enum):

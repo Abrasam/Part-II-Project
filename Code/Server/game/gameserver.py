@@ -1,6 +1,7 @@
 import json
 import threading
 import time
+import datetime
 import socket
 import asyncio
 from collections import deque
@@ -24,13 +25,20 @@ class ChunkThread(threading.Thread):
     # todo: concurrency issues here with editing players/clients.
     def run(self):
         while True:
+            t = time.time()
             if self.done:
                 return
             try:
-                packet_data = self.q.get(timeout=5)
-                self._process_packet(*packet_data)
+                n = self.q.qsize()
+                for _ in range(n):
+                    packet_data = self.q.get_nowait()
+                    self._process_packet(*packet_data)
             except Empty:
                 pass
+            for client in self.players:
+                tmp = datetime.datetime.utcnow()
+                client.send(Packet(PacketType.TIME, [tmp.hour*60+tmp.minute+tmp.second/60]).dict())
+            time.sleep(TICK_LENGTH - (time.time() - t))
 
     def _process_packet(self, packet, sender):
         if packet["type"] == PacketType.PLAYER_REGISTER.value:

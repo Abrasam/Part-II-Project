@@ -35,7 +35,6 @@ public class Movement : MonoBehaviour {
             if (onGround) {
                 velocity.y = 8;
             }
-            jump = false;
         }
 
         Vector3 delta = velocity * Time.fixedDeltaTime;
@@ -117,6 +116,9 @@ public class Movement : MonoBehaviour {
         }
         if (Input.GetButtonDown("Jump")) {
             jump = true;
+        }
+        if (Input.GetButtonUp("Jump")) {
+            jump = false;
         }
 
         transform.Rotate(Vector3.up * mouseHorizontal);

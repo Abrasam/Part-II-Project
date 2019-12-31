@@ -16,6 +16,8 @@ public class World : MonoBehaviour {
 
     private NetworkThread nt;
 
+    private GameObject light;
+
     // Start is called before the first frame update
     void Start() {
         byte[,,] blocks = new byte[Data.ChunkSize, Data.ChunkSize, Data.ChunkSize];
@@ -34,6 +36,7 @@ public class World : MonoBehaviour {
             }
         }
         player = GameObject.Find("Player");
+        light = GameObject.Find("Sun");
 
         byte[] bytes = new byte[10];
 
@@ -49,7 +52,7 @@ public class World : MonoBehaviour {
         tickTimer += Time.deltaTime;
         if (tickTimer > Data.TickLength) {
             //Push events to queue.
-            events.Enqueue(new Update(UpdateType.PLAYER_MOVE, name, player.transform.position));
+            events.Enqueue(new Update(UpdateType.PLAYER_MOVE, name, new float[] { player.transform.position.x, player.transform.position.y, player.transform.position.z, player.transform.eulerAngles.y }));
             //Pop packets from queue.
             int cnt = updates.Count;
             for (int i = 0; i < cnt; i++) {
@@ -63,6 +66,7 @@ public class World : MonoBehaviour {
                                 GameObject deleteMe = chunk.GetAndRemovePlayer(update.player);
                                 if (deleteMe != null) Destroy(deleteMe);
                                 GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                                go.transform.localScale = new Vector3(1, 2, 1);
                                 chunk.AddPlayer(update.player, go);
                             }
                             break;
@@ -75,10 +79,14 @@ public class World : MonoBehaviour {
                             break;
                         case UpdateType.PLAYER_MOVE:
                             Chunk chunk3;
-                            Vector3 pos = (Vector3)update.arg;
+                            float[] arg = (float[])update.arg;
+                            Vector3 pos = new Vector3(arg[0], arg[1], arg[2]);
                             if (chunks.TryGetValue(new Vector2(Mathf.FloorToInt(pos.x / Data.ChunkSize), Mathf.FloorToInt(pos.z / Data.ChunkSize)), out chunk3)) {
                                 GameObject moved = chunk3.GetPlayer(update.player);
-                                if (moved != null) moved.transform.position = pos + Vector3.up;
+                                if (moved != null) {
+                                    moved.transform.position = pos + Vector3.up;
+                                    moved.transform.eulerAngles = new Vector3(transform.eulerAngles.x, arg[3], transform.eulerAngles.z);
+                                }
                             }
                             break;
                         case UpdateType.LOAD_CHUNK:
@@ -92,7 +100,24 @@ public class World : MonoBehaviour {
                             if (chunks.TryGetValue(chunkPos, out rem)) {
                                 chunks.Remove(chunkPos);
                                 Destroy(rem.me);
+                                foreach (GameObject player in rem.GetAllPlayers()) {
+                                    Destroy(player);
+                                }
                             }
+                            break;
+                        case UpdateType.TIME:
+                            light.transform.eulerAngles = new Vector3((float)update.arg * 360 - 90, 0, 0);
+                            float time = (float)update.arg;
+                            Debug.Log(time);
+                            float intensity = 1;
+                            if (time < 3*60/1440f || time > 21*60/1440f) {
+                                intensity = 0;
+                            } else if (time < 6*60/1440f) {
+                                intensity = 8 * time - 1;
+                            } else if (time > 18*60/1440f) {
+                                intensity = 7 - 8 * time;
+                            }
+                            light.GetComponent<Light>().intensity = 1.2f*intensity;
                             break;
                         default:
                             Debug.Log("Invalid update type received?");
@@ -148,5 +173,6 @@ public enum UpdateType {
     LOAD_CHUNK = 2,
     UNLOAD_CHUNK = 3,
     PLAYER_ADD = 4,
-    PLAYER_REMOVE = 5
+    PLAYER_REMOVE = 5,
+    TIME = 6
 }

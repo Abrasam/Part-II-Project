@@ -71,8 +71,6 @@ public class Chunk {
 
                         Vector3 pos = new Vector3(x, y, z);
 
-
-
                         if (blocks[x, y, z] == 0 || IsSolid(pos + Data.faceChecks[i])) continue;
 
                         if (y == Data.ChunkSize - 1 && i == 2) {
@@ -138,5 +136,11 @@ public class Chunk {
             return remove;
         }
         return null;
+    }
+
+    public GameObject[] GetAllPlayers() {
+        GameObject[] ret = new GameObject[players.Count];
+        players.Values.CopyTo(ret, 0);
+        return ret;
     }
 }

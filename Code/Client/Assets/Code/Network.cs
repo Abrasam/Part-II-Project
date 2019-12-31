@@ -220,9 +220,9 @@ public class NetworkThread {
                 if (outgoingUpdates.TryDequeue(out u)) {
                     switch(u.type) {
                         case UpdateType.PLAYER_MOVE:
-                            Vector3 pos = (Vector3)u.arg;
-                            UpdateChunks(pos);
-                            current.Send(new Packet((int)PacketType.PLAYER_MOVE, new float[] { pos.x, pos.y, pos.z }, player));
+                            float[] arg = (float[])u.arg;
+                            UpdateChunks(new Vector3(arg[0], arg[1], arg[2]));
+                            current.Send(new Packet((int)PacketType.PLAYER_MOVE, arg, player));
                             break;
                         default:
                             break;
@@ -248,7 +248,7 @@ public class NetworkThread {
                             incomingUpdates.Enqueue(new Update(UpdateType.LOAD_CHUNK, "", new Chunk(new Vector2(p.args[0], p.args[1]), chunkData)));
                             break;
                         case (int)PacketType.PLAYER_MOVE:
-                            incomingUpdates.Enqueue(new Update(UpdateType.PLAYER_MOVE, p.player, new Vector3(p.args[0], p.args[1], p.args[2])));
+                            incomingUpdates.Enqueue(new Update(UpdateType.PLAYER_MOVE, p.player, p.args));
                             break;
                         case (int)PacketType.PLAYER_REGISTER:
                             Debug.Log("REGISTER");
@@ -257,6 +257,9 @@ public class NetworkThread {
                         case (int)PacketType.PLAYER_DEREGISTER:
                             Debug.Log("DEREGISTER");
                             incomingUpdates.Enqueue(new Update(UpdateType.PLAYER_REMOVE, p.player, new Vector2(p.args[0], p.args[1])));
+                            break;
+                        case (int)PacketType.TIME:
+                            incomingUpdates.Enqueue(new Update(UpdateType.TIME, "", p.args[0] / 1440));
                             break;
                         default:
                             break;
@@ -300,5 +303,6 @@ public enum PacketType {
     PLAYER_DEREGISTER = 2,
     PLAYER_MOVE = 3,
     FIND_PLAYER = 4,
-    CHUNK_DATA = 5
+    CHUNK_DATA = 5,
+    TIME = 6
 }

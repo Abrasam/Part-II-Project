@@ -9,14 +9,14 @@ public static class Data {
     public static readonly float TickLength = 1 / 20;
 
     public static readonly Vector3[] vertices = new Vector3[8] {
-        new Vector3(0.0f, 0.0f, 0.0f),
-        new Vector3(1.0f, 0.0f, 0.0f),
-        new Vector3(1.0f, 1.0f, 0.0f),
-        new Vector3(0.0f, 1.0f, 0.0f),
-        new Vector3(0.0f, 0.0f, 1.0f),
-        new Vector3(1.0f, 0.0f, 1.0f),
-        new Vector3(1.0f, 1.0f, 1.0f),
-        new Vector3(0.0f, 1.0f, 1.0f),
+        new Vector3(-0.001f, -0.001f, -0.001f),
+        new Vector3(1.001f, -0.001f, -0.001f),
+        new Vector3(1.001f, 1.001f, -0.001f),
+        new Vector3(-0.001f, 1.001f, -0.001f),
+        new Vector3(-0.001f, -0.001f, 1.001f),
+        new Vector3(1.001f, -0.001f, 1.001f),
+        new Vector3(1.001f, 1.001f, 1.001f),
+        new Vector3(-0.001f, 1.001f, 1.001f),
     };
 
     public static readonly int[,] triangles = new int[6, 4] {
