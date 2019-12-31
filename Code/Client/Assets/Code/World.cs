@@ -11,12 +11,12 @@ public class World : MonoBehaviour {
     private ConcurrentQueue<Update> updates = new ConcurrentQueue<Update>();
     private ConcurrentQueue<Update> events = new ConcurrentQueue<Update>();
     private GameObject player;
-    private string name;
+    private string username;
     private Dictionary<Vector2, Chunk> chunks = new Dictionary<Vector2, Chunk>();
 
     private NetworkThread nt;
 
-    private GameObject light;
+    private GameObject sun;
 
     // Start is called before the first frame update
     void Start() {
@@ -36,15 +36,15 @@ public class World : MonoBehaviour {
             }
         }
         player = GameObject.Find("Player");
-        light = GameObject.Find("Sun");
+        sun = GameObject.Find("Sun");
 
         byte[] bytes = new byte[10];
 
         new System.Random().NextBytes(bytes);
 
-        name = string.Join("",bytes);
+        username = string.Join("",bytes);
 
-        nt = new NetworkThread(this, name, updates, events, "127.0.0.1", 25566);
+        nt = new NetworkThread(this, username, updates, events, "127.0.0.1", 25566);
     }
 
     // Update is called once per frame
@@ -52,17 +52,16 @@ public class World : MonoBehaviour {
         tickTimer += Time.deltaTime;
         if (tickTimer > Data.TickLength) {
             //Push events to queue.
-            events.Enqueue(new Update(UpdateType.PLAYER_MOVE, name, new float[] { player.transform.position.x, player.transform.position.y, player.transform.position.z, player.transform.eulerAngles.y }));
+            events.Enqueue(new Update(UpdateType.PLAYER_MOVE, username, new float[] { player.transform.position.x, player.transform.position.y, player.transform.position.z, player.transform.eulerAngles.y }));
             //Pop packets from queue.
             int cnt = updates.Count;
             for (int i = 0; i < cnt; i++) {
                 Update update;
                 if (updates.TryDequeue(out update)) {
-                    switch(update.type) {
+                    switch (update.type) {
                         case UpdateType.PLAYER_ADD:
                             Chunk chunk;
                             if (chunks.TryGetValue((Vector2)update.arg, out chunk)) {
-                                Debug.Log("Found chunk.");
                                 GameObject deleteMe = chunk.GetAndRemovePlayer(update.player);
                                 if (deleteMe != null) Destroy(deleteMe);
                                 GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -91,8 +90,17 @@ public class World : MonoBehaviour {
                             break;
                         case UpdateType.LOAD_CHUNK:
                             Chunk newChunk = (Chunk)update.arg;
+                            Vector3 newPos = newChunk.GetPosition();
+                            Chunk oldChunk;
                             newChunk.AddToWorld(this);
-                            chunks.Add(newChunk.GetPosition(), newChunk);
+                            if (chunks.TryGetValue(newPos, out oldChunk)) {
+                                foreach (string name in oldChunk.GetAllPlayerNames()) {
+                                    newChunk.AddPlayer(name, oldChunk.GetPlayer(name));
+                                }
+                                Destroy(oldChunk.me);
+                                chunks.Remove(newPos);
+                            }
+                            chunks.Add(newPos, newChunk);
                             break;
                         case UpdateType.UNLOAD_CHUNK:
                             Vector2 chunkPos = (Vector2)update.arg;
@@ -106,18 +114,19 @@ public class World : MonoBehaviour {
                             }
                             break;
                         case UpdateType.TIME:
-                            light.transform.eulerAngles = new Vector3((float)update.arg * 360 - 90, 0, 0);
+                            sun.transform.eulerAngles = new Vector3((float)update.arg * 360 - 90, 0, 0);
                             float time = (float)update.arg;
-                            Debug.Log(time);
                             float intensity = 1;
-                            if (time < 3*60/1440f || time > 21*60/1440f) {
+                            if (time < 3 * 60 / 1440f || time > 21 * 60 / 1440f) {
                                 intensity = 0;
-                            } else if (time < 6*60/1440f) {
+                            }
+                            else if (time < 6 * 60 / 1440f) {
                                 intensity = 8 * time - 1;
-                            } else if (time > 18*60/1440f) {
+                            }
+                            else if (time > 18 * 60 / 1440f) {
                                 intensity = 7 - 8 * time;
                             }
-                            light.GetComponent<Light>().intensity = 1.2f*intensity;
+                            sun.GetComponent<Light>().intensity = 1.2f * intensity;
                             break;
                         default:
                             Debug.Log("Invalid update type received?");
@@ -150,6 +159,14 @@ public class World : MonoBehaviour {
         return true; //If not loaded assume solid for safety.
     }
 
+    public void DestroyBlock(Vector3 pos) {
+        events.Enqueue(new Update(UpdateType.BLOCK_CHANGE, username, new float[] { pos.x, pos.y, pos.z, 0 }));
+    }
+
+    public void PlaceBlock(Vector3 pos, int type) {
+        events.Enqueue(new Update(UpdateType.BLOCK_CHANGE, username, new float[] { pos.x, pos.y, pos.z, type }));
+    }
+
 
     void OnApplicationQuit() {
         nt.Abort();
@@ -174,5 +191,6 @@ public enum UpdateType {
     UNLOAD_CHUNK = 3,
     PLAYER_ADD = 4,
     PLAYER_REMOVE = 5,
-    TIME = 6
+    TIME = 6,
+    BLOCK_CHANGE = 7,
 }

@@ -1,5 +1,6 @@
 import random
 import json
+from math import floor
 
 from noise import snoise2,snoise3
 from game.const import PacketType, CHUNK_SIZE
@@ -34,6 +35,17 @@ class Chunk:
             return out
         compress = pack(list(map(lambda x: pack(x), self.data)))
         return {"type": PacketType.CHUNK_DATA.value, "args": list(self.location) + compress, "player":""}
+
+    def update(self, x, y, z, block):
+        x,y,z = floor(x),floor(y),floor(z)
+        x -= self.location[0]*CHUNK_SIZE
+        z -= self.location[1]*CHUNK_SIZE
+
+        self.data[x][y][z] = block
+
+    def __contains__(self, coord):
+        x,y,z = coord[0],coord[1],coord[2]
+        return self.location[0]*CHUNK_SIZE <= x < (self.location[0] + 1)*CHUNK_SIZE and self.location[1]*CHUNK_SIZE <= z < (self.location[1] + 1)*CHUNK_SIZE and 0 <= y < CHUNK_SIZE
 
 
 class Player:

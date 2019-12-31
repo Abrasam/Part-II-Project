@@ -84,7 +84,6 @@ public class ChunkThread {
         try {
             while (true) {
                 Packet p = send.Take();
-                //Debug.Log("Packet outgoing!");
                 string json = JsonUtility.ToJson(p) + "\n";
                 byte[] toSend = System.Text.Encoding.UTF8.GetBytes(json);
                 socket.Send(toSend);
@@ -218,11 +217,16 @@ public class NetworkThread {
             for (int i = 0; i < localUpdates; i++) {
                 Update u;
                 if (outgoingUpdates.TryDequeue(out u)) {
-                    switch(u.type) {
+                    switch (u.type) {
                         case UpdateType.PLAYER_MOVE:
                             float[] arg = (float[])u.arg;
                             UpdateChunks(new Vector3(arg[0], arg[1], arg[2]));
                             current.Send(new Packet((int)PacketType.PLAYER_MOVE, arg, player));
+                            break;
+                        case UpdateType.BLOCK_CHANGE:
+                            foreach (ChunkThread ct in servers) {
+                                ct.Send(new Packet((int)PacketType.BLOCK_CHANGE, (float[])u.arg, u.player));
+                            }
                             break;
                         default:
                             break;
@@ -233,10 +237,9 @@ public class NetworkThread {
                 int cnt = s.recv.Count;
                 for (int i = 0; i < cnt; i++) {
                     Packet p = s.recv.Take();
-                    //Debug.Log("Received packet");
                     switch (p.type) {
                         case (int)PacketType.CHUNK_DATA:
-                            Debug.Log("CHUNK DATA");
+                            Debug.Log("CHUNK DATA RECEIVED");
                             byte[,,] chunkData = new byte[Data.ChunkSize, Data.ChunkSize, Data.ChunkSize];
                             for (int x = 0; x < Data.ChunkSize; x++) {
                                 for (int y = 0; y < Data.ChunkSize; y++) {
@@ -251,11 +254,9 @@ public class NetworkThread {
                             incomingUpdates.Enqueue(new Update(UpdateType.PLAYER_MOVE, p.player, p.args));
                             break;
                         case (int)PacketType.PLAYER_REGISTER:
-                            Debug.Log("REGISTER");
                             incomingUpdates.Enqueue(new Update(UpdateType.PLAYER_ADD, p.player, new Vector2(p.args[0], p.args[1])));
                             break;
                         case (int)PacketType.PLAYER_DEREGISTER:
-                            Debug.Log("DEREGISTER");
                             incomingUpdates.Enqueue(new Update(UpdateType.PLAYER_REMOVE, p.player, new Vector2(p.args[0], p.args[1])));
                             break;
                         case (int)PacketType.TIME:
@@ -304,5 +305,6 @@ public enum PacketType {
     PLAYER_MOVE = 3,
     FIND_PLAYER = 4,
     CHUNK_DATA = 5,
-    TIME = 6
+    TIME = 6,
+    BLOCK_CHANGE = 7,
 }

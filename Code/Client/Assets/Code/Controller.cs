@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Movement : MonoBehaviour {
+public class Controller : MonoBehaviour {
 
     private float horizontal;
     private float vertical;
@@ -22,7 +22,7 @@ public class Movement : MonoBehaviour {
 
     void Start() {
         cam = GameObject.Find("Main Camera").transform;
-        //Cursor.lockState = CursorLockMode.Locked;
+        Cursor.lockState = CursorLockMode.Locked;
         world = GameObject.Find("World").GetComponent<World>();
     }
 

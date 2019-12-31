@@ -131,9 +131,9 @@ public class Chunk {
     }
 
     public GameObject GetPlayer(string name) {
-        GameObject remove;
-        if (players.TryGetValue(name, out remove)) {
-            return remove;
+        GameObject get;
+        if (players.TryGetValue(name, out get)) {
+            return get;
         }
         return null;
     }
@@ -141,6 +141,12 @@ public class Chunk {
     public GameObject[] GetAllPlayers() {
         GameObject[] ret = new GameObject[players.Count];
         players.Values.CopyTo(ret, 0);
+        return ret;
+    }
+
+    public string[] GetAllPlayerNames() {
+        string[] ret = new string[players.Count];
+        players.Keys.CopyTo(ret, 0);
         return ret;
     }
 }

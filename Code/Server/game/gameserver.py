@@ -8,11 +8,12 @@ from collections import deque
 from queue import Empty, Queue
 
 from game.const import *
+from game.world import Chunk
 from kademlia.server import DHTServer
 
 
 class ChunkThread(threading.Thread):
-    def __init__(self, chunk):
+    def __init__(self, chunk : Chunk):
         threading.Thread.__init__(self)
         self.chunk = chunk
         self.players = []
@@ -38,30 +39,33 @@ class ChunkThread(threading.Thread):
             for client in self.players:
                 tmp = datetime.datetime.utcnow()
                 client.send(Packet(PacketType.TIME, [tmp.hour*60+tmp.minute+tmp.second/60]).dict())
-            time.sleep(TICK_LENGTH - (time.time() - t))
+            time.sleep(max(0,TICK_LENGTH - (time.time() - t)))
 
     def _process_packet(self, packet, sender):
         if packet["type"] == PacketType.PLAYER_REGISTER.value:
-            print("REGISTER")
-            print(packet["player"])
             if sender not in self.players:
                 self.players.append(sender)
                 for c in self.clients:
                     if c == sender: continue
                     c.send(packet)
         elif packet["type"] == PacketType.PLAYER_DEREGISTER.value:
-            print("DEREGISTER")
             if sender in self.players:
-                print("wib")
                 self.players.remove(sender)
                 for c in self.clients:
                     if c == sender: continue
                     c.send(packet)
                     print(c)
-        if packet["type"] == PacketType.PLAYER_MOVE.value:
+        elif packet["type"] == PacketType.PLAYER_MOVE.value:
             for c in self.clients:
                 if c == sender: continue
                 c.send(packet)
+        elif packet["type"] == PacketType.BLOCK_CHANGE.value:
+            pos = packet["args"][0:3]
+            if pos in self.chunk:
+                self.chunk.update(*packet["args"])
+                data = json.dumps(self.chunk.encode()).encode()
+                for client in self.clients:
+                    client.send_raw(data)
 
     def register(self, client):
         self.clients.append(client)
@@ -90,6 +94,9 @@ class Client:
 
     def send(self, packet):
         self.to_send.append(json.dumps(packet).encode() + b'\n')
+
+    def send_raw(self, raw_packet):
+        self.to_send.append(raw_packet + b'\n')
 
     def recv(self, sender):
         self.chunk_thread.q.put((json.loads(self.buf.decode()), sender))
