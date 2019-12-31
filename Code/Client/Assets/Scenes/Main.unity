@@ -192,6 +192,7 @@ GameObject:
   - component: {fileID: 1484554791}
   - component: {fileID: 1484554790}
   - component: {fileID: 1484554789}
+  - component: {fileID: 1484554792}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -263,6 +264,18 @@ Transform:
   m_Father: {fileID: 2134501597}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1484554792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1484554788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5b30502fb3796644b744ecd7771f5fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1794766540
 GameObject:
   m_ObjectHideFlags: 0
@@ -304,9 +317,9 @@ Light:
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 2
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.9107755, b: 0.514151, a: 1}
   m_Intensity: 1
-  m_Range: 20
+  m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
@@ -361,7 +374,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5290d34b352358449638c90478e320b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  elon: {fileID: 100000, guid: d8546f66a5a72ce47bf02a64594a2931, type: 3}
   material: {fileID: 2100000, guid: 15645f887cf98844d9bd54c0d675fe4e, type: 2}
 --- !u!4 &2045977073
 Transform:
