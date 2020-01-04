@@ -42,9 +42,11 @@ public class World : MonoBehaviour {
 
         new System.Random().NextBytes(bytes);
 
-        username = string.Join("",bytes);
+        username = "jakesully123456";// string.Join("",bytes);
 
         nt = new NetworkThread(this, username, updates, events, "127.0.0.1", 25566);
+        player.transform.position = nt.GetLocation();
+        nt.Start();
     }
 
     // Update is called once per frame
@@ -65,7 +67,7 @@ public class World : MonoBehaviour {
                                 GameObject deleteMe = chunk.GetAndRemovePlayer(update.player);
                                 if (deleteMe != null) Destroy(deleteMe);
                                 GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                                go.transform.localScale = new Vector3(1, 2, 1);
+                                go.transform.localScale = new Vector3(0.6f, 1.8f, 0.6f);
                                 chunk.AddPlayer(update.player, go);
                             }
                             break;
@@ -126,10 +128,9 @@ public class World : MonoBehaviour {
                             else if (time > 18 * 60 / 1440f) {
                                 intensity = 7 - 8 * time;
                             }
-                            sun.GetComponent<Light>().intensity = 1.2f * intensity;
+                            sun.GetComponent<Light>().intensity = 1.4f * intensity;
                             break;
                         default:
-                            Debug.Log("Invalid update type received?");
                             break;
                     }
                 }

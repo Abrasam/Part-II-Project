@@ -38,7 +38,8 @@ class KademliaNode(asyncio.DatagramProtocol):
         self.waiting = {}
         self.transport = None
         self.table = RoutingTable(self, K)
-        self.storage = Storage()
+        self.chunks = Storage()
+        self.players = Storage()
         loop = asyncio.get_running_loop()
 
         def refresh():
@@ -92,12 +93,12 @@ class KademliaNode(asyncio.DatagramProtocol):
         self.table.add_contact(node)
 
         # send all values it needs
-        for key in self.storage:
+        for key in self.chunks:
             nearby = self.table.nearest_nodes_to(key)
             if len(nearby) > 0:
                 if not (node.id ^ key < nearby[-1].id ^ key and self.id ^ key < nearby[0].id ^ key):
                     continue
-            asyncio.ensure_future(self.ext_store(node, key, self.storage[key]))
+            asyncio.ensure_future(self.ext_store_chunk(node, key, self.chunks[key]))
 
     def _timeout(self, msg_id):
         node = self.waiting[msg_id][2]
@@ -116,11 +117,19 @@ class KademliaNode(asyncio.DatagramProtocol):
         pass
 
     @stub
-    async def ext_find_value(self, node, key):
+    async def ext_find_chunk(self, node, key):
         pass
 
     @stub
-    async def ext_store(self, node, key, value):
+    async def ext_find_player(self, node, key):
+        pass
+
+    @stub
+    async def ext_store_chunk(self, node, key, value):
+        pass
+
+    @stub
+    async def ext_store_player(self, node, key, value):
         pass
 
     @rpc
@@ -132,16 +141,26 @@ class KademliaNode(asyncio.DatagramProtocol):
         return list(map(lambda node: (node.id, node.addr[0], node.addr[1]), self.table.nearest_nodes_to(node_id)))
 
     @rpc
-    def find_value(self, key):
-        if key in self.storage:
-            return self.storage[key]
+    def find_chunk(self, key):
+        if key in self.chunks:
+            return self.chunks[key]
         return self.find_node(key)
 
     @rpc
-    def store(self, key, value):
-        self.storage[key] = value
+    def find_player(self, key):
+        if key in self.players:
+            return self.players[key]
+        return self.find_node(key)
 
-    async def lookup(self, key_or_id, value=False):
+    @rpc
+    def store_chunk(self, key, value):
+        self.chunks[key] = value
+
+    @rpc
+    def store_player(self, key, value):
+        self.players[key] = value
+
+    async def lookup(self, key_or_id, value=False, find_type=None):
         nodes = self.table.nearest_nodes_to(key_or_id)
         queried = []
         while len(nodes) > 0:
@@ -151,7 +170,7 @@ class KademliaNode(asyncio.DatagramProtocol):
             for i in range(0, min(ALPHA, len(unqueried))):
                 multicast.append(unqueried.pop(0))
             #print("ASKING: " + str(multicast))
-            res = await asyncio.gather(*[self.ext_find_value(n, key_or_id) if value else self.ext_find_node(n, key_or_id) for n in multicast])
+            res = await asyncio.gather(*[find_type(n, key_or_id) if value else self.ext_find_node(n, key_or_id) for n in multicast])
             queried += multicast
             for i in range(0, len(res)):
                 if res[i] is None:
@@ -166,9 +185,9 @@ class KademliaNode(asyncio.DatagramProtocol):
                 break
         return None if value else nodes
 
-    async def insert(self, key, value):
+    async def insert(self, key, value, store_type=None):
         nodes = await self.lookup(key)
-        await asyncio.gather(*[self.ext_store(n, key, value) for n in nodes])
+        await asyncio.gather(*[store_type(n, key, value) for n in nodes])
 
     async def bootstrap(self, node):
         self.table.add_contact(node)
@@ -178,9 +197,15 @@ class KademliaNode(asyncio.DatagramProtocol):
 
     def republish_keys(self):
         now = time.time()
-        for key in self.storage:
-            value = self.storage[key]
-            t = self.storage.time[key]
+        for key in self.chunks:
+            value = self.chunks[key]
+            t = self.chunks.time[key]
             if now - t > 30:
-                del self.storage[key]
-                asyncio.ensure_future(self.insert(key, value))
+                del self.chunks[key]
+                asyncio.ensure_future(self.insert(key, value, store_type=self.ext_store_chunk))
+        for key in self.players:
+            value = self.players[key]
+            t = self.players.time[key]
+            if now - t > 30:
+                del self.players[key]
+                asyncio.ensure_future(self.insert(key, value, store_type=self.ext_store_player))

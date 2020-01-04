@@ -13,7 +13,7 @@ public class Controller : MonoBehaviour {
     private float sprintModifier = 1;
     private Transform cam;
     private World world;
-    private const float halfWidth = 0.5f;
+    private const float halfWidth = 0.3f;
 
     private bool onGround = false;
     private bool jump = false;

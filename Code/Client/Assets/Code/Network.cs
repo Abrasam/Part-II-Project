@@ -139,6 +139,7 @@ public class NetworkThread {
         socket.Connect(ipe);
 
         socket.Send(System.Text.Encoding.UTF8.GetBytes("{\"type\": \"dht\"}"));
+        Debug.Log(System.Text.Encoding.UTF8.GetBytes("{\"type\": \"dht\"}")[0]);
 
         byte[] ok = new byte[2];
 
@@ -149,10 +150,27 @@ public class NetworkThread {
         if (System.Text.Encoding.UTF8.GetString(ok) != "ok") {
             throw new ServerRejectedException("Server did not accept connection.");
         }
+    }
 
-        eventThread = new Thread(EventHandler);
-        eventThread.IsBackground = true;
-        eventThread.Start();
+    public void Start() {
+        Debug.Log(eventThread);
+        if (eventThread == null) {
+            eventThread = new Thread(EventHandler);
+            eventThread.IsBackground = true;
+            eventThread.Start();
+        }
+    }
+    
+    public Vector3 GetLocation() {
+        socket.Send(System.Text.Encoding.UTF8.GetBytes("\x1{\"name\": \"" + player + "\"}"));
+        List<byte> loc = new List<byte>();
+        byte[] buf = new byte[1024];
+        int n = socket.Receive(buf);
+        for (int i = 0; i < n; i++) {
+            loc.Add(buf[i]);
+        }
+        Debug.Log(System.Text.Encoding.UTF8.GetString(loc.ToArray()));
+        return JsonUtility.FromJson<Vector3>(System.Text.Encoding.UTF8.GetString(loc.ToArray()));
     }
 
     private void UpdateChunks(Vector3 pos) {
@@ -181,7 +199,7 @@ public class NetworkThread {
                     }
                 }
                 if (!found) {
-                    socket.Send(System.Text.Encoding.UTF8.GetBytes("[" + (chunkX + i) + "," + (chunkY + j) + "]"));
+                    socket.Send(System.Text.Encoding.UTF8.GetBytes("\x0[" + (chunkX + i) + "," + (chunkY + j) + "]"));
                     byte[] buf = new byte[1];
                     List<byte> msg = new List<byte>();
                     socket.Receive(buf);
@@ -239,7 +257,6 @@ public class NetworkThread {
                     Packet p = s.recv.Take();
                     switch (p.type) {
                         case (int)PacketType.CHUNK_DATA:
-                            Debug.Log("CHUNK DATA RECEIVED");
                             byte[,,] chunkData = new byte[Data.ChunkSize, Data.ChunkSize, Data.ChunkSize];
                             for (int x = 0; x < Data.ChunkSize; x++) {
                                 for (int y = 0; y < Data.ChunkSize; y++) {
@@ -257,6 +274,7 @@ public class NetworkThread {
                             incomingUpdates.Enqueue(new Update(UpdateType.PLAYER_ADD, p.player, new Vector2(p.args[0], p.args[1])));
                             break;
                         case (int)PacketType.PLAYER_DEREGISTER:
+                            Debug.Log("DEREGISTER");
                             incomingUpdates.Enqueue(new Update(UpdateType.PLAYER_REMOVE, p.player, new Vector2(p.args[0], p.args[1])));
                             break;
                         case (int)PacketType.TIME:

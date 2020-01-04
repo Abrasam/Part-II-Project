@@ -53,42 +53,42 @@ public class WireFrame : MonoBehaviour {
     private void OnPostRender() {
         if (!valid) return;
         GL.Begin(GL.LINES);
-        GL.Color(Color.black);
-        GL.Vertex3(destroy.x, destroy.y, destroy.z);
-        GL.Vertex3(destroy.x + 1f, destroy.y, destroy.z);
+        GL.Color(Color.white);
+        GL.Vertex3(destroy.x - 0.02f, destroy.y - 0.02f, destroy.z - 0.02f);
+        GL.Vertex3(destroy.x + 1.02f, destroy.y - 0.02f, destroy.z - 0.02f);
 
-        GL.Vertex3(destroy.x + 1f, destroy.y, destroy.z);
-        GL.Vertex3(destroy.x + 1f, destroy.y, destroy.z + 1f);
+        GL.Vertex3(destroy.x + 1.02f, destroy.y - 0.02f, destroy.z - 0.02f);
+        GL.Vertex3(destroy.x + 1.02f, destroy.y - 0.02f, destroy.z + 1.02f);
 
-        GL.Vertex3(destroy.x + 1f, destroy.y, destroy.z + 1f);
-        GL.Vertex3(destroy.x, destroy.y, destroy.z + 1f);
+        GL.Vertex3(destroy.x + 1.02f, destroy.y - 0.02f, destroy.z + 1.02f);
+        GL.Vertex3(destroy.x - 0.02f, destroy.y - 0.02f, destroy.z + 1.02f);
 
-        GL.Vertex3(destroy.x, destroy.y, destroy.z + 1f);
-        GL.Vertex3(destroy.x, destroy.y, destroy.z);
+        GL.Vertex3(destroy.x - 0.02f, destroy.y - 0.02f, destroy.z + 1.02f);
+        GL.Vertex3(destroy.x - 0.02f, destroy.y - 0.02f, destroy.z - 0.02f);
 
-        GL.Vertex3(destroy.x, destroy.y, destroy.z);
-        GL.Vertex3(destroy.x, destroy.y + 1f, destroy.z);
+        GL.Vertex3(destroy.x - 0.02f, destroy.y - 0.02f, destroy.z - 0.02f);
+        GL.Vertex3(destroy.x - 0.02f, destroy.y + 1.02f, destroy.z - 0.02f);
 
-        GL.Vertex3(destroy.x + 1f, destroy.y, destroy.z);
-        GL.Vertex3(destroy.x + 1f, destroy.y + 1f, destroy.z);
+        GL.Vertex3(destroy.x + 1.02f, destroy.y - 0.02f, destroy.z - 0.02f);
+        GL.Vertex3(destroy.x + 1.02f, destroy.y + 1.02f, destroy.z - 0.02f);
 
-        GL.Vertex3(destroy.x, destroy.y, destroy.z + 1f);
-        GL.Vertex3(destroy.x, destroy.y + 1f, destroy.z + 1f);
+        GL.Vertex3(destroy.x - 0.02f, destroy.y - 0.02f, destroy.z + 1.02f);
+        GL.Vertex3(destroy.x - 0.02f, destroy.y + 1.02f, destroy.z + 1.02f);
 
-        GL.Vertex3(destroy.x + 1f, destroy.y, destroy.z + 1f);
-        GL.Vertex3(destroy.x + 1f, destroy.y, destroy.z + 1f);
+        GL.Vertex3(destroy.x + 1.02f, destroy.y - 0.02f, destroy.z + 1.02f);
+        GL.Vertex3(destroy.x + 1.02f, destroy.y - 0.02f, destroy.z + 1.02f);
 
-        GL.Vertex3(destroy.x, destroy.y + 1f, destroy.z);
-        GL.Vertex3(destroy.x + 1f, destroy.y + 1f, destroy.z);
+        GL.Vertex3(destroy.x - 0.02f, destroy.y + 1.02f, destroy.z - 0.02f);
+        GL.Vertex3(destroy.x + 1.02f, destroy.y + 1.02f, destroy.z - 0.02f);
 
-        GL.Vertex3(destroy.x + 1f, destroy.y + 1f, destroy.z);
-        GL.Vertex3(destroy.x + 1f, destroy.y + 1f, destroy.z + 1f);
+        GL.Vertex3(destroy.x + 1.02f, destroy.y + 1.02f, destroy.z - 0.02f);
+        GL.Vertex3(destroy.x + 1.02f, destroy.y + 1.02f, destroy.z + 1.02f);
 
-        GL.Vertex3(destroy.x + 1f, destroy.y + 1f, destroy.z + 1f);
-        GL.Vertex3(destroy.x, destroy.y + 1f, destroy.z + 1f);
+        GL.Vertex3(destroy.x + 1.02f, destroy.y + 1.02f, destroy.z + 1.02f);
+        GL.Vertex3(destroy.x - 0.02f, destroy.y + 1.02f, destroy.z + 1.02f);
 
-        GL.Vertex3(destroy.x, destroy.y + 1f, destroy.z + 1f);
-        GL.Vertex3(destroy.x, destroy.y + 1f, destroy.z);
+        GL.Vertex3(destroy.x - 0.02f, destroy.y + 1.02f, destroy.z + 1.02f);
+        GL.Vertex3(destroy.x - 0.02f, destroy.y + 1.02f, destroy.z - 0.02f);
         GL.End();
     }
 }

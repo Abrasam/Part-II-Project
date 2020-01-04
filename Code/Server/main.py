@@ -20,15 +20,25 @@ class DHTThread:  # todo: make this gracefully die/integrate it into the select 
             try:
                 data = self.socket.recv(1024)
                 if data:
-                    msg = json.loads(data.decode())
-                    #  assume is find chunk for now.
-                    msg = tuple(msg)
-                    future = asyncio.run_coroutine_threadsafe(self.dht.get_chunk(msg), dht.loop)
-                    addr = future.result()
-                    if addr is None:
-                        future = asyncio.run_coroutine_threadsafe(self.dht.generate_chunk(msg), dht.loop)
+                    msg = json.loads(data[1:].decode())
+                    if data[0] == 0:
+                        msg = tuple(msg)
+                        future = asyncio.run_coroutine_threadsafe(self.dht.get_chunk(msg), dht.loop)
                         addr = future.result()
-                    self.socket.send(addr.encode() + b'\n')
+                        if addr is None:
+                            future = asyncio.run_coroutine_threadsafe(self.dht.generate_chunk(msg), dht.loop)
+                            addr = future.result()
+                        self.socket.send(addr.encode() + b'\n')
+                    elif data[0] == 1:
+                        name = msg["name"]
+                        print(f"Looking for {name}")
+                        future = asyncio.run_coroutine_threadsafe(self.dht.get_player(name), self.dht.loop)
+                        player = future.result()
+                        if player:
+                            x,y,z = player["pos"]
+                            self.socket.send(json.dumps({"x":x,"y":y,"z":z}).encode())
+                        else:
+                            self.socket.send(json.dumps({"x":0,"y":32,"z":0}).encode())
                 else:
                     self.socket.close()
                     return
@@ -88,11 +98,11 @@ def ctrl_loop():
                         s.close()
                     else:
                         if chunk_coord not in loaded:  # if chunk not loaded then load it
-                            loaded[chunk_coord] = ChunkThread(chunks[chunk_coord])
+                            loaded[chunk_coord] = ChunkThread(dht, chunks[chunk_coord])
                         s.send(b'ok')  # start normal game comms
                         s.setblocking(0)
-                        client = Client(ClientType.PLAYER, loaded[chunk_coord], msg["player"])
-                        loaded[chunk_coord].register(client)  # register to chunk
+                        client = Client(ClientType.PLAYER, loaded[chunk_coord], msg["player"], s)
+                        loaded[chunk_coord].add_client(client)  # register to chunk
                         clients[s] = client
                 elif msg["type"] == "generate":
                     chunk_coord = tuple(msg["chunk"])
@@ -113,7 +123,7 @@ def ctrl_loop():
                             else:
                                 client.buf += c
                     else:
-                        if clients[r].chunk_thread.deregister(clients[r]):
+                        if clients[r].chunk_thread.remove_client(clients[r]):
                             clients[r].chunk_thread.stop()
                             del loaded[clients[r].chunk_thread.chunk.location]
                         del clients[r]
@@ -138,7 +148,7 @@ def ctrl_loop():
                 pass
 
         for e in exceptional:
-            if clients[e].chunk_thread.deregister(clients[e]):
+            if clients[e].chunk_thread.remove_client(clients[e]):
                 clients[e].chunk_thread.stop()
                 del loaded[clients[e].chunk_thread.chunk.location]
             del clients[e]
