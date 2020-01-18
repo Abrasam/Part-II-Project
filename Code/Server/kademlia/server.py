@@ -38,7 +38,6 @@ class DHTServer:
         return json.loads(value) if value else None
 
     async def save_player(self, name, location):
-        print(f"saving {location}")
         key = int(sha1(name.encode()).hexdigest(), 16)
         await self.server.insert(key, json.dumps({"pos":location}), store_type=self.server.ext_store_player)
 

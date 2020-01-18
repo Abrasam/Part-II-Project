@@ -83,7 +83,7 @@ def ctrl_loop():
         for s in sockets:
             if s.fileno() == -1:
                 print(clients[s])
-        readable, writable, exceptional = select.select(sockets, sockets, sockets)
+        readable, writable, exceptional = select.select(sockets, sockets, sockets, 10)
         for r in readable:
             if r == ss:
                 s, addr = ss.accept()

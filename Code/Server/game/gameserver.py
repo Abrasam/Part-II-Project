@@ -64,7 +64,7 @@ class ChunkThread(threading.Thread):
                     c.send(packet)
         elif packet["type"] == PacketType.PLAYER_DEREGISTER.value:
             if sender in self.players:
-                print("saving that for you sir")
+
                 asyncio.run_coroutine_threadsafe(self.dht.save_player(self.players[sender].name, self.players[sender].location), self.dht.loop)
                 del self.players[sender]
                 for c in self.clients:
@@ -95,7 +95,6 @@ class ChunkThread(threading.Thread):
     def remove_client(self, client):
         self.clients.remove(client)
         if client in self.players:
-            print("DEREGISTER")
             self.q.put((Packet(PacketType.PLAYER_DEREGISTER, self.chunk.location, player=client.name).dict(), client))
         return len(self.clients) == 0
 

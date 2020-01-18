@@ -193,7 +193,6 @@ class KademliaNode(asyncio.DatagramProtocol):
         self.table.add_contact(node)
         await self.lookup(self.id)
         await self.table.refresh_buckets(self.table.buckets[i] for i in range(self.table.get_first_nonempty_bucket()+1, len(self.table.buckets)))  # should this be different?
-        print("this terminated")
 
     def republish_keys(self):
         now = time.time()
