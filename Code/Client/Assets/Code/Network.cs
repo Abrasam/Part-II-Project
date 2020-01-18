@@ -153,7 +153,6 @@ public class NetworkThread {
     }
 
     public void Start() {
-        Debug.Log(eventThread);
         if (eventThread == null) {
             eventThread = new Thread(EventHandler);
             eventThread.IsBackground = true;

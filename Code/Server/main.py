@@ -46,20 +46,22 @@ class DHTThread:  # todo: make this gracefully die/integrate it into the select 
                 return
 
 
-if len(sys.argv) < 2:
-    print("Usage: <command> <base port> <bootstrap address> <bootstrap port>")
+if len(sys.argv) < 3:
+    print("Usage: <command> <bind ip> <base port> <bootstrap address> <bootstrap port>")
     sys.exit()
 
-base_port = int(sys.argv[1])
+bind_ip = sys.argv[1]
 
-dht = DHTServer(('0.0.0.0', base_port))
+base_port = int(sys.argv[2])
+
+dht = DHTServer((bind_ip, base_port))
 dht_ready = threading.Event()
 
 
 def ctrl_loop():
     dht_ready.wait()
     ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    ss.bind(('0.0.0.0', base_port + 1))
+    ss.bind((bind_ip, base_port + 1))
     ss.setblocking(0)
 
     ss.listen(5)
@@ -74,9 +76,9 @@ def ctrl_loop():
     t = time.time()
 
     while True:
-        if time.time() - t > 5:
-            t = time.time()
-            print(f"Thread Count: {threading.active_count()}")
+        if time.time() - t > 3600:
+            for coord in chunks:
+                asyncio.run_coroutine_threadsafe(dht.republish_chunk(coord, (bind_ip, base_port + 1)), dht.loop)
         sockets = list(clients.keys()) + [ss]
         for s in sockets:
             if s.fileno() == -1:
@@ -162,8 +164,8 @@ game_server_ctrl_thread.start()
 
 async def run():
     print("initialising DHT")
-    if len(sys.argv) == 4:  # have supplied bootstrap
-        await dht.run(bootstrap=Node(int(sys.argv[1]), (sys.argv[2], int(sys.argv[3]))))
+    if len(sys.argv) == 5:  # have supplied bootstrap
+        await dht.run(bootstrap=Node(int(sys.argv[2]), (sys.argv[3], int(sys.argv[4]))))
     else:
         await dht.run()
     dht_ready.set()

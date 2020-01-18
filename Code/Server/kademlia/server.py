@@ -42,6 +42,10 @@ class DHTServer:
         key = int(sha1(name.encode()).hexdigest(), 16)
         await self.server.insert(key, json.dumps({"pos":location}), store_type=self.server.ext_store_player)
 
+    async def republish_chunk(self, coord, addr):
+        key = int(sha1(str(coord).encode()).hexdigest(), 16)
+        await self.server.insert(key, json.dumps({"ip": addr[0], "port": addr[1]}), store_type=self.server.ext_store_chunk)
+
     async def generate_chunk(self, coord):
         key = int(sha1(str(coord).encode()).hexdigest(), 16)
         nodes = await self.server.lookup(key)

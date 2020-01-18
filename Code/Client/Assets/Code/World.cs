@@ -42,9 +42,9 @@ public class World : MonoBehaviour {
 
         new System.Random().NextBytes(bytes);
 
-        username = "jakesully123456";// string.Join("",bytes);
+        username = string.Join("",bytes); //"jakesully123456";//
 
-        nt = new NetworkThread(this, username, updates, events, "127.0.0.1", 25566);
+        nt = new NetworkThread(this, username, updates, events, "5.135.160.191", 24001);
         player.transform.position = nt.GetLocation();
         nt.Start();
     }
