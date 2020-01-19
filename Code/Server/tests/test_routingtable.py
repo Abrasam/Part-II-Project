@@ -5,7 +5,7 @@ from random import getrandbits
 import asyncio
 
 
-class DummyServer():
+class DummyServer:
     def __init__(self, id=getrandbits(160)):
         self.id = id
 
