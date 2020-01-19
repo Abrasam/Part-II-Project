@@ -195,7 +195,7 @@ class KademliaNode(asyncio.DatagramProtocol):
         await self.table.refresh_buckets(self.table.buckets[i] for i in range(self.table.get_first_nonempty_bucket()+1, len(self.table.buckets)))  # should this be different?
 
     def republish_keys(self):
-        now = time.time()
+        now = time.monotonic()
         for key in self.chunks:
             value = self.chunks[key]
             t = self.chunks.time[key]

@@ -26,10 +26,10 @@ class ChunkThread(threading.Thread):
 
     # todo: concurrency issues here with editing players/clients.
     def run(self):
-        ticks = 0
-        timer = 0
+        # ticks = 0
+        # timer = 0
         while True:
-            t = time.time()
+            t = time.monotonic()
             try:
                 n = self.q.qsize()
                 for _ in range(n):
@@ -41,15 +41,15 @@ class ChunkThread(threading.Thread):
                 tmp = datetime.datetime.utcnow()
                 client.send(Packet(PacketType.TIME, [tmp.hour*60+tmp.minute+tmp.second/60]).dict())
             for c in self.players:
-                tim = time.time()
+                tim = time.monotonic()
                 if tim - self.players[c].touched > 5:
                     c.socket.close()
                     self.remove_client(c)
-            time.sleep(max(0,TICK_LENGTH - (time.time() - t)))
+            time.sleep(max(0,TICK_LENGTH - (time.monotonic() - t)))
             if self.done and self.q.empty():
                 return
             '''ticks += 1
-            timer += time.time() - t
+            timer += time.monotonic() - t
             if timer > 5:
                 print("TPS:" + str(ticks / timer))
                 timer = 0
@@ -106,10 +106,10 @@ class Player:
     def __init__(self, name, location):
         self.name = name
         self.location = location
-        self.touched = time.time()
+        self.touched = time.monotonic()
 
     def touch(self):
-        self.touched = time.time()
+        self.touched = time.monotonic()
 
     def update_location(self, loc):
         self.location = loc

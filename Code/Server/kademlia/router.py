@@ -7,13 +7,13 @@ class KBucket:
     def __init__(self, lower, upper, k):
         self.lower, self.upper = lower, upper
         self.k = k
-        self.updated = time.time()
+        self.updated = time.monotonic()
         self.update()
         self.nodes = []
         self.replacement = []
 
     def update(self):
-        self.updated = time.time()
+        self.updated = time.monotonic()
 
     def add_node(self, node):
         if node in self.nodes:
@@ -36,7 +36,7 @@ class KBucket:
             del self.nodes[self.nodes.index(node)]
 
             if len(self.replacement) > 0:
-                print("added from replacement " + str(self.replacement[-1]))
+                #print("added from replacement " + str(self.replacement[-1]))
                 self.add_node(self.replacement.pop())  # this may not accurately do LRU entirely correctly.
 
     def __len__(self):
@@ -83,7 +83,7 @@ class RoutingTable:
         return candidates[:self.k]
 
     def get_stale_buckets(self):
-        now = time.time()
+        now = time.monotonic()
         return list(filter(lambda b: (now - b.updated > 3600), self.buckets))
 
     def refresh_buckets(self, buckets):

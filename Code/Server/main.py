@@ -73,10 +73,10 @@ def ctrl_loop():
 
     print("initialising game server")
 
-    t = time.time()
+    t = time.monotonic()
 
     while True:
-        if time.time() - t > 3600:
+        if time.monotonic() - t > 3600:
             for coord in chunks:
                 asyncio.run_coroutine_threadsafe(dht.republish_chunk(coord, (bind_ip, base_port + 1)), dht.loop)
         sockets = list(clients.keys()) + [ss]
