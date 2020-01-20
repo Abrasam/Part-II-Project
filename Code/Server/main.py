@@ -47,14 +47,18 @@ class DHTThread:  # todo: make this gracefully die/integrate it into the select 
 
 
 if len(sys.argv) < 3:
-    print("Usage: <command> <bind ip> <base port> <bootstrap address> <bootstrap port>")
+    print("Usage: <command> <bind ip> <base port> [-i <id>] [-b <bootstrap address> <bootstrap port> <bootstrap id>]")
     sys.exit()
 
 bind_ip = sys.argv[1]
 
 base_port = int(sys.argv[2])
 
-dht = DHTServer((bind_ip, base_port))
+id = None
+if "-i" in sys.argv:
+    id = int(sys.argv[1+sys.argv.index("-i")])
+
+dht = DHTServer((bind_ip, base_port), id=id)
 dht_ready = threading.Event()
 
 
@@ -94,6 +98,7 @@ def ctrl_loop():
                 if msg["type"] == "connect":
                     chunk_coord = tuple(msg["chunk"])
                     player = msg["player"]
+                    print(f"player {player} is connecting to chunk at {chunk_coord}")
                     #print(f"Client @ {addr} connecting to chunk {chunk_coord}.")
                     if chunk_coord not in chunks:  # if chunk doesn't exist
                         s.send(b'no')
@@ -164,8 +169,8 @@ game_server_ctrl_thread.start()
 
 async def run():
     print("initialising DHT")
-    if len(sys.argv) == 5:  # have supplied bootstrap
-        await dht.run(bootstrap=Node(int(sys.argv[2]), (sys.argv[3], int(sys.argv[4]))))
+    if "-b" in sys.argv:  # have supplied bootstrap but not ID
+        await dht.run(bootstrap=Node(int(sys.argv[sys.argv.index("-b")+3]), (sys.argv[sys.argv.index("-b")+1], int(sys.argv[sys.argv.index("-b")+2]))))
     else:
         await dht.run()
     dht_ready.set()

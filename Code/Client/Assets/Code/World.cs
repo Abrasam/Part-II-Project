@@ -42,7 +42,7 @@ public class World : MonoBehaviour {
 
         new System.Random().NextBytes(bytes);
 
-        username = string.Join("",bytes); //"jakesully123456";//
+        username = "Abrasam";// string.Join("",bytes);
 
         nt = new NetworkThread(this, username, updates, events, "127.0.0.1", 25566);
         player.transform.position = nt.GetLocation();

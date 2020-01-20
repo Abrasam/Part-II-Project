@@ -34,7 +34,6 @@ class DHTServer:
             value = self.server.players[key]
         else:
             value = await self.server.lookup(key, value=True, find_type=self.server.ext_find_player)
-        print(f"getting {value}")
         return json.loads(value) if value else None
 
     async def save_player(self, name, location):

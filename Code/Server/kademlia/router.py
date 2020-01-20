@@ -55,7 +55,7 @@ class KBucket:
 class RoutingTable:
     def __init__(self, server, k):
         self.server = server
-        self.buckets = [KBucket(2**i - 1, 2**(i+1), k) for i in range(0, 160)]
+        self.buckets = [KBucket(2**i, 2**(i+1), k) for i in range(0, 160)]
         self.k = k
 
     def get_bucket(self, id):
@@ -65,12 +65,11 @@ class RoutingTable:
         return None  # should get be here.
 
     def add_contact(self, node):
+        if node.id == self.server.id:
+            raise RuntimeError()
         i = self.get_bucket(node.id)
         if self.buckets[i].add_node(node):
             return
-
-        print("dropped node")
-
         asyncio.ensure_future(self.server.ext_ping(self.buckets[i][0]))  # call ping to force staleness check.
 
     def remove_contact(self, node):
@@ -90,6 +89,7 @@ class RoutingTable:
         return asyncio.gather(*[self.server.lookup(randint(b.lower, b.upper)) for b in buckets])
 
     def get_node_if_contact(self, node_id):
+        if node_id == self.server.id: return None
         buckets = list(filter(lambda b: b.id == node_id, self.buckets[self.get_bucket(node_id)].nodes))
         if len(buckets) == 1:
             return buckets[0]
