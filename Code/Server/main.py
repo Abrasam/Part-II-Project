@@ -141,7 +141,7 @@ def ctrl_loop():
                         if r in exceptional:
                             exceptional.remove(r)
                         r.close()
-                except ConnectionError:
+                except OSError:
                     pass
         for w in writable:
             client = clients[w]
@@ -151,9 +151,7 @@ def ctrl_loop():
                 sent = w.send(data)
                 if sent != len(data):
                     client.to_send.appendleft(data[sent:])
-            except IndexError:
-                pass
-            except ConnectionError:
+            except OSError:
                 pass
 
         for e in exceptional:
