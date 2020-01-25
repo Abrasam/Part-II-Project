@@ -142,6 +142,7 @@ def ctrl_loop():
                             exceptional.remove(r)
                         r.close()
                 except OSError:
+                    print("I DIE\n\n\n\n\nIDIE")
                     pass
         for w in writable:
             client = clients[w]
@@ -152,6 +153,7 @@ def ctrl_loop():
                 if sent != len(data):
                     client.to_send.appendleft(data[sent:])
             except OSError:
+                print("I DIE\n\n\n\n\nIDIE")
                 pass
 
         for e in exceptional:
