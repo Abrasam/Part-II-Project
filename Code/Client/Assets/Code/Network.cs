@@ -191,6 +191,7 @@ public class NetworkThread {
             r.Abort();
             incomingUpdates.Enqueue(new Update(UpdateType.UNLOAD_CHUNK, "", r.GetChunkCoord()));
         }
+        Debug.Log(servers.Count);
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
                 bool found = false;

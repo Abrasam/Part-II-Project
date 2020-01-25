@@ -23,6 +23,7 @@ class DHTThread:  # todo: make this gracefully die/integrate it into the select 
                     msg = json.loads(data[1:].decode())
                     if data[0] == 0:
                         msg = tuple(msg)
+                        print("Chunk location query")
                         future = asyncio.run_coroutine_threadsafe(self.dht.get_chunk(msg), dht.loop)
                         addr = future.result()
                         if addr is None:
@@ -119,6 +120,8 @@ def ctrl_loop():
                 elif msg["type"] == "dht":
                     DHTThread(s, dht)
                     s.send(b'ok')
+                elif msg["type"] == "ping":
+                    s.send(b'pong')
             else:
                 try:
                     data = r.recv(1024)

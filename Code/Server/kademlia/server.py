@@ -22,9 +22,23 @@ class DHTServer:
 
     async def get_chunk(self, coord):
         key = int(sha1(str(coord).encode()).hexdigest(), 16)  # sha1 is 160 bits so useful for kademlia.
+        value = None
         if key in self.server.chunks:
-            return self.server.chunks[key]
-        value = await self.server.lookup(key, value=True, find_type=self.server.ext_find_chunk)
+            value = self.server.chunks[key]
+        else:
+            value = await self.server.lookup(key, value=True, find_type=self.server.ext_find_chunk)
+        print(f"find?{value}")
+        if value is not None:
+            addr = json.loads(value)
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            try:
+                s.connect((addr["ip"],addr["port"]))
+                s.send(b'ping')
+                if s.recv(4) == b'pong':
+                    return value
+            finally:
+                print("finally")
+                return None
         return value
 
     async def get_player(self, name):
