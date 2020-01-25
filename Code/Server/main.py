@@ -145,6 +145,7 @@ def ctrl_loop():
         for w in writable:
             client = clients[w]
             try:
+                if client.to_send.count() < 1: continue
                 data = client.to_send.popleft()
                 #print(f"Sending: {data}")
                 sent = w.send(data)
