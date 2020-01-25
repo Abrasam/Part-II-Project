@@ -103,6 +103,10 @@ public class ChunkThread {
         return new Vector2(chunkCoord[0], chunkCoord[1]);
     }
 
+    public bool IsAlive() {
+        return sendThread.IsAlive && recvThread.IsAlive;
+    }
+
     public void Abort() {
         socket.Close();
     }
@@ -178,7 +182,7 @@ public class NetworkThread {
         List<ChunkThread> rem = new List<ChunkThread>();
         foreach (ChunkThread ct in servers) {
             Vector2 chunk = ct.GetChunkCoord();
-            if (!(Math.Abs(chunk.x - chunkX) < 5 && Math.Abs(chunk.y - chunkY) < 5)) {
+            if (!(Math.Abs(chunk.x - chunkX) < 5 && Math.Abs(chunk.y - chunkY) < 5) || !ct.IsAlive()) {
                 rem.Add(ct);
             }
         }

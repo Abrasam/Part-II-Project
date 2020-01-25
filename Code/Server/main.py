@@ -80,6 +80,7 @@ def ctrl_loop():
     t = time.monotonic()
 
     while True:
+        print(dht.id)
         if time.monotonic() - t > 3600:
             for coord in chunks:
                 asyncio.run_coroutine_threadsafe(dht.republish_chunk(coord, (bind_ip, base_port + 1)), dht.loop)

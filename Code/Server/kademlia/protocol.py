@@ -162,6 +162,7 @@ class KademliaNode(asyncio.DatagramProtocol):
 
     async def lookup(self, key_or_id, value=False, find_type=None):
         nodes = self.table.nearest_nodes_to(key_or_id)
+        print(nodes)
         queried = []
         while len(nodes) > 0:
             best = nodes[0]
