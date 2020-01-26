@@ -66,6 +66,7 @@ dht_ready = threading.Event()
 def ctrl_loop():
     dht_ready.wait()
     ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ss.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     ss.bind((bind_ip, base_port + 1))
     ss.setblocking(0)
 
@@ -87,6 +88,7 @@ def ctrl_loop():
         sockets = list(clients.keys()) + [ss]
         for s in sockets:
             if s.fileno() == -1:
+                sockets.remove(s)
                 print(clients[s])
         readable, writable, exceptional = select.select(sockets, sockets, sockets, 10)
         for r in readable:

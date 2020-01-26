@@ -33,7 +33,7 @@ class DHTServer:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
                 s.connect((addr["ip"],addr["port"]))
-                s.send(b'ping')
+                s.send(json.dumps({"type": "ping"}).encode())
                 if s.recv(4) == b'pong':
                     return value
             finally:

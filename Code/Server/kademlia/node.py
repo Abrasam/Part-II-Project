@@ -6,7 +6,7 @@ class Node:
         self.addr = addr
 
     def __eq__(self, other):
-        return self.id == other.id and self.addr == other.addr  # prioritise older node in address conflict.
+        return self.id == other.id
 
     def __str__(self):
         return "Node("+str(self.id)+")"
