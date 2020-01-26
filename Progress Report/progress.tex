@@ -19,16 +19,30 @@
 	
 	\subsection{Work Completed}
 	\begin{enumerate}
-		\item 
+		\item I have implemented Kademlia, to the specification set out in the original Kademlia paper~\cite{kademlia}. I have made some adjustments and approximations to suit my project. For example, my implementation of Kademlia has two separate \texttt{STORE} and \texttt{FIND\_VALUE} RPCs, one for player data and one for world data, this ensures these are not conflated.
+		\item I have implemented the game server to run alongside the Kademlia network. The client uses the Kademlia DHT to locate the appropriate server for a particular section (chunk~\cite{chunk}) of the world, it can then connect to this server and download the relevant part of the world. The game server also handles simple updates such as player movement, changes in time and terrain editing by the player, these changes are stored on the server and multicast to other clients in (or nearby to) this chunk of the world.
+		\item I have produced a simple 3D client to interact with the world. I had initially proposed to develop this using LWJGL~\cite{lwjgl}, however, in the end I decided to use Unity~\cite{unity} to create the client as this was slightly simpler, and the graphical component is not the focus of this project. This section did take longer than I had anticipated, I spent quite a while working out the best way to generate the meshes for the terrain in such a way that the performance of the client was acceptable.
 	\end{enumerate}
 	\section{Work Remaining}
+	I still need to implement my simple test client, which will be used to stress test the system. Additionally, further work on the game server to perform additional validity checking of player actions (such as ensuring they do not fall through terrain).
 	
+	I will then start evaluation, this will be done by scaling up the system using AWS, as suggested in my project proposal. I will also be performing tests on single node performance, to see how many concurrent clients a single server can handle before it fails.
+	
+	Finally, I will work on any extensions I have time for and do my write-up in parallel. I plan to have a nearly complete version of the dissertation complete by the end of this term.
 	\section{Extensions}
-	
+	In my original proposal I suggested several possible extensions, I have already implemented one of these (terrain generation using coherent noise). I plan to attempt to implement two further extensions, one of which was proposed in my initial proposal:
+	\begin{enumerate}
+		\item I propose to incorporate some simple redundancy into my system so that if a single node dies then the world data for that chunk of the world will not be regenerated from scratch by another node (meaning anything built there is lost).
+		\item I would also like to add some non-player entities to the world so that the game server is doing more, making this a more realistic simulation of an actual game server. So I will be adding some mobs~\cite{mob} if I find time to complete this extension. This was suggested in my proposal.
+	\end{enumerate}
 	\section{Difficulties Faced}
-	
+	So far I have faced few difficulties, I would note that I was unfortunately ill with the flu for the first 2 weeks of the Christmas vacation, meaning I was not productive in that time. I feel that I compensated for this in the remainder of the holiday though. Additionally, I might note that the Kademlia implementation took considerably longer than anticipated, mainly because of poor documentation and the fact that there are two different versions of the Kademlia paper which give conflicting specifications. I eventually discovered this discrepancy and settled on the implementation outlined in the earlier paper which was simpler and more clearly defined.
 	\begin{thebibliography}{9}
-			
+		\bibitem{kademlia} Maymounkov, P. and Mazières, D. Kademlia: A Peer-to-peer Information System Based on the XOR Metric. \url{https://www.scs.stanford.edu/~dm/home/papers/kpos.pdf}. Accessed: 2020-01-26.
+		\bibitem{chunk} ``Chunk'' on the Minecraft Wiki. \url{https://minecraft.gamepedia.com/Chunk}. Accessed: 2020-01-26.
+		\bibitem{lwjgl} LWJGL: Lightweight Java Game Library. \url{https://www.lwjgl.org/}. Accessed: 2020-01-26.
+		\bibitem{unity} Unity Game Engine. \url{https://unity.com/}. Accessed 2020-01-26.
+		\bibitem{mob} ``Mob'' on Wikipedia. \url{https://en.wikipedia.org/wiki/Mob_(gaming)}. Accessed: 2020-01-26.
 	\end{thebibliography}
 
 \end{document}
