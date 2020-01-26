@@ -61,14 +61,17 @@ class DHTServer:
     async def generate_chunk(self, coord):
         key = int(sha1(str(coord).encode()).hexdigest(), 16)
         nodes = await self.server.lookup(key)
-        if len(nodes) > 0:
+        for i in range(len(nodes)):
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            addr = (nodes[0].addr[0], nodes[0].addr[1]+1)
-            s.connect(addr)
-            s.send(json.dumps({"type": "generate", "chunk": coord}).encode())
-            if s.recv(2) == b'ok':
-                addr = json.dumps({"ip": addr[0], "port": addr[1]})
-                # incremented port because game port = kademlia port + 1 for simplicity's sake.
-                await self.server.insert(key, addr, store_type=self.server.ext_store_chunk)
-                return addr
+            addr = (nodes[i].addr[0], nodes[i].addr[1]+1)
+            try:
+                s.connect(addr)
+                s.send(json.dumps({"type": "generate", "chunk": coord}).encode())
+                if s.recv(2) == b'ok':
+                    addr = json.dumps({"ip": addr[0], "port": addr[1]})
+                    # incremented port because game port = kademlia port + 1 for simplicity's sake.
+                    await self.server.insert(key, addr, store_type=self.server.ext_store_chunk)
+                    return addr
+            except ConnectionError:
+                print("Node down, trying next or dying gracefully")
         return None

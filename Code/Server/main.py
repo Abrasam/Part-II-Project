@@ -17,33 +17,31 @@ class DHTThread:  # todo: make this gracefully die/integrate it into the select 
 
     def mainloop(self):
         while True:
-            try:
-                data = self.socket.recv(1024)
-                if data:
-                    msg = json.loads(data[1:].decode())
-                    if data[0] == 0:
-                        msg = tuple(msg)
-                        print("Chunk location query")
-                        future = asyncio.run_coroutine_threadsafe(self.dht.get_chunk(msg), dht.loop)
+            data = self.socket.recv(1024)
+            if data:
+                msg = json.loads(data[1:].decode())
+                if data[0] == 0:
+                    msg = tuple(msg)
+                    print("Chunk location query")
+                    future = asyncio.run_coroutine_threadsafe(self.dht.get_chunk(msg), dht.loop)
+                    addr = future.result()
+                    if addr is None:
+                        print("address invalid")
+                        future = asyncio.run_coroutine_threadsafe(self.dht.generate_chunk(msg), dht.loop)
                         addr = future.result()
-                        if addr is None:
-                            future = asyncio.run_coroutine_threadsafe(self.dht.generate_chunk(msg), dht.loop)
-                            addr = future.result()
-                        self.socket.send(addr.encode() + b'\n')
-                    elif data[0] == 1:
-                        name = msg["name"]
-                        print(f"Looking for {name}")
-                        future = asyncio.run_coroutine_threadsafe(self.dht.get_player(name), self.dht.loop)
-                        player = future.result()
-                        if player:
-                            x,y,z = player["pos"]
-                            self.socket.send(json.dumps({"x":x,"y":y,"z":z}).encode())
-                        else:
-                            self.socket.send(json.dumps({"x":0,"y":32,"z":0}).encode())
-                else:
-                    self.socket.close()
-                    return
-            except ConnectionError:
+                    self.socket.send(addr.encode() + b'\n')
+                elif data[0] == 1:
+                    name = msg["name"]
+                    print(f"Looking for {name}")
+                    future = asyncio.run_coroutine_threadsafe(self.dht.get_player(name), self.dht.loop)
+                    player = future.result()
+                    if player:
+                        x,y,z = player["pos"]
+                        self.socket.send(json.dumps({"x":x,"y":y,"z":z}).encode())
+                    else:
+                        self.socket.send(json.dumps({"x":0,"y":32,"z":0}).encode())
+            else:
+                self.socket.close()
                 return
 
 
@@ -88,44 +86,44 @@ def ctrl_loop():
         sockets = list(clients.keys()) + [ss]
         for s in sockets:
             if s.fileno() == -1:
-                sockets.remove(s)
-                print(clients[s])
-        readable, writable, exceptional = select.select(sockets, sockets, sockets, 10)
-        for r in readable:
-            if r == ss:
-                s, addr = ss.accept()
-                s.setblocking(1)
-                data = s.recv(1024)
-                msg = json.loads(data.decode())
-                #print(msg)
-                if msg["type"] == "connect":
-                    chunk_coord = tuple(msg["chunk"])
-                    player = msg["player"]
-                    print(f"player {player} is connecting to chunk at {chunk_coord}")
-                    #print(f"Client @ {addr} connecting to chunk {chunk_coord}.")
-                    if chunk_coord not in chunks:  # if chunk doesn't exist
-                        s.send(b'no')
-                        s.close()
-                    else:
-                        if chunk_coord not in loaded:  # if chunk not loaded then load it
-                            loaded[chunk_coord] = ChunkThread(dht, chunks[chunk_coord])
-                        s.send(b'ok')  # start normal game comms
-                        s.setblocking(0)
-                        client = Client(ClientType.PLAYER, loaded[chunk_coord], msg["player"], s)
-                        loaded[chunk_coord].add_client(client)  # register to chunk
-                        clients[s] = client
-                elif msg["type"] == "generate":
-                    chunk_coord = tuple(msg["chunk"])
-                    if chunk_coord not in chunks:
-                        chunks[chunk_coord] = Chunk(*chunk_coord)
-                    s.send(b'ok')
-                elif msg["type"] == "dht":
-                    DHTThread(s, dht)
-                    s.send(b'ok')
-                elif msg["type"] == "ping":
-                    s.send(b'pong')
-            else:
-                try:
+                s.close()
+                del clients[s]
+        try:
+            readable, writable, exceptional = select.select(sockets, sockets, sockets, 10)
+            for r in readable:
+                if r == ss:
+                    s, addr = ss.accept()
+                    s.setblocking(1)
+                    data = s.recv(1024)
+                    msg = json.loads(data.decode())
+                    #print(msg)
+                    if msg["type"] == "connect":
+                        chunk_coord = tuple(msg["chunk"])
+                        player = msg["player"]
+                        print(f"player {player} is connecting to chunk at {chunk_coord}")
+                        #print(f"Client @ {addr} connecting to chunk {chunk_coord}.")
+                        if chunk_coord not in chunks:  # if chunk doesn't exist
+                            s.send(b'no')
+                            s.close()
+                        else:
+                            if chunk_coord not in loaded:  # if chunk not loaded then load it
+                                loaded[chunk_coord] = ChunkThread(dht, chunks[chunk_coord])
+                            s.send(b'ok')  # start normal game comms
+                            s.setblocking(0)
+                            client = Client(ClientType.PLAYER, loaded[chunk_coord], msg["player"], s)
+                            loaded[chunk_coord].add_client(client)  # register to chunk
+                            clients[s] = client
+                    elif msg["type"] == "generate":
+                        chunk_coord = tuple(msg["chunk"])
+                        if chunk_coord not in chunks:
+                            chunks[chunk_coord] = Chunk(*chunk_coord)
+                        s.send(b'ok')
+                    elif msg["type"] == "dht":
+                        DHTThread(s, dht)
+                        s.send(b'ok')
+                    elif msg["type"] == "ping":
+                        s.send(b'pong')
+                else:
                     data = r.recv(1024)
                     if data:
                         client = clients[r]
@@ -144,29 +142,24 @@ def ctrl_loop():
                         if r in exceptional:
                             exceptional.remove(r)
                         r.close()
-                except OSError:
-                    print("I DIE\n\n\n\n\nIDIE")
-                    pass
-        for w in writable:
-            client = clients[w]
-            try:
+            for w in writable:
+                client = clients[w]
                 if len(client.to_send) < 1: continue
                 data = client.to_send.popleft()
-                #print(f"Sending: {data}")
                 sent = w.send(data)
                 if sent != len(data):
                     client.to_send.appendleft(data[sent:])
-            except OSError:
-                print("I DIE\n\n\n\n\nIDIE")
-                pass
 
-        for e in exceptional:
-            if clients[e].chunk_thread.remove_client(clients[e]):
-                clients[e].chunk_thread.stop()
-                del loaded[clients[e].chunk_thread.chunk.location]
-            del clients[e]
-            e.close()
-
+            for e in exceptional:
+                if clients[e].chunk_thread.remove_client(clients[e]):
+                    clients[e].chunk_thread.stop()
+                    del loaded[clients[e].chunk_thread.chunk.location]
+                del clients[e]
+                e.close()
+        except OSError:
+            print(list(map(lambda x: x.fileno(), sockets)))
+        except ValueError:
+            print(list(map(lambda x: x.fileno(), sockets)))
 
 game_server_ctrl_thread = threading.Thread(target=ctrl_loop)
 game_server_ctrl_thread.setDaemon(True)
