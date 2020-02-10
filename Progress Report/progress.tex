@@ -4,7 +4,7 @@
 
 \begin{document}
 	\title{Progress Report -- Voxel Populi:\\ A Decentralised Peer-to-Peer Voxel-Based World}
-	\author{Samuel J. Sully}
+	\author{Samuel J. Sully (sjs252)}
 	\date{26 January 2020}
 	\maketitle
 	\thispagestyle{empty}
@@ -15,11 +15,11 @@
 	\textbf{Project Overseers:} Prof. Marcelo Fiore \&  Dr. Amanda Prorok
 
 	\section{Status of Project}
-	Overall, my project is progressing roughly according to plan, with a few minor deviations. I am approximately keeping up with my timetable, though there is one item which I have not completed. The item in question is the small test client which will be fairly easy to implement. This has not yet been needed and I've spent more time testing and debugging the rest of the project first before I move onto more formal evaluation.
+	My project aims to create a 3D online world using a decentralised peer-to-peer network architecture. This involves 3 main components: a Kademlia distributed hash table (DHT), the game server and the client. I am approximately keeping up with my timetable and have more or less passed my success criteria. Though there is one item which I have not completed. The item in question is a small test agent to be used in evaluating the project which will be fairly simple to implement. This has not yet been needed and I've spent more time testing and debugging the rest of the project first before I move onto evaluation.
 	
 	\subsection{Work Completed}
 	\begin{enumerate}
-		\item I have implemented Kademlia, to the specification set out in the original Kademlia paper~\cite{kademlia}. I have made some adjustments and approximations to suit my project. For example, my implementation of Kademlia has two separate \texttt{STORE} and \texttt{FIND\_VALUE} RPCs, one for player data and one for world data, this ensures these are not conflated.
+		\item I have implemented the Kademlia DHT, based on the specification set out in the Kademlia paper~\cite{kademlia}. I have made some adjustments and approximations to suit my project. For example, my implementation of Kademlia has two separate \texttt{STORE} and \texttt{FIND\_VALUE} RPCs, one for player data and one for world data, this ensures these types of data are not conflated.
 		\item I have implemented the game server to run alongside the Kademlia network. The client uses the Kademlia DHT to locate the appropriate server for a particular section (chunk~\cite{chunk}) of the world, it can then connect to this server and download the relevant part of the world. The game server also handles simple updates such as player movement, changes in time and terrain editing by the player, these changes are stored on the server and multicast to other clients in (or nearby to) this chunk of the world.
 		\item I have produced a simple 3D client to interact with the world. I had initially proposed to develop this using LWJGL~\cite{lwjgl}, however, in the end I decided to use Unity~\cite{unity} to create the client as this was slightly simpler, and the graphical component is not the focus of this project. This section did take longer than I had anticipated, I spent quite a while working out the best way to generate the meshes for the terrain in such a way that the performance of the client was acceptable.
 	\end{enumerate}
@@ -28,7 +28,7 @@
 	
 	I will then start evaluation, this will be done by scaling up the system using AWS, as suggested in my project proposal. I will also be performing tests on single node performance, to see how many concurrent clients a single server can handle before it fails.
 	
-	Finally, I will work on any extensions I have time for and do my write-up in parallel. I plan to have a nearly complete version of the dissertation complete by the end of this term.
+	Finally, I will work on any extensions I have time for and do my write-up in parallel. I plan to have a near complete dissertation by the end of this term.
 	\section{Extensions}
 	In my original proposal I suggested several possible extensions, I have already implemented one of these (terrain generation using coherent noise). I plan to attempt to implement two further extensions, one of which was proposed in my initial proposal:
 	\begin{enumerate}
@@ -36,7 +36,7 @@
 		\item I would also like to add some non-player entities to the world so that the game server is doing more, making this a more realistic simulation of an actual game server. So I will be adding some mobs~\cite{mob} if I find time to complete this extension. This was suggested in my proposal.
 	\end{enumerate}
 	\section{Difficulties Faced}
-	So far I have faced few difficulties, I would note that I was unfortunately ill with the flu for the first 2 weeks of the Christmas vacation, meaning I was not productive in that time. I feel that I compensated for this in the remainder of the holiday though. Additionally, I might note that the Kademlia implementation took considerably longer than anticipated, mainly because of poor documentation and the fact that there are two different versions of the Kademlia paper which give conflicting specifications. I eventually discovered this discrepancy and settled on the implementation outlined in the earlier paper which was simpler and more clearly defined.
+	So far I have faced few difficulties, I would note that I unfortunately lost some time during the Christmas vacation due to illness. I feel that I compensated for this in the remainder of the holiday though. Additionally, I might note that the Kademlia implementation took considerably longer than anticipated, mainly because of poor documentation and the fact that there are two different versions of the Kademlia paper which give conflicting specifications. I eventually discovered this discrepancy and settled on the implementation outlined in the earlier paper which was simpler and more clearly defined.
 	\begin{thebibliography}{9}
 		\bibitem{kademlia} Maymounkov, P. and Mazières, D. Kademlia: A Peer-to-peer Information System Based on the XOR Metric. \url{https://www.scs.stanford.edu/~dm/home/papers/kpos.pdf}. Accessed: 2020-01-26.
 		\bibitem{chunk} ``Chunk'' on the Minecraft Wiki. \url{https://minecraft.gamepedia.com/Chunk}. Accessed: 2020-01-26.
