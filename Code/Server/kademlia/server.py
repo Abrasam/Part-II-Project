@@ -64,6 +64,7 @@ class DHTServer:
         for i in range(len(nodes)):
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             addr = (nodes[i].addr[0], nodes[i].addr[1]+1)
+            print(f"WUB WUB WUB IMMA DIE{addr}")
             try:
                 s.connect(addr)
                 s.send(json.dumps({"type": "generate", "chunk": coord}).encode())
