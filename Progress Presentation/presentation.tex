@@ -1,0 +1,66 @@
+\documentclass{beamer}
+
+\usepackage{hyperref}
+
+\title{Voxel Populi:\\A Decentralised Peer-to-Peer Voxel-Based World}
+\author{Samuel J. Sully (sjs252)}
+\date{Lent 2020}
+	
+\begin{document}
+		
+	\frame{\titlepage}
+		
+	\begin{frame}
+		\frametitle{Project Description}
+		\pause
+		\begin{itemize}
+			\item<2-> 3D voxel-based world
+			\item<3-> World spatially distributed across network
+			\item<4-> Uses Kademlia distributed hash table -- peer-to-peer
+			\item<5-> Unity graphical client -- interact with world
+			\item<6-> Alternative to usual client-server model for MMOs
+			\item<7-> Aim for load balancing, failure tolerance \& longevity
+		\end{itemize}
+	\end{frame}
+	\begin{frame}
+		\frametitle{Summary of Work}
+		\pause
+		\begin{itemize}
+			\item<2->Work Completed:
+			\begin{itemize}
+				\item Kademlia DHT
+				\item Game server
+				\item Graphical client
+			\end{itemize}
+			\item<3->Work Remaining:
+			\begin{itemize}
+				\item Improve robustness
+				\item Evaluation client
+				\item (Extensions)
+			\end{itemize}
+		\end{itemize}
+	\end{frame}
+	\begin{frame}
+		\frametitle{Demo}
+		\url{https://drive.google.com/file/d/15Uw_DwdCLs7KNedXpSnNxYbRyq6f_Obt/view?usp=sharing}
+	\end{frame}
+	\begin{frame}
+		\frametitle{Planned Extensions}
+		\pause
+		\begin{itemize}
+			\item<2-> Node failure -- prevent loss of chunks
+			\item<3-> In-world entity -- boids?
+		\end{itemize}
+	\end{frame}
+	\frame{\titlepage}
+	\begin{frame}
+		\frametitle{Evaluation}
+		\begin{itemize}
+			\item Comparison with Kademlia specification
+			\item Testing at scale with AWS and test client
+			\item Use data from (2) to estimate performance at MMO scale
+			\item Stress test of individual server
+			\item Analysis of resilience to various faults (e.g. Sybil, Byzantine)
+		\end{itemize}		
+	\end{frame}
+\end{document}
