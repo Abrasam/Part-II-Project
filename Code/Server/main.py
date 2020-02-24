@@ -65,7 +65,7 @@ def ctrl_loop():
     dht_ready.wait()
     ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ss.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    ss.bind((bind_ip, base_port + 1))
+    ss.bind(('0.0.0.0', base_port + 1))
     ss.setblocking(0)
 
     ss.listen(5)
