@@ -6,7 +6,7 @@ from kademlia.node import Node
 from kademlia.router import RoutingTable
 from kademlia.storage import Storage
 
-TIMEOUT = 1  # RPC timeout.
+TIMEOUT = 2  # RPC timeout.
 K = 20
 ALPHA = 3
 
@@ -20,7 +20,7 @@ def stub(func):
         self.transport.sendto(json.dumps(msg).encode("UTF-8"), node.addr)
         print("sent rpc " + json.dumps(msg) + " to " + str(node.addr) + " id: " + str(node.id))
         f = asyncio.Future()
-        self.waiting[msg["id"]] = (f, loop.call_later(TIMEOUT+random.randint(0,10), self._timeout, msg["id"]), node)
+        self.waiting[msg["id"]] = (f, loop.call_later(TIMEOUT+random.randint(0,TIMEOUT), self._timeout, msg["id"]), node)
         await f
         return f.result()
     return rpc_stub
@@ -40,6 +40,7 @@ class KademliaNode(asyncio.DatagramProtocol):
         self.table = RoutingTable(self, K)
         self.chunks = Storage()
         self.players = Storage()
+        self._timeouts = {}
         loop = asyncio.get_running_loop()
 
         def refresh():
@@ -73,7 +74,7 @@ class KademliaNode(asyncio.DatagramProtocol):
                 return
             res = json.dumps(
                 {"id": msg["id"], "node": self.id, "call": False, "rpc": msg["rpc"], "ret": func(*msg["args"])})
-            #print("return to sender " + res + " " + str(node.id))
+            print("return to sender " + res + " " + str(node.id))
             self.transport.sendto(res.encode("UTF-8"), addr)
         else:
             if msg["id"] in self.waiting:
@@ -107,6 +108,7 @@ class KademliaNode(asyncio.DatagramProtocol):
         del self.waiting[msg_id]
         self.table.remove_contact(node)  # this is not correct to kademlia implementation, need to add 5 failure removal
         print("timed out done now yeet")
+        self._timeouts[node] = time.monotonic()
 
     @stub
     async def ext_ping(self, node):
@@ -167,7 +169,7 @@ class KademliaNode(asyncio.DatagramProtocol):
         while len(nodes) > 0:
             best = nodes[0]
             multicast = []
-            unqueried = list(filter(lambda n: n not in queried, nodes))
+            unqueried = list(filter(lambda n: n not in queried and (n not in self._timeouts or time.monotonic() - self._timeouts[n] > 600), nodes)) # don't query recently failed nodes
             for i in range(0, min(ALPHA, len(unqueried))):
                 multicast.append(unqueried.pop(0))
             #print("ASKING: " + str(multicast))
@@ -200,12 +202,12 @@ class KademliaNode(asyncio.DatagramProtocol):
         for key in self.chunks:
             value = self.chunks[key]
             t = self.chunks.time[key]
-            if now - t > 30:
+            if now - t > 3600:
                 del self.chunks[key]
                 asyncio.ensure_future(self.insert(key, value, store_type=self.ext_store_chunk))
         for key in self.players:
             value = self.players[key]
             t = self.players.time[key]
-            if now - t > 30:
+            if now - t > 3600:
                 del self.players[key]
                 asyncio.ensure_future(self.insert(key, value, store_type=self.ext_store_player))
