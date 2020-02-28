@@ -19,6 +19,7 @@ Content-Disposition: attachment; filename="userdata.txt"
 
 #!/bin/bash
 /bin/echo "$(data)" >> /tmp/testfile.txt
+sudo apt-get update && sudo apt-get upgrade
 apt-get install python3.8 python3.8-dev python3-pip -y
 python3.8 -m pip install noise
 IP=$(curl http://checkip.amazonaws.com)
