@@ -27,6 +27,8 @@ git clone https://github.com/Abrasam/Part-II-Project.git
 cd Part-II-Project/Code/Server
 echo $IP
 pwd
-python3.8 main.py $IP 25565 -b 5.135.160.191 28015 0
-echo "This should never be echoed."
+screen -mSd vox
+screen -S vox -X stuff "python3.8 main.py $IP 25565 -b 5.135.160.191 28015 0
+"
+echo "This should be echoed when init is done."
 --//
