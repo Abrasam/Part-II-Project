@@ -6,7 +6,7 @@ from kademlia.node import Node
 from kademlia.router import RoutingTable
 from kademlia.storage import Storage
 
-TIMEOUT = 2  # RPC timeout.
+TIMEOUT = 3  # RPC timeout.
 K = 20
 ALPHA = 3
 

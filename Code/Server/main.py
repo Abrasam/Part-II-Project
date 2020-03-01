@@ -26,7 +26,7 @@ class DHTThread:  # todo: make this gracefully die/integrate it into the select 
                     future = asyncio.run_coroutine_threadsafe(self.dht.get_chunk(msg), dht.loop)
                     addr = future.result()
                     if addr is None:
-                        print("address invalid")
+                        print("address invalid/chunk doesn't exist")
                         future = asyncio.run_coroutine_threadsafe(self.dht.generate_chunk(msg), dht.loop)
                         addr = future.result()
                     self.socket.send(addr.encode() + b'\n')
@@ -83,6 +83,7 @@ def ctrl_loop():
         if time.monotonic() - t > 3600:
             for coord in chunks:
                 asyncio.run_coroutine_threadsafe(dht.republish_chunk(coord, (bind_ip, base_port + 1)), dht.loop)
+            t = time.monotonic()
         sockets = list(clients.keys()) + [ss]
         for s in sockets:
             if s.fileno() == -1:
