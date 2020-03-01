@@ -22,6 +22,16 @@ Content-Disposition: attachment; filename="userdata.txt"
 sudo apt-get update && sudo apt-get upgrade
 apt-get install python3.8 python3.8-dev python3-pip -y
 python3.8 -m pip install noise
+sysctl -w net.core.rmem_max=8388608
+sysctl -w net.core.rmem_default=8388608
+sysctl -w net.core.wmem_max=8388608
+sysctl -w net.core.wmem_default=8388608
+sysctl -w net.ipv4.udp_mem='262144 327680 434274'
+sysctl -w net.ipv4.udp_rmem_min=16384
+sysctl -w net.ipv4.udp_wmem_min=16384
+sysctl -w net.core.netdev_budget=600
+sysctl -w net.ipv4.ip_early_demux=0
+sysctl -w net.core.netdev_max_backlog=3000
 IP=$(curl http://checkip.amazonaws.com)
 git clone https://github.com/Abrasam/Part-II-Project.git
 cd Part-II-Project/Code/Server
