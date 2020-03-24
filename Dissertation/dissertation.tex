@@ -2,6 +2,7 @@
 
 \usepackage{verbatim}
 \usepackage[hidelinks]{hyperref}
+\usepackage{tabularx}
 
 \raggedbottom                           % try to avoid widows and orphans
 \sloppy
@@ -13,6 +14,13 @@
 
 \renewcommand{\baselinestretch}{1.1}    % adjust line spacing to make
 % more readable
+
+\setlength{\parskip}{0.5em}%
+
+\newcommand{\python}{\emph{Python}}
+\newcommand{\unity}{\emph{Unity}}
+\newcommand{\kademlia}{\emph{Kademlia}}
+\newcommand{\K}{$k$}
 
 \begin{document}
 	
@@ -62,10 +70,10 @@
 	\stepcounter{footnote}
 	
 	\section*{Original Aims of the Project}
-	My project aimed to create a peer-to-peer 3D world using a distributed hash table (DHT), namely Kademlia~\cite{kademlia}. I aimed to explore this decentralised, peer-to-peer approach for Massively Multiplayer Online games (MMOs) to see if such an approach is viable. This was motivated by the advantages of the decentralised approach, such as better load balancing and longevity for the game.
+	My project aimed to create a peer-to-peer 3D world using a distributed hash table (DHT), namely \kademlia{}~\cite{kademlia}. I aimed to explore this decentralised, peer-to-peer approach for Massively Multiplayer Online games (MMOs) to see if such an approach is viable. This was motivated by the advantages of the decentralised approach, such as better load balancing and longevity for the game.
 	
 	\section*{Work Completed}
-	I have completed all the work set out in my proposal, the three parts of my project are all functioning correctly. I implemented Kademlia with some modifications to better suit the virtual world application; I implemented the game server to run above the DHT and process the computation for an individual chunk for the world and I implemented the graphical client in Unity which connects to the world and allows a user to move around and interact with it. I also completed the test client which was used in the evaluation stage.
+	I have completed all the work set out in my proposal, the three parts of my project are all functioning correctly. I implemented \kademlia{} with some modifications to better suit the virtual world application; I implemented the game server to run above the DHT and process the computation for an individual chunk for the world and I implemented the graphical client in \unity{} which connects to the world and allows a user to move around and interact with it. I also completed the test client which was used in the evaluation stage.
 	
 	\section*{Special Difficulties}
 	None.
@@ -102,10 +110,10 @@
 	\section{Project Summary}
 	My project explores a peer-to-peer architecture for MMOs or large scale simulations. This is in contrast to the more commonly used centralised approach. My project is build upon a distributed hash table which is used to locate in the peer-to-peer network the server responsible for handling any particular part of the world.
 	
-	My project consists of three parts: the distributed hash table which is a modified version of the Kademlia~\cite{kademlia} specification; the game server which runs the computation for certain segments of the world and the Unity client used to interact with the world. All these have been completed in adherence to the success criteria in my project proposal, as well as the evaluation client used in the evaluation stage. The project culminated in a large scale test using Amazon Web Services.
+	My project consists of three parts: the distributed hash table which is a modified version of the \kademlia{}~\cite{kademlia} specification; the game server which runs the computation for certain segments of the world and the \unity{} client used to interact with the world. All these have been completed in adherence to the success criteria in my project proposal, as well as the evaluation client used in the evaluation stage. The project culminated in a large scale test using Amazon Web Services.
 	
 	\section{Motivation}
-	The Massively Multiplayer Online Game (MMO) genre is very popular\footnote{World of Warcraft -- a popular MMO -- had 7.7 million subscribers in 2019.} in modern gaming, as an increasing proportion of the populace have access to high speed broadband the prevalence of these games continues to increase. Most of these games employ a centralised client-server mode where the creators of the MMO have a relatively small number of expensive and powerful machines which they use to handle all players.
+	The Massively Multiplayer Online Game (MMO) genre is very popular\footnote{\emph{World of Warcraft} -- a popular MMO -- had 7.7 million subscribers in 2019.} in modern gaming, as an increasing proportion of the populace have access to high speed broadband the prevalence of these games continues to increase. Most of these games employ a centralised client-server mode where the creators of the MMO have a relatively small number of expensive and powerful machines which they use to handle all players.
 	
 	This centralised approach often requires some form of `sharding'~\cite{shard}, whereby players are separated into separate, independent instances (`shards') of the same world. Meaning that players can only interact with others connected to the same shard. The centralised approach also means that the game creators have total authoritative control over the game.
 	
@@ -113,15 +121,92 @@
 	
 	This has a number of advantages over the centralised, sharded approach. One significant advantage is that the world is able to be explicitly mutable (such as the voxel-based world I have implemented), with the sharded approach if a player makes a change in one shard then we may need some way of propagating these changes to the other shards while maintaining consistency. However, in my approach there is only one server which is authoritative for the state of any part of the world so there is no need for complex consensus mechanisms.
 	
-	A further advantage is that the system has improved longevity. When large-scale MMOs cease to be profitable or useful for the developers, who operate the centralised servers, they often shut them down, as recently happened with the popular MMO Club Penguin~\cite{clubpenguin} in 2017. With my approach, if we allow individuals to create their own servers to join the peer-to-peer network then, provided there exists a community dedicated to keeping the MMO running, it can continue to exist at no cost to the developers. It would even be possible to have multiple, separate networks running or even networks running modified versions of the game.
+	A further advantage is that the system has improved longevity. When large-scale MMOs cease to be profitable or useful for the developers, who operate the centralised servers, they often shut them down, as recently happened with the popular MMO \emph{Club Penguin}~\cite{clubpenguin} in 2017. With my approach, if we allow individuals to create their own servers to join the peer-to-peer network then, provided there exists a community dedicated to keeping the MMO running, it can continue to exist at no cost to the developers. It would even be possible to have multiple, separate networks running or even networks running modified versions of the game.
 	
 	\section{Related Works}
 	There are very few large-scale, peer-to-peer MMOs, likely due to the security issues I will present in the evaluation chapter and due to the fact that it limits the ability for the developers to monetize the MMO post-release. However, it is possible that techniques similar to mine may be used behind the scenes on a number of large-scale MMOs.
 	
-	One similar piece of work is SpatialOS~\cite{SpatialOS}, this is a platform for managing online games or simulations in the cloud. It works in a similar way to my project, by splitting up the world into segments which are administrated by separate servers. SpatialOS is produced by the startup Improbable and is still fairly new, however, it is being used in the development of a number of games.
+	One similar piece of work is \emph{SpatialOS}~\cite{SpatialOS}, this is a platform for managing online games or simulations in the cloud. It works in a similar way to my project, by splitting up the world into segments which are administrated by separate servers. \emph{SpatialOS} is produced by the startup Improbable and is still fairly new, however, it is being used in the development of a number of games.
+	
+	It's worth noting also that while my implementation of \kademlia{} is custom, I used a \kademlia{} library~\cite{pykademlia} for \python{} as a reference for a fully functioning Kademlia implementation. However, this implementation uses the approach outlined in the second Kademlia paper, while my approach uses the slightly different approach from the first paper.
 	
 	\cleardoublepage
 	\chapter{Preparation}
+	
+	\section{Starting Point}
+	Prior to this project I had limited experience in implementing distributed systems, my knowledge on such systems mainly comes from the Part IB courses Concurrent and Distributed Systems and Computer Networking. Computer Networking introduced the concept of distributed hash tables (DHTs) which are used extensively in my project. Concurrent and Distributed Systems introduces most of the overarching principles of distributed systems, such as RPCs, which are essential in my project. Furthermore, my project relies on knowledge from a number of other courses, such as Part II Principles of Communication and Part IA Introduction to Graphics.
+	
+	\section{Requirement Analysis}
+	My project aims to implement a suite of software for the operation, interaction with and testing of a 3D world which is distributed over a number of peers in a peer-to-peer network. The success criteria set out in my proposal is as follows:
+	
+	\begin{enumerate}
+		\item My DHT must adhere to the Kademlia specification. It is possible I will need to make some changes to fit the specification better to my needs and this is acceptable.
+		\item The peer-to-peer node program must join the network, bootstrapping via some known node, and then will be able to participate in hosting the game world as it becomes part of the DHT.
+		\item It must be possible to interact with the world using a simple 3D graphical client, which is able to place and remove voxels from the world. These changes must persist.
+		\item The system must handle player moving between separate chunks (and thus, separate peers) seamlessly, with no loading screen.
+		\item There must be a simple test agent which connects to and interacts with the world in some notional way to emulate the behaviour of a human user. This is for the purposes of quantitative evaluation.
+	\end{enumerate}
+
+	In addition to these criterion, the project will need to fulfil a number of other requirements:
+	
+	\begin{itemize}
+		\item \textbf{Robustness:} the system must be very robust, handling node failures with minimal disruption to the overall system, minimising disruption to users connected to the system at a given time.
+		\item \textbf{Deployment:} the implementation must run as a cloud application, being easily deployable to a large number of machines. In my testing I will be using \emph{AWS EC2} Virtual Private Servers running \emph{Ubuntu 18.04}.
+		\item \textbf{Decentralisation:} the implementation must be designed to be entirely decentralised, nodes in the P2P network must be entirely equal, there must be no authoritative entity in the system.
+		\item \textbf{Mutability:} the game world must emulate that of voxel-based games such as \emph{Minecraft}. As such, users must be able to edit the world and have these changes persist, users' locations must also be stored so that when they log out and back in at another time (or to a different server), they return to where they left off.
+	\end{itemize}
+
+	\section{Kademlia}
+	My project is built using a DHT at its core, a DHT is a decentralised storage system based on the commonly used hash table data structure. DHTs store \textless key,value\textgreater~pairs, these are distributed among the nodes in the network, with there existing some method to partition the set of keys between the nodes, preferably in such a way that node joins or leaves require minimal changes to this partition (i.e. a node leaving does not cause the entire key-node mapping to change). The DHT maintains an \emph{overlay network} where each node maintains a set of links to other nodes in the DHT according to the topology of the network, this set of links is used in routing queries around the DHT.
+	
+	\subsection{XOR Metric}
+	The \kademlia{} specification sets out that identifiers be $160$bit integers. Nodes IDs and keys for the DHT occupy this ID space. The notion of distance between identifiers, $d(x,y)$, is given by the bitwise XOR of the two (i.e. $d(x,y) = x \oplus y$). This is a valid metric as it obeys the following properties:
+	\begin{enumerate}
+		\item $d(x,x) = 0$, that is, the distance from any identifier to itself is $0$.
+		\item $d(x,y) > 0$ if $x \neq y$, that is, the  distance between any two distinct identifiers is larger than $0$.
+		\item $d(x,y) = d(y,x)$, that is, distances are symmetric.
+		\item Distances obey  the triangle inequality, i.e. $d(x,z) \leq d(x,y) + d(y,z)$.
+	\end{enumerate}
+	The set of keys which a node `owns' is given by all those which are closest to its ID using the above notion of distance\footnote{This is not strictly true, actually the \K~closest nodes all store values for that key, where \K~is a parameter of the network.}.
+	
+	\subsection{Node State}
+	Each node maintains some amount of information about other nodes in the network in order to route messages. Each node maintains a \K-bucket for each $i$ in $0 \leq i < 160$ , a \K-bucket is simply a sorted list (of length \K) of \textless IP address, UDP port, node ID\textgreater~triples of nodes between $2^i$ and $2^{i+1}$ distance away from this node. The lists are sorted by time last seen, such that the most recently seen node is at the tail of the list. This is useful later when evicting stale nodes from the \K-bucket. Note that \K~is a parameter of the network, the replication parameter.
+	
+	In order to populate these \K-buckets, whenever a node receivers a message from another, it looks for the appropriate \K-bucket and, if the sender is already in the \K-bucket then it is moved to the tail of the list, otherwise it is appended to the tail of the list. If the \K-bucket is full then we send a \texttt{PING} RPC to the least recently seen node, if it fails to reply then we evict it and put the new node in instead, else we discard the new node\footnote{In my implementation, the new node is added to a queue to join the \K-bucket.}.
+	
+	\subsection{RPCs}
+	The Kademlia protocol has four RPCs: \texttt{PING}, \texttt{FIND\_NODE}, \texttt{FIND\_VALUE} and \texttt{STORE}. All other operations are built up from these four RPCs. Table \ref{tab:rpcs} details the function of each RPC. My implementation will deviate from this specification as detailed in \textbf{LINK TO}.
+	
+	\begin{table}
+		\begin{tabularx}{\textwidth}{| l | X |}
+			\hline
+			\texttt{PING} & Used to check whether a node is online, upon receiving a \texttt{PING} RPC a node will reply with its ID.\\
+			\hline
+			\texttt{FIND\_NODE} & Takes a $160$bit integer as argument (and identifier). When a node receives a \texttt{FIND\_NODE} RPC it returns \textless IP address, UDP port, node ID\textgreater~ triples from the \K nearest nodes to the argument identifier that it knows of.\\
+			\hline
+			\texttt{FIND\_VALUE} & Behaves in the same was as \texttt{FIND\_NODE} but will return a value if it possesses one for the supplied ID.\\
+			\hline
+			\texttt{STORE} & Takes a \textless key, value\textgreater~ pair which the receiving node stores.\\
+			\hline
+		\end{tabularx}
+		\caption{The four \kademlia RPCs.}
+		\label{tab:rpcs}
+	\end{table}
+	
+	\subsection{Lookup and Storage}
+	The lookup procedure is used to locate the \K closest nodes to a supplied identifier. The lookup procedure has one parameter, the concurrency factor $\alpha$. It proceeds as follows:
+	\begin{itemize}
+		\item Find $\alpha$ closest nodes from own \K-buckets.
+		\item Send \texttt{FIND\_NODE} RPCs to these $\alpha$ nodes searching for supplied identifier.
+		\item Then we recursively send \texttt{FIND\_NODE} requests nodes it learned of from the results of previous steps until we find no new nodes. Node that at most $\alpha$ requests may be `in-flight' at once.
+	\end{itemize}
+	\subsection{Bootstrap}
+	
+	\section{Game Server}
+
+	\section{Client}
+	
+	\section{Professional Practice}
 	
 	\cleardoublepage
 	\chapter{Implementation}
@@ -140,6 +225,7 @@
 		\bibitem{shard} ``Sharding'' on Wikipedia. \url{https://en.wikipedia.org/wiki/Shard_(database_architecture)}. Accessed: 2019-10-15.
 		\bibitem{clubpenguin} ``Club Penguin is shutting down''. \url{https://techcrunch.com/2017/01/31/club-penguin-is-shutting-down/}. Accessed: 2019-10-15.
 		\bibitem{SpatialOS} SpatialOS by Improbable. \url{https://improbable.io/spatialos}. Accessed: 2020-03-20.
+		\bibitem{pykademlia} Kademlia Python Library. \url{https://github.com/bmuller/kademlia/}. Accessed: 2020-03-20.
 	\end{thebibliography}
 	\cleardoublepage
 	

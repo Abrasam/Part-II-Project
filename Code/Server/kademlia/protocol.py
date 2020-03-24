@@ -166,11 +166,12 @@ class KademliaNode(asyncio.DatagramProtocol):
         nodes = self.table.nearest_nodes_to(key_or_id)
         print(nodes)
         queried = [Node(self.id, ())]
+        found_new = False
         while len(nodes) > 0:
             best = nodes[0]
             multicast = []
             unqueried = list(filter(lambda n: n not in queried and (n not in self._timeouts or time.monotonic() - self._timeouts[n] > 600), nodes)) # don't query recently failed nodes
-            for i in range(0, min(ALPHA, len(unqueried))):
+            for i in range(0, min(ALPHA if found_new else K, len(unqueried))):
                 multicast.append(unqueried.pop(0))
             #print("ASKING: " + str(multicast))
             res = await asyncio.gather(*[find_type(n, key_or_id) if value else self.ext_find_node(n, key_or_id) for n in multicast])
@@ -184,8 +185,12 @@ class KademliaNode(asyncio.DatagramProtocol):
             nodes = list(set(nodes))
             nodes.sort(key=lambda n: n.id ^ key_or_id)
             nodes = nodes[:K]  # only keep K best.
-            if best == nodes[0]:
-                break
+            found_new = best == nodes[0]
+            for n in nodes:
+                if n not in queried:
+                    continue
+            break
+
         return None if value else nodes
 
     async def insert(self, key, value, store_type=None):
