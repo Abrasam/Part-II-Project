@@ -164,7 +164,7 @@ class KademliaNode(asyncio.DatagramProtocol):
 
     async def lookup(self, key_or_id, value=False, find_type=None):
         nodes = self.table.nearest_nodes_to(key_or_id)
-        print(nodes)
+        #print(nodes)
         queried = [Node(self.id, ())]
         found_new = False
         while len(nodes) > 0:
@@ -174,7 +174,7 @@ class KademliaNode(asyncio.DatagramProtocol):
             for i in range(0, min(ALPHA if found_new else K, len(unqueried))):
                 multicast.append(unqueried.pop(0))
             #print("ASKING: " + str(multicast))
-            res = await asyncio.gather(*[find_type(n, key_or_id) if value else self.ext_find_node(n, key_or_id) for n in multicast])
+            res = await asyncio.pgather(*[find_type(n, key_or_id) if value else self.ext_find_node(n, key_or_id) for n in multicast])
             queried += multicast
             for i in range(0, len(res)):
                 if res[i] is None:
