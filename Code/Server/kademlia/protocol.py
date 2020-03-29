@@ -168,7 +168,6 @@ class KademliaNode(asyncio.DatagramProtocol):
         queried = [Node(self.id, ())]
         found_new = False
         while len(nodes) > 0:
-            print("iter")
             best = nodes[0]
             multicast = []
             unqueried = list(filter(lambda n: n not in queried and (n not in self._timeouts or time.monotonic() - self._timeouts[n] > 600), nodes)) # don't query recently failed nodes

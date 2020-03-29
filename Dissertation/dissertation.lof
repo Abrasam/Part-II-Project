@@ -1,6 +1,8 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces A screenshot of terrain from the game \emph {Minecraft}.}}{8}{figure.2.1}%
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Diagram giving an overview of \emph {Voxel Populi} architecture. Note that the client needs to know only the IP and port of any node in the Kademlia network, which it will use to access the DHT and query the IP and port pairs of the nodes containing world data it requires.}}{12}{figure.3.1}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

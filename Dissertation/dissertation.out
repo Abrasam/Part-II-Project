@@ -9,13 +9,23 @@
 \BOOKMARK [2][-]{subsection.2.3.1}{XOR Metric}{section.2.3}% 9
 \BOOKMARK [2][-]{subsection.2.3.2}{Node State}{section.2.3}% 10
 \BOOKMARK [2][-]{subsection.2.3.3}{RPCs}{section.2.3}% 11
-\BOOKMARK [2][-]{subsection.2.3.4}{Lookup and Storage}{section.2.3}% 12
-\BOOKMARK [2][-]{subsection.2.3.5}{Bootstrap}{section.2.3}% 13
-\BOOKMARK [1][-]{section.2.4}{Game Server}{chapter.2}% 14
-\BOOKMARK [1][-]{section.2.5}{Client}{chapter.2}% 15
-\BOOKMARK [1][-]{section.2.6}{Professional Practice}{chapter.2}% 16
-\BOOKMARK [0][-]{chapter.3}{Implementation}{}% 17
-\BOOKMARK [0][-]{chapter.4}{Evaluation}{}% 18
-\BOOKMARK [0][-]{chapter.5}{Conclusion}{}% 19
-\BOOKMARK [0][-]{chapter.5}{Bibliography}{}% 20
-\BOOKMARK [0][-]{appendix.A}{Proposal}{}% 21
+\BOOKMARK [2][-]{subsection.2.3.4}{Node Lookup}{section.2.3}% 12
+\BOOKMARK [2][-]{subsection.2.3.5}{Value Lookup}{section.2.3}% 13
+\BOOKMARK [2][-]{subsection.2.3.6}{Value Storage}{section.2.3}% 14
+\BOOKMARK [2][-]{subsection.2.3.7}{Bootstrap}{section.2.3}% 15
+\BOOKMARK [1][-]{section.2.4}{Game Server}{chapter.2}% 16
+\BOOKMARK [1][-]{section.2.5}{Client}{chapter.2}% 17
+\BOOKMARK [1][-]{section.2.6}{World \046 Terrain}{chapter.2}% 18
+\BOOKMARK [1][-]{section.2.7}{Professional Practice}{chapter.2}% 19
+\BOOKMARK [2][-]{subsection.2.7.1}{Ethical Implications}{section.2.7}% 20
+\BOOKMARK [2][-]{subsection.2.7.2}{Methodology}{section.2.7}% 21
+\BOOKMARK [2][-]{subsection.2.7.3}{Tooling}{section.2.7}% 22
+\BOOKMARK [2][-]{subsection.2.7.4}{Documentation}{section.2.7}% 23
+\BOOKMARK [0][-]{chapter.3}{Implementation}{}% 24
+\BOOKMARK [1][-]{section.3.1}{Kademlia}{chapter.3}% 25
+\BOOKMARK [1][-]{section.3.2}{Game Server}{chapter.3}% 26
+\BOOKMARK [1][-]{section.3.3}{Client}{chapter.3}% 27
+\BOOKMARK [0][-]{chapter.4}{Evaluation}{}% 28
+\BOOKMARK [0][-]{chapter.5}{Conclusion}{}% 29
+\BOOKMARK [0][-]{chapter.5}{Bibliography}{}% 30
+\BOOKMARK [0][-]{appendix.A}{Proposal}{}% 31

@@ -9,13 +9,23 @@
 \contentsline {subsection}{\numberline {2.3.1}XOR Metric}{4}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Node State}{5}{subsection.2.3.2}%
 \contentsline {subsection}{\numberline {2.3.3}RPCs}{5}{subsection.2.3.3}%
-\contentsline {subsection}{\numberline {2.3.4}Lookup and Storage}{5}{subsection.2.3.4}%
-\contentsline {subsection}{\numberline {2.3.5}Bootstrap}{6}{subsection.2.3.5}%
-\contentsline {section}{\numberline {2.4}Game Server}{6}{section.2.4}%
-\contentsline {section}{\numberline {2.5}Client}{6}{section.2.5}%
-\contentsline {section}{\numberline {2.6}Professional Practice}{6}{section.2.6}%
-\contentsline {chapter}{\numberline {3}Implementation}{7}{chapter.3}%
-\contentsline {chapter}{\numberline {4}Evaluation}{9}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Conclusion}{11}{chapter.5}%
-\contentsline {chapter}{Bibliography}{13}{chapter.5}%
-\contentsline {chapter}{\numberline {A}Proposal}{15}{appendix.A}%
+\contentsline {subsection}{\numberline {2.3.4}Node Lookup}{5}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.5}Value Lookup}{6}{subsection.2.3.5}%
+\contentsline {subsection}{\numberline {2.3.6}Value Storage}{6}{subsection.2.3.6}%
+\contentsline {subsection}{\numberline {2.3.7}Bootstrap}{6}{subsection.2.3.7}%
+\contentsline {section}{\numberline {2.4}Game Server}{7}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Client}{7}{section.2.5}%
+\contentsline {section}{\numberline {2.6}World \& Terrain}{8}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Professional Practice}{9}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Ethical Implications}{9}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.2}Methodology}{9}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.7.3}Tooling}{9}{subsection.2.7.3}%
+\contentsline {subsection}{\numberline {2.7.4}Documentation}{9}{subsection.2.7.4}%
+\contentsline {chapter}{\numberline {3}Implementation}{11}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Kademlia}{11}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Game Server}{11}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Client}{11}{section.3.3}%
+\contentsline {chapter}{\numberline {4}Evaluation}{13}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Conclusion}{15}{chapter.5}%
+\contentsline {chapter}{Bibliography}{17}{chapter.5}%
+\contentsline {chapter}{\numberline {A}Proposal}{19}{appendix.A}%

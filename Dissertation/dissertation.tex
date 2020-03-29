@@ -3,6 +3,7 @@
 \usepackage{verbatim}
 \usepackage[hidelinks]{hyperref}
 \usepackage{tabularx}
+\usepackage{graphicx}
 
 \raggedbottom                           % try to avoid widows and orphans
 \sloppy
@@ -97,6 +98,8 @@
 	
 	\listoffigures
 	
+	\listoftables
+	
 	\newpage
 
 	\cleardoublepage
@@ -134,7 +137,7 @@
 	\chapter{Preparation}
 	
 	\section{Starting Point}
-	Prior to this project I had limited experience in implementing distributed systems, my knowledge on such systems mainly comes from the Part IB courses Concurrent and Distributed Systems and Computer Networking. Computer Networking introduced the concept of distributed hash tables (DHTs) which are used extensively in my project. Concurrent and Distributed Systems introduces most of the overarching principles of distributed systems, such as RPCs, which are essential in my project. Furthermore, my project relies on knowledge from a number of other courses, such as Part II Principles of Communication and Part IA Introduction to Graphics.
+	Prior to this project I had limited experience in implementing distributed systems, my knowledge on such systems mainly comes from the Part IB courses Concurrent and Distributed Systems and Computer Networking. Computer Networking introduced the concept of distributed hash tables (DHTs) which are used extensively in my project. Concurrent and Distributed Systems introduces most of the overarching principles of distributed systems, such as RPCs, which are essential in my project. Furthermore, my project relies on knowledge from a number of other courses, such as Part II Principles of Communication and Part IA Introduction to Graphics. I have some limited experience with 3D graphics from my own hobby programming as well.
 	
 	\section{Requirement Analysis}
 	My project aims to implement a suite of software for the operation, interaction with and testing of a 3D world which is distributed over a number of peers in a peer-to-peer network. The success criteria set out in my proposal is as follows:
@@ -189,27 +192,79 @@
 			\texttt{STORE} & Takes a \textless key, value\textgreater~ pair which the receiving node stores.\\
 			\hline
 		\end{tabularx}
-		\caption{The four \kademlia RPCs.}
+		\caption{The four \kademlia~RPCs.}
 		\label{tab:rpcs}
 	\end{table}
 	
-	\subsection{Lookup and Storage}
+	\subsection{Node Lookup}
 	The lookup procedure is used to locate the \K closest nodes to a supplied identifier. The lookup procedure has one parameter, the concurrency factor $\alpha$. It proceeds as follows:
-	\begin{itemize}
+	\begin{enumerate}
 		\item Find $\alpha$ closest nodes from own \K-buckets.
 		\item Send \texttt{FIND\_NODE} RPCs to these $\alpha$ nodes searching for supplied identifier.
-		\item Then we recursively send \texttt{FIND\_NODE} requests nodes it learned of from the results of previous steps until we find no new nodes. Node that at most $\alpha$ requests may be `in-flight' at once.
-	\end{itemize}
+		\item Then we recursively send \texttt{FIND\_NODE} requests nodes it learned of from the results of previous steps.
+		\item When an iteration of RPCs gives us no new nodes better than the current closest, we send RPCs to all of the \K~closest nodes we have not yet queried.
+		\item The procedure terminates when we have received a response from all of the \K~nearest nodes.
+	\end{enumerate}
+	The \K~nearest nodes are returned from this procedure.
+	
+	\subsection{Value Lookup}
+	The procedure for retrieving a value from the DHT is similar to the node lookup procedure above, replacing the \texttt{FIND\_NODE} RPCs in the above description with \texttt{FIND\_VALUE} RPCs. Instead of returning the \K~nearest nodes it will return the value found, or some notional \texttt{NULL} value if none exists.
+	
+	\subsection{Value Storage}
+	The store value procedure consists of performing a lookup node procedure as above with the identifier being the key of the \textless key, value\textgreater~ pair to be stored. Then \texttt{STORE} RPCs with the \textless key, value\textgreater~ pair are sent to the \K~nodes returned from the lookup.
+	
 	\subsection{Bootstrap}
+	Bootstrapping is the process by which a node joins the network. Because \kademlia{} routing information is implicitly learned through network activity we do not need an explicit \texttt{JOIN} method, we can simply use existing RPCs to join a network. All that we need is the IP, port and ID of any existing node in the network, this is the bootstrap node.
+	
+	The joining node, $n$, inserts the bootstrap node, $m$, into the appropriate \K-bucket and then performs a node lookup for its own ID. Finally it refreshes all its buckets which are further away than its closest neighbour. Refreshing a \K-bucket simple means picking a random ID from that bucket's range and performing a node lookup for that ID. This operation is performed automatically by each node periodically on all buckets which have not been touched in a certain amount of time\footnote{Usually 1 hour.}. By performing a lookup of itself and by refreshing those \K-buckets we have ensured that this node has been inserted into the routing tables of a number of other nodes.
 	
 	\section{Game Server}
+	The second major part of my project is the game server, for this I will use an architecture similar to that used by \emph{Minecraft} and by \emph{Valve}'s \emph{Source} engine~\cite{source}. An instance of a game server will be the authoritative dedicated host that runs the computations for a given chunk of the game world, a client will connect to a number of servers in order to receive the current world state and display it to the user graphically. This section of the system is purely client server, clients do not communicate among one another, instead doing so via the server(s).
+	
+	The server will use an approach used in both \emph{Minecraft} and \emph{Source} where the game world is simulated in discrete time steps known as `ticks'. During a tick we process any incoming packets and update the state of the world, then we send any packets to clients in order to update the world state. In these examples world state is transferred to clients using \emph{delta compression}, where, after the initial sending of the game state, we only send changes that happened since the last tick, this reduces network load.
+	
+	A number of further approaches could be employed by my implementation, such as compensating for latency and interpolating between ticks. However, these are beyond the scope of my investigation and are thus not a requirement for my project.
 
 	\section{Client}
+	The third major part of my project is the client, which will be used to connect to and interact with, the world. This section of the project will require some 3D graphics, thus it will draw on material from the two graphics courses in Part IA and Part IB. I will also need to implement the algorithm for locating and loading the relevant chunks into the world so that the chunks surrounding the player's current location are always loaded.
+	
+	For this section of the project I decided to use \unity, rather than \emph{LWJGL}, because the graphical element was simpler and as graphics is not the focus of my project this felt appropriate.
+	
+	\section{World \& Terrain}
+	The game world will be analagous to that of \emph{Minecraft}, in that it will consist of voxels (i.e. blocks) arranged in a 3D grid. An example of \emph{Minecraft}'s terrain can be seen in figure \ref{fig:minecraft}. The \emph{Minecraft} world is broken into `chunks' each $16\times16\times256$ blocks, then each chunk is simply a 3D array of block data.
+	\begin{figure}
+		\includegraphics[width=\textwidth]{minecraft.png}
+		\caption{A screenshot of terrain from the game \emph{Minecraft}.}
+		\label{fig:minecraft}
+	\end{figure}
+
+	The terrain in \emph{Minecraft} is generated procedurally, allowing for infinite worlds to be created on the fly. A common approach in procedurally generated video games is to use some form of coherent noise\footnote{Coherent noise simply means smooth pseudorandom noise which obeys the following properties: \begin{enumerate} \item The same input always gives the same output. \item A small change in the input will produce a large change in the output. \item A large change in the input will produce a random change in the output.\end{enumerate}} to generate a height map\footnote{Simply a 2D function or array where the value at any given point is the height of the terrain at any given point.}. I plan to use Perlin noise~\cite{perlin} (or its successor, Simplex noise~\cite{simplex}) to generate a heightmap for my world. Then I will use simple rules to assign blocks at different heights different values (i.e. grass on top, followed by dirt, followed by stone) in order to procude a \emph{Minecraft}-like world. The structure of the world into chunks allows for easy segmentation across servers as each chunk can reside on a different server, additionally, by having data represented within a chunk as a 3D array this makes editing the world simple.
 	
 	\section{Professional Practice}
+	\subsection{Ethical Implications} %pron - persistend customisable environment
+	One ethical and legal concern is that my project would give users access to a canvas within which they could, theoretically, encode any data. This could give rise to legal issues if, for example, illegal material were encoded in world data, then the server owner on who's server that data is stored could technically be in breach of the law.
+	
+	\subsection{Methodology}
+	The project was broken up into discrete features, with a timeline planning to complete each in approximately $2-3$ weeks. Thus I followed the \emph{Agile} software development workflow. Each $2-3$ week sprint had a deliverable which could be tested independently and demonstrated. My sprint timetable outlined in the proposal was adapted as the projected moved forward and some parts of the project took more, or less, time than anticipated.
+	
+	
+	\subsection{Tooling}
+	I used the \emph{PyCharm} IDE for the development of the \kademlia{} implementation and my game server as these were both written in \python{} using version $3.8$ due to improvements made to the \emph{asyncio} library in \python{} $3.8$. For the client I used \unity{} with \emph{Microsoft Visual Studio 2017} for editing the \emph{C\#} scripts. \emph{Git} was used for version control, with code pushed to \emph{GitHub} regularly and further backed-up daily to both the SRCF\footnote{Student-Run Computing Facility.} and the MCS using a \emph{cron} job.
+	
+	\subsection{Documentation}
+	\textbf{Pending...}	
 	
 	\cleardoublepage
 	\chapter{Implementation}
+	My project consists of three parts: the bespoke \kademlia{} implementation, the game server and the client. The system works by having the client query the \kademlia{} implementation to locate the appropriate servers for a particular part of the world, then connecting to that server and `joining' the world via that server. This is visualised in figure \ref{fig:diagram1}.
+	\begin{figure}
+		\includegraphics[width=\textwidth]{diag1.png}
+		\caption{Diagram giving an overview of \emph{Voxel Populi} architecture. Note that the client needs to know only the IP and port of any node in the Kademlia network, which it will use to access the DHT and query the IP and port pairs of the nodes containing world data it requires.}
+		\label{fig:diagram1}
+	\end{figure}
+	\section{Kademlia}
+	\section{Game Server}
+	\section{Client}
 	
 	\cleardoublepage
 	\chapter{Evaluation}
@@ -226,6 +281,10 @@
 		\bibitem{clubpenguin} ``Club Penguin is shutting down''. \url{https://techcrunch.com/2017/01/31/club-penguin-is-shutting-down/}. Accessed: 2019-10-15.
 		\bibitem{SpatialOS} SpatialOS by Improbable. \url{https://improbable.io/spatialos}. Accessed: 2020-03-20.
 		\bibitem{pykademlia} Kademlia Python Library. \url{https://github.com/bmuller/kademlia/}. Accessed: 2020-03-20.
+		\bibitem{source} Source Engine Multiplayer Networking, Valve. \url{https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking}. Accessed: 25-3-2020.
+		\bibitem{perlin} ``Perlin Noise'' on Wikipedia. \url{https://en.wikipedia.org/wiki/Perlin_noise}. Accessed: 2019-10-17.
+		\bibitem{simplex} ``Simplex Noise'' on Wikipedia.
+		\url{https://en.wikipedia.org/wiki/Simplex_noise}. Accessed: 2019-03-27.
 	\end{thebibliography}
 	\cleardoublepage
 	
