@@ -23,9 +23,15 @@
 \BOOKMARK [2][-]{subsection.2.7.4}{Documentation}{section.2.7}% 23
 \BOOKMARK [0][-]{chapter.3}{Implementation}{}% 24
 \BOOKMARK [1][-]{section.3.1}{Kademlia}{chapter.3}% 25
-\BOOKMARK [1][-]{section.3.2}{Game Server}{chapter.3}% 26
-\BOOKMARK [1][-]{section.3.3}{Client}{chapter.3}% 27
-\BOOKMARK [0][-]{chapter.4}{Evaluation}{}% 28
-\BOOKMARK [0][-]{chapter.5}{Conclusion}{}% 29
-\BOOKMARK [0][-]{chapter.5}{Bibliography}{}% 30
-\BOOKMARK [0][-]{appendix.A}{Proposal}{}% 31
+\BOOKMARK [2][-]{subsection.3.1.1}{Custom RPC Specification}{section.3.1}% 26
+\BOOKMARK [2][-]{subsection.3.1.2}{Generate Procedure}{section.3.1}% 27
+\BOOKMARK [1][-]{section.3.2}{Game Server}{chapter.3}% 28
+\BOOKMARK [2][-]{subsection.3.2.1}{Server State}{section.3.2}% 29
+\BOOKMARK [2][-]{subsection.3.2.2}{Protocol}{section.3.2}% 30
+\BOOKMARK [2][-]{subsection.3.2.3}{Computation}{section.3.2}% 31
+\BOOKMARK [1][-]{section.3.3}{DHT Interface}{chapter.3}% 32
+\BOOKMARK [1][-]{section.3.4}{Client}{chapter.3}% 33
+\BOOKMARK [0][-]{chapter.4}{Evaluation}{}% 34
+\BOOKMARK [0][-]{chapter.5}{Conclusion}{}% 35
+\BOOKMARK [0][-]{chapter.5}{Bibliography}{}% 36
+\BOOKMARK [0][-]{appendix.A}{Proposal}{}% 37

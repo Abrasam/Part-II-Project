@@ -23,9 +23,15 @@
 \contentsline {subsection}{\numberline {2.7.4}Documentation}{9}{subsection.2.7.4}%
 \contentsline {chapter}{\numberline {3}Implementation}{11}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Kademlia}{11}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Game Server}{11}{section.3.2}%
-\contentsline {section}{\numberline {3.3}Client}{11}{section.3.3}%
-\contentsline {chapter}{\numberline {4}Evaluation}{13}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Conclusion}{15}{chapter.5}%
-\contentsline {chapter}{Bibliography}{17}{chapter.5}%
-\contentsline {chapter}{\numberline {A}Proposal}{19}{appendix.A}%
+\contentsline {subsection}{\numberline {3.1.1}Custom RPC Specification}{12}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Generate Procedure}{13}{subsection.3.1.2}%
+\contentsline {section}{\numberline {3.2}Game Server}{13}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Server State}{13}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Protocol}{13}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Computation}{13}{subsection.3.2.3}%
+\contentsline {section}{\numberline {3.3}DHT Interface}{13}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Client}{13}{section.3.4}%
+\contentsline {chapter}{\numberline {4}Evaluation}{15}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Conclusion}{17}{chapter.5}%
+\contentsline {chapter}{Bibliography}{19}{chapter.5}%
+\contentsline {chapter}{\numberline {A}Proposal}{21}{appendix.A}%

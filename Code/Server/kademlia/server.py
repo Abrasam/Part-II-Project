@@ -61,7 +61,6 @@ class DHTServer:
     async def generate_chunk(self, coord):
         key = int(sha1(str(coord).encode()).hexdigest(), 16)
         nodes = await self.server.lookup(key)
-        #print(nodes)
         for i in range(len(nodes)):
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             addr = (nodes[i].addr[0], nodes[i].addr[1]+1)

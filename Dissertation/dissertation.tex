@@ -4,6 +4,12 @@
 \usepackage[hidelinks]{hyperref}
 \usepackage{tabularx}
 \usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{cleveref}
+
+\crefname{section}{§}{§§}
+\Crefname{section}{§}{§§}
 
 \raggedbottom                           % try to avoid widows and orphans
 \sloppy
@@ -100,6 +106,8 @@
 	
 	\listoftables
 	
+	\listofalgorithms
+	
 	\newpage
 
 	\cleardoublepage
@@ -178,7 +186,7 @@
 	In order to populate these \K-buckets, whenever a node receivers a message from another, it looks for the appropriate \K-bucket and, if the sender is already in the \K-bucket then it is moved to the tail of the list, otherwise it is appended to the tail of the list. If the \K-bucket is full then we send a \texttt{PING} RPC to the least recently seen node, if it fails to reply then we evict it and put the new node in instead, else we discard the new node\footnote{In my implementation, the new node is added to a queue to join the \K-bucket.}.
 	
 	\subsection{RPCs}
-	The Kademlia protocol has four RPCs: \texttt{PING}, \texttt{FIND\_NODE}, \texttt{FIND\_VALUE} and \texttt{STORE}. All other operations are built up from these four RPCs. Table \ref{tab:rpcs} details the function of each RPC. My implementation will deviate from this specification as detailed in \textbf{LINK TO}.
+	The Kademlia protocol has four RPCs: \texttt{PING}, \texttt{FIND\_NODE}, \texttt{FIND\_VALUE} and \texttt{STORE}. All other operations are built up from these four RPCs. Table \ref{tab:rpcs} details the function of each RPC. My implementation will deviate from this specification as detailed in \cref{sec:customrpc}.
 	
 	\begin{table}
 		\begin{tabularx}{\textwidth}{| l | X |}
@@ -257,13 +265,57 @@
 	\cleardoublepage
 	\chapter{Implementation}
 	My project consists of three parts: the bespoke \kademlia{} implementation, the game server and the client. The system works by having the client query the \kademlia{} implementation to locate the appropriate servers for a particular part of the world, then connecting to that server and `joining' the world via that server. This is visualised in figure \ref{fig:diagram1}.
+	
 	\begin{figure}
 		\includegraphics[width=\textwidth]{diag1.png}
 		\caption{Diagram giving an overview of \emph{Voxel Populi} architecture. Note that the client needs to know only the IP and port of any node in the Kademlia network, which it will use to access the DHT and query the IP and port pairs of the nodes containing world data it requires.}
 		\label{fig:diagram1}
 	\end{figure}
+	The client needs to connect to a single node from the \emph{VoxelPopuli} network, which it will use as a `stepping stone' to access the whole network via. It uses this stepping stone node to query the DHT to find the \textless IP, port\textgreater~of the game servers responsible for the chunks it needs. It then initiates connections with each of these game servers in parallel, registers the player in that chunk and downloads the world data.
+	
+	The \emph{VoxelPopuli} server consists of two distinct parts, the \kademlia{} node and the game server. Thus for each node in the network there are two \emph{virtual} nodes. The \kademlia{} nodes are not visible to a client. In order to query the DHT, clients connect to any game server and initiate a special type of session specifically for DHT access. The game server then performs queries to the DHT on behalf of the client. Further details of this special session are in \cref{sec:interface}. Note that for simplicity's sake the \kademlia{} node and game server bind to the same IP address with the game server port being the \kademlia{} port incremented by $1$.
+	
 	\section{Kademlia}
+	This section introduces my bespoke implementation of the \kademlia{} specification. A custom implementation of \kademlia{} was necessary for two main reasons:
+	\begin{itemize}
+		\item The project necessitated not only \texttt{PUT} and \texttt{GET} procedures but also a \texttt{GENERATE} procedure for locating the appropriate server for a particular chunk and then instructing it to generate said chunk.
+		\item Two distinct types of data needed to be stored in the network. The network needed to store chunk location information (IP and port of appropriate server) and player state information in distinct areas so as not to conflate them.
+	\end{itemize}
+	As such, a custom implementation was devised with additional RPCs and a bespoke high-level interface with the required \texttt{PUT}, \texttt{GET} and \texttt{GENERATE} procedures.
+	
+	\subsection{Custom RPC Specification}
+	\label{sec:customrpc}
+	In table \ref{tab:rpcs} I outlined the RPCs in the default \kademlia{} specification. In my implementation I have separate \texttt{STORE\_PLAYER} and \texttt{STORE\_CHUNK} RPCs as well as equivalent variants of the \texttt{FIND\_VALUE} RPCs. These replace the default \texttt{STORE} and \texttt{FIND\_VALUE} RPCs meaning we have a final specification consisting of 6 RPCs: \texttt{PING}, \texttt{FIND\_NODE}, \texttt{STORE\_PLAYER}, \texttt{STORE\_CHUNK}, \texttt{FIND\_PLAYER} and \texttt{FIND\_CHUNK}.
+	
+	In order to accommodate these new RPCs, the lookup procedure was made polymorphic, taking the appropriate RPC as an argument. Additionally, each node now has two separate storage tables, one for player data and one for chunk data. This implementation was preferable to the alternative of running two distinct \kademlia{} networks, as this would have significant additional overhead as two separate node states would need to be maintained for each node.
+	
+	\subsection{Generate Procedure}
+	When a chunk is found not to exist in the network, it must be generated. In order to do this we need to first locate the server it should be generated on, then we need to check that server is up. Once we have confirmation that the server is running we send a request to the game server on that VoxelPopuli server to generate and initialise the node ready for players. If a node is not up we move to the next nearest node. Once the chunk is generated we must store the \textless IP address, port\textgreater~of the node it was generated on in the network so that in future when we look up this chunk we will find the correct server. Algorithm \ref{alg:generate} gives pseudocode of the generate procedure.
+	\begin{algorithm}
+		\begin{algorithmic}
+			\Function{Generate}{ChunkCoordinate}
+				\State $key \gets \mathrm{sha1(ChunkCoordinates)}$
+				\State $nodes \gets \mathrm{lookup(key)}$
+				\For{$n \in nodes$}
+					\State Send generate request to game server at $<n.ip, n.port+1>$ \Comment{Game server address is that of respective \kademlia{} node with port incremented.}
+					\If{Successful}
+						\State Call RPC \Call{STORE\_CHUNK}{$key, <n.ip, n.port+1>$}
+						\State \Return Success
+					\EndIf
+				\EndFor
+				\State \Return Failure
+			\EndFunction
+		\end{algorithmic}
+		\caption{Generate Procedure Pseudocode}
+		\label{alg:generate}
+	\end{algorithm}
+	
 	\section{Game Server}
+	\subsection{Server State}
+	\subsection{Protocol}
+	\subsection{Computation}
+	\section{DHT Interface}
+	\label{sec:interface}
 	\section{Client}
 	
 	\cleardoublepage
