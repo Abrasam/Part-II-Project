@@ -1,7 +1,7 @@
 import select
 from queue import Empty
 
-from game.gameserver import *
+from game.chunkthread import *
 from game.world import *
 from kademlia.node import Node
 import socket, sys, json
