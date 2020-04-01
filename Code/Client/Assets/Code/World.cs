@@ -138,24 +138,21 @@ public class World : MonoBehaviour {
         }
     }
 
-
-    //Adapted from https://github.com/b3agz/Code-A-Game-Like-Minecraft-In-Unity/blob/49e95cecaffc25e86a7aa4402e2c9848a863d8a6/06-character-controller/Assets/Scripts/World.cs#L106
     public bool IsSolid(float x, float y, float z) {
 
-        int xCheck = Mathf.FloorToInt(x);
-        int yCheck = Mathf.FloorToInt(y);
-        int zCheck = Mathf.FloorToInt(z);
+        int xi = Mathf.FloorToInt(x);
+        int yi = Mathf.FloorToInt(y);
+        int zi = Mathf.FloorToInt(z);
 
-        int xChunk = Mathf.FloorToInt(xCheck / (float)Data.ChunkSize);
-        int zChunk = Mathf.FloorToInt(zCheck / (float)Data.ChunkSize);
+        int chunkX = Mathf.FloorToInt(xi / (float)Data.ChunkSize);
+        int chunkY = Mathf.FloorToInt(zi / (float)Data.ChunkSize);
 
-        xCheck -= (xChunk * Data.ChunkSize);
-        zCheck -= (zChunk * Data.ChunkSize);
-
+        xi -= (chunkX * Data.ChunkSize);
+        zi -= (chunkY * Data.ChunkSize);
 
         Chunk chunk;
-        if (chunks.TryGetValue(new Vector2(xChunk, zChunk), out chunk)) {
-            return chunk.IsSolid(new Vector3(xCheck, yCheck, zCheck));
+        if (chunks.TryGetValue(new Vector2(chunkX, chunkY), out chunk)) {
+            return chunk.IsSolid(new Vector3(xi, yi, zi));
         }
         return true; //If not loaded assume solid for safety.
     }

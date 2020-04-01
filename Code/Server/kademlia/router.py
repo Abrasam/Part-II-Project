@@ -36,8 +36,7 @@ class KBucket:
             del self.nodes[self.nodes.index(node)]
 
             if len(self.replacement) > 0:
-                #print("added from replacement " + str(self.replacement[-1]))
-                self.add_node(self.replacement.pop())  # this may not accurately do LRU entirely correctly.
+                self.add_node(self.replacement.pop())
 
     def __len__(self):
         return len(self.nodes)

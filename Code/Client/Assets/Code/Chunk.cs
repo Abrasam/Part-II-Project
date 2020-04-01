@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -71,7 +70,7 @@ public class Chunk {
 
                         Vector3 pos = new Vector3(x, y, z);
 
-                        if (blocks[x, y, z] == 0 || IsSolid(pos + Data.faceChecks[i])) continue;
+                        if (blocks[x, y, z] == 0 || IsSolid(pos + Data.faceOffsets[i])) continue;
 
                         if (y == Data.ChunkSize - 1 && i == 2) {
                             t += 1;

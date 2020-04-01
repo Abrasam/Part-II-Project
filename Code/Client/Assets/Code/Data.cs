@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static class Data {
-    //Class adapted from https://github.com/b3agz/Code-A-Game-Like-Minecraft-In-Unity/blob/master/02-the-first-chunk/Assets/Scripts/VoxelData.cs
 
     public static readonly int ChunkSize = 32;
     public static readonly float TickLength = 1 / 20;
@@ -28,7 +27,7 @@ public static class Data {
 		{1, 2, 5, 6}
 	};
 
-    public static readonly Vector3[] faceChecks = new Vector3[6] {
+    public static readonly Vector3[] faceOffsets = new Vector3[6] {
 
         new Vector3(0.0f, 0.0f, -1.0f),
         new Vector3(0.0f, 0.0f, 1.0f),
