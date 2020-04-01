@@ -20,7 +20,7 @@ public class Chunk {
     public Chunk(Vector2 chunkPos, byte[,,] blocks) {
         this.chunkPos = chunkPos;
         this.blocks = blocks;
-        RefreshMeshData();
+        ComputeMeshData();
     }
 
     public void AddToWorld(World world) {
@@ -36,7 +36,7 @@ public class Chunk {
         me.transform.SetParent(world.transform);
         me.transform.position = new Vector3(chunkPos.x * Data.ChunkSize, 0, chunkPos.y * Data.ChunkSize);
 
-        RefreshMesh();
+        UpdateMesh();
 
         players = new Dictionary<string, GameObject>();
     }
@@ -54,7 +54,7 @@ public class Chunk {
         return blocks[x, y, z] != 0;
     }
 
-    private void RefreshMeshData() {
+    private void ComputeMeshData() {
         int vertexIndex = 0;
         verts = new List<Vector3>();
         triangles = new List<int>();
@@ -100,7 +100,7 @@ public class Chunk {
         }
     }
 
-    private void RefreshMesh() {
+    private void UpdateMesh() {
         Mesh mesh = new Mesh();
         mesh.vertices = verts.ToArray();
         mesh.triangles = triangles.ToArray();
