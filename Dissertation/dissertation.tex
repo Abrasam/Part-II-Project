@@ -316,13 +316,33 @@
 	\subsection{Server State}
 	The game server state consists of a set of active client connections and the state for each of the chunks it is responsible for. Chunk state consists of the world data for that chunk, represented as a 3D array of integers ranging between $0-3$ to represent different voxel types; the set of players currently active in this chunk and their locations; a list of clients who are subscribed to updates on this chunk and $(x,y)$ -- the coordinates of this chunk in the world.
 	
+	Chunks are either loaded or unloaded, unloaded chunks have no connected clients and their computation (i.e. game loop) is not currently being executed. A loaded chunk has a dedicated thread for performing the game computations of the chunk, a chunk is only loaded if it has a non-zero number of connected clients and is unloaded as soon as the last client disconnects.
+	
 	\subsection{Protocol}
 	\subsubsection{Handshake Procedure}
+	When the server receives a new connection it waits for a \emph{JSON} message from the new client, this message is decoded and it should contain a \emph{type} field. This \emph{type} field can take four different values, depending on which the server will take different actions. The possible values are:
+	\begin{itemize}
+		\item \textbf{"connect"} -- this means that the client wishes to connect to a chunk resident on this \emph{VoxelPopuli} server. There will be a field called \emph{chunk} which contains the chunk coordinates of the chunk to be connected to. The server will then perform the following:
+		\begin{enumerate}
+			\item Check if the relevant chunk is indeed resident and generated on this server. If not it will send a failure message to the client and return.
+			\item Check whether the chunk is loaded and if not load it by starting a new chunk processing thread for this chunk (see \cref{sec:cthread}).
+			\item Add this client to the chunk processing thread's client list.
+		\end{enumerate}
+		\item \textbf{"generate"} -- this means that the client (in fact another \emph{VoxelPopuli} server in this case) is requesting that a supplied chunk be generated. Again the \emph{chunk} field will be present, containing the coordinates of the chunk to be generated. The server will simply generate the chunk and add it to its set of chunks, however, it will not load it.
+		\item \textbf{"dht"} -- this means that the client does not wish to use this node as a game server but instead as an access point to the DHT. In this case we launch a new, dedicated, thread to handle DHT queries, details of this thread can be found in \cref{sec:interface}.
+		\item \textbf{"ping"} -- used to query whether a game server is alive, returns the \texttt{UTF-8} encoding of the string \emph{"pong"}.
+	\end{itemize}
+	
 	\subsubsection{Game Protocol}
-	\subsection{Computation}
+	
+	\subsection{Chunk Thread}
+	\label{sec:cthread}
+	
 	\section{DHT Interface}
-	\subsection{Protocol}
 	\label{sec:interface}
+	
+	\subsection{Protocol}
+	
 	\section{Client}
 	
 	\cleardoublepage

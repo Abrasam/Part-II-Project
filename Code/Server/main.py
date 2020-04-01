@@ -97,12 +97,10 @@ def ctrl_loop():
                     s.setblocking(1)
                     data = s.recv(1024)
                     msg = json.loads(data.decode())
-                    #print(msg)
                     if msg["type"] == "connect":
                         chunk_coord = tuple(msg["chunk"])
                         player = msg["player"]
                         print(f"player {player} is connecting to chunk at {chunk_coord}")
-                        #print(f"Client @ {addr} connecting to chunk {chunk_coord}.")
                         if chunk_coord not in chunks:  # if chunk doesn't exist
                             s.send(b'no')
                             s.close()
@@ -161,6 +159,7 @@ def ctrl_loop():
             print(list(map(lambda x: x.fileno(), sockets)))
         except ValueError:
             print(list(map(lambda x: x.fileno(), sockets)))
+
 
 game_server_ctrl_thread = threading.Thread(target=ctrl_loop)
 game_server_ctrl_thread.setDaemon(True)

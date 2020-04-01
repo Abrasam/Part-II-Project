@@ -24,7 +24,6 @@ class ChunkThread(threading.Thread):
         self.setDaemon(True)
         self.start()
 
-    # todo: concurrency issues here with editing players/clients.
     def run(self):
         # ticks = 0
         # timer = 0

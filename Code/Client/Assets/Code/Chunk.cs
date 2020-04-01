@@ -65,7 +65,6 @@ public class Chunk {
         for (int y = 0; y < Data.ChunkSize; y++) {
             for (int x = 0; x < Data.ChunkSize; x++) {
                 for (int z = 0; z < Data.ChunkSize; z++) {
-                    Vector3 delta = new Vector3(x, y, z);
                     for (int i = 0; i < 6; i++) {
 
                         Vector3 pos = new Vector3(x, y, z);
