@@ -16,7 +16,7 @@
 \clubpenalty1000%
 \widowpenalty1000%
 
-\addtolength{\oddsidemargin}{6mm}       % adjust margins
+\addtolength{\oddsidemargin}{8mm}       % adjust margins
 \addtolength{\evensidemargin}{-8mm}
 
 \renewcommand{\baselinestretch}{1.1}    % adjust line spacing to make
@@ -268,7 +268,7 @@
 	
 	\begin{figure}
 		\includegraphics[width=\textwidth]{diag1.png}
-		\caption{Diagram giving an overview of \emph{Voxel Populi} architecture. Note that the client needs to know only the IP and port of any node in the Kademlia network, which it will use to access the DHT and query the IP and port pairs of the nodes containing world data it requires.}
+		\caption{Diagram giving an overview of \emph{Voxel Populi} architecture.}
 		\label{fig:diagram1}
 	\end{figure}
 	The client needs to connect to a single node from the \emph{VoxelPopuli} network, which it will use as a `stepping stone' to access the whole network via. It uses this stepping stone node to query the DHT to find the \textless IP, port\textgreater~of the game servers responsible for the chunks it needs. It then initiates connections with each of these game servers in parallel, registers the player in that chunk and downloads the world data.
@@ -282,6 +282,75 @@
 		\item Two distinct types of data needed to be stored in the network. The network needed to store chunk location information (IP and port of appropriate server) and player state information in distinct areas so as not to conflate them.
 	\end{itemize}
 	As such, a custom implementation was devised with additional RPCs and a bespoke high-level interface with the required \texttt{PUT}, \texttt{GET} and \texttt{GENERATE} procedures.
+	
+	\subsection{RPC Framework}
+	In order for \kademlia{} nodes to communicate with each other we need a method of issuing RPCs to remote machines and retrieving the results. In order to do this I used \emph{asyncio}'s \texttt{DatagramProtocol} class which is a base class for implementing protocols over UDP. This class provides overrideable methods such as \texttt{datagram\_received()} which is called when the underlying socket receives a UDP datagram. I wrote a general-purpose RPC system because at the time I was unsure how many RPCs I would need and wanted to be able to add and remove them on the fly. This proved useful when revising my \kademlia{} implementation to include the separate \texttt{STORE} and \texttt{FIND\_VALUE} RPCs.
+	
+	In order to implement the RPC framework I designed a \emph{JSON} format for RPC calls and responses (see table \ref{tab:rpcjson} for details). I created two function decorators in Python: \texttt{@rpc} and \texttt{@stub}. \texttt{@rpc} adds no special behaviour and simply marks that this method may be called remotely; \texttt{@stub} replaces the supplied method with a method which takes the same arguments and computes the JSON RPC string to be sent to the other machine, then sends this message and awaits a reply before returning the result (or \texttt{None} on a timeout), this process is outlined in algorithm \ref{alg:rpcstub}.
+	\begin{table}
+		\begin{tabularx}{\textwidth}{| l | X |}
+			\hline 
+			\texttt{id} & 32-bit random number to uniquely identify this RPC call.\\
+			\hline
+			\texttt{node} & ID of the sending node.\\
+			\hline
+			\texttt{call} & Boolean representing whether this is an RPC call or a response.\\
+			\hline
+			\texttt{rpc} & The name of the remote procedure to be called.\\
+			\hline
+			\texttt{args} & The list of arguments (in order) to be supplied to the remote procedure. Not present on responses.\\
+			\hline
+			\texttt{ret} & The return value of a remote call. Not present on calls.\\
+			\hline
+		\end{tabularx}
+	\caption{JSON RPC specification.}
+	\label{tab:rpcjson}
+	\end{table}
+
+	Upon receiving a datagram the RPC framework decodes it as a JSON string and checks whether it is a function call or a response. In the case that it is a call, the relevant function is checked to determine if it has the \texttt{@rpc} decorator (i.e. it has been marked for remote calling) and then executes it, packaging the result up as a JSON message and returning it to the sender. If it is a response, it checks if there is a pending RPC with that ID, if so it will supply the result to that RPC call, otherwise the message is discarded. This process is detailed in algorithm \ref{alg:datagram}.
+	\begin{algorithm}
+		\begin{algorithmic}
+			\Function{rpc\_stub}{func, to\_node, args}
+			\State {id $\gets$ randombits(32)}
+			\State {json $\gets$ \{``id'': id, ``node'': this\_node\_id, ``call'': true, ``rpc'': func, ``args'': args\}}
+			\State {store pending rpc in table}
+			\State {send\_udp(json, to)}
+			\State {schedule timeout}
+			\State {await response OR timeout}
+			\If{timed out}
+			\State \Return None
+			\Else
+			\State {response $\gets$ get\_response(id)}
+			\State \Return response
+			\EndIf
+			\EndFunction
+		\end{algorithmic}
+		\caption{RPC framework \texttt{@stub} decorator algorithm.}
+		\label{alg:rpcstub}
+	\end{algorithm}
+	\begin{algorithm}
+		\begin{algorithmic}
+			\Function{datagram}{data, from}
+				\State {msg $\gets$ json\_decode(data)}
+				\If{msg.get(``call'')}
+					\State func $\gets$ get\_function(msg.get(``RPC''))
+					\If {func exists AND func has decorator \texttt{@rpc}}
+						\State {res $\gets$ func(msg.get(``args''))}
+						\State {json $\gets$ \{``id'': msg.get(``id''), ``node'': this\_node\_id, ``call'': false, ``rpc'': func.name, ``ret'': res\}}
+						\State {send\_udp(json, from)}
+					\EndIf
+				\Else
+					\If{rpc with id msg.get(``id'') is pending}
+						\State {send msg.get(``ret'') to pending RPC calls}
+					\EndIf
+				\EndIf
+			\EndFunction
+		\end{algorithmic}
+		\caption{Datagram handling in my JSON RPC framework.}
+		\label{alg:datagram}
+	\end{algorithm}
+	
+	This framework allows for the \kademlia{} specification to be implemented as described in the following sections. It allows methods to be tagged as remotely callable and allows for the creation of \emph{stub} methods which allow calling of RPCs on remote machines. This is necessary for the implementation of the \kademlia{} RPCs.
 	
 	\subsection{Custom RPC Specification}
 	\label{sec:customrpc}
@@ -306,7 +375,7 @@
 				\State \Return Failure
 			\EndFunction
 		\end{algorithmic}
-		\caption{Generate Procedure Pseudocode}
+		\caption{Generate Procedure Pseudocode.}
 		\label{alg:generate}
 	\end{algorithm}
 	
@@ -314,13 +383,26 @@
 	The game server is responsible for performing the computation and maintaining the state for a number of chunks concurrently. It is also responsible for providing clients with a method of querying the DHT to locate chunks in the \emph{VoxelPopuli} network and to retrieve player data.
 	
 	\subsection{Server State}
-	The game server state consists of a set of active client connections and the state for each of the chunks it is responsible for. Chunk state consists of the world data for that chunk, represented as a 3D array of integers ranging between $0-3$ to represent different voxel types; the set of players currently active in this chunk and their locations; a list of clients who are subscribed to updates on this chunk and $(x,y)$ -- the coordinates of this chunk in the world.
+	The game server state consists of a set of active client connections and the state for each of the chunks it is responsible for. Chunk state consists of the world data for that chunk, represented as a 3D array of integers ranging between $0-3$ to represent different voxel types (see table \ref{tab:blocks}); the set of players currently active in this chunk and their locations; a list of clients who are subscribed to updates on this chunk and $(x,y)$ -- the coordinates of this chunk in the world.
+	
+	\begin{table}
+		\centering
+		\begin{tabularx}{0.65\textwidth}{| l | l | l | l | X |}
+			\hline
+			\textbf{Block Type} & Air & Stone & Grass & Dirt \\
+			\hline
+			\textbf{Integer Value} & 0 & 1 & 2 & 3 \\
+			\hline
+		\end{tabularx}
+		\caption{\emph{VoxelPopuli} block types.}
+		\label{tab:blocks}
+	\end{table}
 	
 	Chunks are either loaded or unloaded, unloaded chunks have no connected clients and their computation (i.e. game loop) is not currently being executed. A loaded chunk has a dedicated thread for performing the game computations of the chunk, a chunk is only loaded if it has a non-zero number of connected clients and is unloaded as soon as the last client disconnects.
 	
 	\subsection{Protocol}
-	\subsubsection{Handshake Procedure}
-	When the server receives a new connection it waits for a \emph{JSON} message from the new client, this message is decoded and it should contain a \emph{type} field. This \emph{type} field can take four different values, depending on which the server will take different actions. The possible values are:
+	\subsubsection{Handshake}
+	When the server receives a new connection it waits for a JSON message from the new client, this message is decoded and it should contain a \emph{type} field. This \emph{type} field can take four different values, depending on which the server will take different actions. The possible values are:
 	\begin{itemize}
 		\item \textbf{``connect''} -- this means that the client wishes to connect to a chunk resident on this \emph{VoxelPopuli} server. There will be a field called \emph{chunk} which contains the chunk coordinates of the chunk to be connected to. The server will then perform the following:
 		\begin{enumerate}
@@ -332,10 +414,22 @@
 		\item \textbf{``dht''} -- this means that the client does not wish to use this node as a game server but instead as an access point to the DHT. In this case we launch a new, dedicated, thread to handle DHT queries, details of this thread can be found in \cref{sec:interface}.
 		\item \textbf{``ping''} -- used to query whether a game server is alive, returns the \texttt{UTF-8} encoding of the string \emph{``pong''}.
 	\end{itemize}
-	Once the action has been completed successfully the server sends an acknowledgement to the client, informing it that the operation succeeded. Unless the connection is to be kept live (i.e. in the case of connecting to the game server (``connect'' packet) or DHT interfacing (``dht'' packet) then the connection is closed.
+	Once the action has been completed successfully the server sends an acknowledgement to the client, informing it that the operation succeeded. Unless the connection is to be kept live (i.e. in the case of connecting to the game server (``connect'' packet) or DHT interfacing (``dht'' packet)) then the connection is closed.
 	
-	\subsubsection{Game Protocol}
-	There are a number of packets which need to be exchanged between the client and game server.
+	\subsubsection{Game}
+	There are a number of messages which need to be exchanged between the client and game server. These allow the client(s) to inform the server that it has performed an action updating its or the world's state and allow the server to inform the client(s) of changes to the state of the world. Again these are exchanged as JSON messages of the format shown in table \ref{tab:gameprotocol}.
+	\begin{table}
+		\centering
+		\begin{tabularx}{0.85\textwidth}{| l | l | X |}
+			\hline
+			Type (\texttt{int}) & Arguments (\texttt{list of floats}) & Player (\texttt{string})\\
+			\hline
+		\end{tabularx}
+		\caption{Message format for the game server protocol.}
+		\label{tab:gameprotocol}
+	\end{table}
+
+	
 	
 	\subsection{Chunk Thread}
 	\label{sec:cthread}

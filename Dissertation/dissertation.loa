@@ -1,1 +1,3 @@
-\contentsline {algorithm}{\numberline {1}{\ignorespaces Generate Procedure Pseudocode}}{13}{algorithm.1}%
+\contentsline {algorithm}{\numberline {1}{\ignorespaces RPC framework \texttt {@stub} decorator algorithm.}}{13}{algorithm.1}%
+\contentsline {algorithm}{\numberline {2}{\ignorespaces Datagram handling in my JSON RPC framework.}}{14}{algorithm.2}%
+\contentsline {algorithm}{\numberline {3}{\ignorespaces Generate Procedure Pseudocode.}}{15}{algorithm.3}%

@@ -18,7 +18,6 @@ def stub(func):
         loop = asyncio.get_event_loop()
         msg = {"id": random.getrandbits(32), "node": self.id, "call": True, "rpc": func.__name__[4:], "args": args}
         self.transport.sendto(json.dumps(msg).encode("UTF-8"), node.addr)
-        #print("sent rpc " + json.dumps(msg) + " to " + str(node.addr) + " id: " + str(node.id))
         f = asyncio.Future()
         self.waiting[msg["id"]] = (f, loop.call_later(TIMEOUT+random.randint(0,TIMEOUT), self._timeout, msg["id"]), node)
         await f

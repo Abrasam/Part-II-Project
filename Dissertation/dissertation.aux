@@ -63,33 +63,49 @@
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
 \@writefile{toc}{\contentsline {section}{\numberline {3.1}Kademlia}{11}{section.3.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces Diagram giving an overview of \emph  {Voxel Populi} architecture. Note that the client needs to know only the IP and port of any node in the Kademlia network, which it will use to access the DHT and query the IP and port pairs of the nodes containing world data it requires.}}{12}{figure.3.1}\protected@file@percent }
-\newlabel{fig:diagram1}{{3.1}{12}{Diagram giving an overview of \emph {Voxel Populi} architecture. Note that the client needs to know only the IP and port of any node in the Kademlia network, which it will use to access the DHT and query the IP and port pairs of the nodes containing world data it requires}{figure.3.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3.1}{\ignorespaces Diagram giving an overview of \emph  {Voxel Populi} architecture.}}{12}{figure.3.1}\protected@file@percent }
+\newlabel{fig:diagram1}{{3.1}{12}{Diagram giving an overview of \emph {Voxel Populi} architecture}{figure.3.1}{}}
 \newlabel{fig:diagram1@cref}{{[figure][1][3]3.1}{[1][11][]12}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.1}Custom RPC Specification}{12}{subsection.3.1.1}\protected@file@percent }
-\newlabel{sec:customrpc}{{3.1.1}{12}{Custom RPC Specification}{subsection.3.1.1}{}}
-\newlabel{sec:customrpc@cref}{{[subsection][1][3,1]3.1.1}{[1][12][]12}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.2}Generate Procedure}{13}{subsection.3.1.2}\protected@file@percent }
-\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Generate Procedure Pseudocode}}{13}{algorithm.1}\protected@file@percent }
-\newlabel{alg:generate}{{1}{13}{Generate Procedure}{algorithm.1}{}}
-\newlabel{alg:generate@cref}{{[algorithm][1][]1}{[1][13][]13}}
-\@writefile{toc}{\contentsline {section}{\numberline {3.2}Game Server}{13}{section.3.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.1}Server State}{13}{subsection.3.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.2}Protocol}{14}{subsection.3.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Handshake Procedure}{14}{section*.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{Game Protocol}{15}{section*.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.3}Chunk Thread}{15}{subsection.3.2.3}\protected@file@percent }
-\newlabel{sec:cthread}{{3.2.3}{15}{Chunk Thread}{subsection.3.2.3}{}}
-\newlabel{sec:cthread@cref}{{[subsection][3][3,2]3.2.3}{[1][15][]15}}
-\@writefile{toc}{\contentsline {section}{\numberline {3.3}DHT Interface}{15}{section.3.3}\protected@file@percent }
-\newlabel{sec:interface}{{3.3}{15}{DHT Interface}{section.3.3}{}}
-\newlabel{sec:interface@cref}{{[section][3][3]3.3}{[1][15][]15}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.1}Protocol}{15}{subsection.3.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3.4}Client}{15}{section.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {4}Evaluation}{17}{chapter.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.1}RPC Framework}{12}{subsection.3.1.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3.1}{\ignorespaces JSON RPC specification.}}{13}{table.3.1}\protected@file@percent }
+\newlabel{tab:rpcjson}{{3.1}{13}{JSON RPC specification}{table.3.1}{}}
+\newlabel{tab:rpcjson@cref}{{[table][1][3]3.1}{[1][12][]13}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces RPC framework \texttt  {@stub} decorator algorithm.}}{13}{algorithm.1}\protected@file@percent }
+\newlabel{alg:rpcstub}{{1}{13}{RPC Framework}{algorithm.1}{}}
+\newlabel{alg:rpcstub@cref}{{[algorithm][1][]1}{[1][13][]13}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces Datagram handling in my JSON RPC framework.}}{14}{algorithm.2}\protected@file@percent }
+\newlabel{alg:datagram}{{2}{14}{RPC Framework}{algorithm.2}{}}
+\newlabel{alg:datagram@cref}{{[algorithm][2][]2}{[1][13][]14}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.2}Custom RPC Specification}{14}{subsection.3.1.2}\protected@file@percent }
+\newlabel{sec:customrpc}{{3.1.2}{14}{Custom RPC Specification}{subsection.3.1.2}{}}
+\newlabel{sec:customrpc@cref}{{[subsection][2][3,1]3.1.2}{[1][14][]14}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1.3}Generate Procedure}{14}{subsection.3.1.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3.2}{\ignorespaces \emph  {VoxelPopuli} block types.}}{15}{table.3.2}\protected@file@percent }
+\newlabel{tab:blocks}{{3.2}{15}{\emph {VoxelPopuli} block types}{table.3.2}{}}
+\newlabel{tab:blocks@cref}{{[table][2][3]3.2}{[1][15][]15}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {3}{\ignorespaces Generate Procedure Pseudocode.}}{15}{algorithm.3}\protected@file@percent }
+\newlabel{alg:generate}{{3}{15}{Generate Procedure}{algorithm.3}{}}
+\newlabel{alg:generate@cref}{{[algorithm][3][]3}{[1][14][]15}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.2}Game Server}{15}{section.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.1}Server State}{15}{subsection.3.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.2}Protocol}{16}{subsection.3.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Handshake}{16}{section*.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{Game}{16}{section*.11}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3.3}{\ignorespaces Message format for the game server protocol.}}{17}{table.3.3}\protected@file@percent }
+\newlabel{tab:gameprotocol}{{3.3}{17}{Message format for the game server protocol}{table.3.3}{}}
+\newlabel{tab:gameprotocol@cref}{{[table][3][3]3.3}{[1][16][]17}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2.3}Chunk Thread}{17}{subsection.3.2.3}\protected@file@percent }
+\newlabel{sec:cthread}{{3.2.3}{17}{Chunk Thread}{subsection.3.2.3}{}}
+\newlabel{sec:cthread@cref}{{[subsection][3][3,2]3.2.3}{[1][17][]17}}
+\@writefile{toc}{\contentsline {section}{\numberline {3.3}DHT Interface}{17}{section.3.3}\protected@file@percent }
+\newlabel{sec:interface}{{3.3}{17}{DHT Interface}{section.3.3}{}}
+\newlabel{sec:interface@cref}{{[section][3][3]3.3}{[1][17][]17}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3.1}Protocol}{17}{subsection.3.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3.4}Client}{17}{section.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {4}Evaluation}{19}{chapter.4}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
-\@writefile{toc}{\contentsline {chapter}{\numberline {5}Conclusion}{19}{chapter.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {5}Conclusion}{21}{chapter.5}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
 \bibcite{kademlia}{1}
@@ -100,7 +116,7 @@
 \bibcite{source}{6}
 \bibcite{perlin}{7}
 \bibcite{simplex}{8}
-\@writefile{toc}{\contentsline {chapter}{Bibliography}{21}{chapter.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {chapter}{\numberline {A}Proposal}{23}{appendix.A}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{Bibliography}{23}{chapter.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {chapter}{\numberline {A}Proposal}{25}{appendix.A}\protected@file@percent }
 \@writefile{lof}{\addvspace {10\p@ }}
 \@writefile{lot}{\addvspace {10\p@ }}
