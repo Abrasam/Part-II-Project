@@ -29,13 +29,16 @@
 \contentsline {section}{\numberline {3.2}Game Server}{15}{section.3.2}%
 \contentsline {subsection}{\numberline {3.2.1}Server State}{15}{subsection.3.2.1}%
 \contentsline {subsection}{\numberline {3.2.2}Protocol}{16}{subsection.3.2.2}%
-\contentsline {subsubsection}{Handshake}{16}{section*.10}%
-\contentsline {subsubsection}{Game}{16}{section*.11}%
+\contentsline {subsubsection}{\numberline {3.2.2.1}Handshake}{16}{subsubsection.3.2.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2.2}Game}{17}{subsubsection.3.2.2.2}%
 \contentsline {subsection}{\numberline {3.2.3}Chunk Thread}{17}{subsection.3.2.3}%
-\contentsline {section}{\numberline {3.3}DHT Interface}{17}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}Protocol}{17}{subsection.3.3.1}%
-\contentsline {section}{\numberline {3.4}Client}{17}{section.3.4}%
-\contentsline {chapter}{\numberline {4}Evaluation}{19}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Conclusion}{21}{chapter.5}%
-\contentsline {chapter}{Bibliography}{23}{chapter.5}%
-\contentsline {chapter}{\numberline {A}Proposal}{25}{appendix.A}%
+\contentsline {subsection}{\numberline {3.2.4}DHT Interface}{19}{subsection.3.2.4}%
+\contentsline {subsubsection}{\numberline {3.2.4.1}Protocol}{19}{subsubsection.3.2.4.1}%
+\contentsline {section}{\numberline {3.3}Client}{19}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Architecture}{19}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Mesh Generation}{19}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}Chunk Loading \& Unloading}{19}{subsection.3.3.3}%
+\contentsline {chapter}{\numberline {4}Evaluation}{21}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Conclusion}{23}{chapter.5}%
+\contentsline {chapter}{Bibliography}{25}{chapter.5}%
+\contentsline {chapter}{\numberline {A}Proposal}{27}{appendix.A}%

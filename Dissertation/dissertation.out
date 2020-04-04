@@ -29,11 +29,16 @@
 \BOOKMARK [1][-]{section.3.2}{Game Server}{chapter.3}% 29
 \BOOKMARK [2][-]{subsection.3.2.1}{Server State}{section.3.2}% 30
 \BOOKMARK [2][-]{subsection.3.2.2}{Protocol}{section.3.2}% 31
-\BOOKMARK [2][-]{subsection.3.2.3}{Chunk Thread}{section.3.2}% 32
-\BOOKMARK [1][-]{section.3.3}{DHT Interface}{chapter.3}% 33
-\BOOKMARK [2][-]{subsection.3.3.1}{Protocol}{section.3.3}% 34
-\BOOKMARK [1][-]{section.3.4}{Client}{chapter.3}% 35
-\BOOKMARK [0][-]{chapter.4}{Evaluation}{}% 36
-\BOOKMARK [0][-]{chapter.5}{Conclusion}{}% 37
-\BOOKMARK [0][-]{chapter.5}{Bibliography}{}% 38
-\BOOKMARK [0][-]{appendix.A}{Proposal}{}% 39
+\BOOKMARK [3][-]{subsubsection.3.2.2.1}{Handshake}{subsection.3.2.2}% 32
+\BOOKMARK [3][-]{subsubsection.3.2.2.2}{Game}{subsection.3.2.2}% 33
+\BOOKMARK [2][-]{subsection.3.2.3}{Chunk Thread}{section.3.2}% 34
+\BOOKMARK [2][-]{subsection.3.2.4}{DHT Interface}{section.3.2}% 35
+\BOOKMARK [3][-]{subsubsection.3.2.4.1}{Protocol}{subsection.3.2.4}% 36
+\BOOKMARK [1][-]{section.3.3}{Client}{chapter.3}% 37
+\BOOKMARK [2][-]{subsection.3.3.1}{Architecture}{section.3.3}% 38
+\BOOKMARK [2][-]{subsection.3.3.2}{Mesh Generation}{section.3.3}% 39
+\BOOKMARK [2][-]{subsection.3.3.3}{Chunk Loading \046 Unloading}{section.3.3}% 40
+\BOOKMARK [0][-]{chapter.4}{Evaluation}{}% 41
+\BOOKMARK [0][-]{chapter.5}{Conclusion}{}% 42
+\BOOKMARK [0][-]{chapter.5}{Bibliography}{}% 43
+\BOOKMARK [0][-]{appendix.A}{Proposal}{}% 44

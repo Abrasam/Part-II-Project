@@ -22,6 +22,8 @@
 \renewcommand{\baselinestretch}{1.1}    % adjust line spacing to make
 % more readable
 
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
 \setlength{\parskip}{0.5em}%
 
 \newcommand{\python}{\emph{Python}}
@@ -383,7 +385,7 @@
 	The game server is responsible for performing the computation and maintaining the state for a number of chunks concurrently. It is also responsible for providing clients with a method of querying the DHT to locate chunks in the \emph{VoxelPopuli} network and to retrieve player data.
 	
 	\subsection{Server State}
-	The game server state consists of a set of active client connections and the state for each of the chunks it is responsible for. Chunk state consists of the world data for that chunk, represented as a 3D array of integers ranging between $0-3$ to represent different voxel types (see table \ref{tab:blocks}); the set of players currently active in this chunk and their locations; a list of clients who are subscribed to updates on this chunk and $(x,y)$ -- the coordinates of this chunk in the world.
+	The game server state consists of a set of active client connections (and two queues for each connection, one for receiving and one for sending data) and the state for each of the chunks it is responsible for. Chunk state consists of the world data for that chunk, represented as a 3D array\footnote{The current size of a chunk is $32\times32\times32$ blocks.},  of integers ranging between $0-3$ to represent different voxel types (see table \ref{tab:blocks}); the set of players currently active in this chunk and their locations; a list of clients who are subscribed to updates on this chunk and $(x,y)$ -- the coordinates of this chunk in the world. Note here that a client may be connected to a single game server multiple times because it is connected to multiple of the chunks this server is responsible for.
 	
 	\begin{table}
 		\centering
@@ -400,8 +402,11 @@
 	
 	Chunks are either loaded or unloaded, unloaded chunks have no connected clients and their computation (i.e. game loop) is not currently being executed. A loaded chunk has a dedicated thread for performing the game computations of the chunk, a chunk is only loaded if it has a non-zero number of connected clients and is unloaded as soon as the last client disconnects.
 	
+	The game server's main thread runs continuously a loop it checks if there are any new connections, in which case it will perform the handshake procedure in \cref{sec:handshake}. Furthermore, it uses \texttt{select} to get a list of sockets ready for reading or writing. Then, for each readable socket it reads all data available and adds it to the socket's buffer, if it encounters a newline character (denoting the end of a packet) it puts the packet into the receive queue associated with this socket and clears the buffer. For each writeable socket it checks if there is queued data to send and if so, attempts to send it, removing the successfully sent data from the send queue associated with that socket.
+	
 	\subsection{Protocol}
 	\subsubsection{Handshake}
+	\label{sec:handshake}
 	When the server receives a new connection it waits for a JSON message from the new client, this message is decoded and it should contain a \emph{type} field. This \emph{type} field can take four different values, depending on which the server will take different actions. The possible values are:
 	\begin{itemize}
 		\item \textbf{``connect''} -- this means that the client wishes to connect to a chunk resident on this \emph{VoxelPopuli} server. There will be a field called \emph{chunk} which contains the chunk coordinates of the chunk to be connected to. The server will then perform the following:
@@ -417,7 +422,7 @@
 	Once the action has been completed successfully the server sends an acknowledgement to the client, informing it that the operation succeeded. Unless the connection is to be kept live (i.e. in the case of connecting to the game server (``connect'' packet) or DHT interfacing (``dht'' packet)) then the connection is closed.
 	
 	\subsubsection{Game}
-	There are a number of messages which need to be exchanged between the client and game server. These allow the client(s) to inform the server that it has performed an action updating its or the world's state and allow the server to inform the client(s) of changes to the state of the world. Again these are exchanged as JSON messages of the format shown in table \ref{tab:gameprotocol}.
+	There are a number of messages which need to be exchanged between the client and game server. These allow the client(s) to inform the server that it has performed an action updating the world's state and allow the server to inform the client(s) of these, and other, state changes. Again these are exchanged as JSON messages of the format shown in table \ref{tab:gameprotocol}.
 	\begin{table}
 		\centering
 		\begin{tabularx}{0.85\textwidth}{| l | l | X |}
@@ -429,17 +434,55 @@
 		\label{tab:gameprotocol}
 	\end{table}
 
-	
+	The game server protocol consists of $6$ types of packet which are exchanged between clients and servers. The details of each packet are in table \ref{tab:gamepackets}. In order to signal the end of a packet each packet has a newline character appended to the end of its JSON representation. Packets are encoded as bytes using UTF-8 and then sent over a TCP socket between client and server.
+
+	\begin{table}
+		\begin{tabularx}{\textwidth}{| l | l | X | p{2cm} |}
+			\hline
+			\bf Packet Type & \bf ID & \bf Purpose & \bf Arguments \\
+			\hline
+			\tt PLAYER\_REGISTER & $1$ & Used by clients to inform a server that a player is entering a particular chunk. Relayed to clients to inform them they should start rendering this player. & Player location $(x,y,z)$. \\
+			\hline
+			\tt PLAYER\_DEREGISTER & $2$ & Used by clients to inform a server that a player has left a particular chunk. Also triggers server to save player data to DHT. Relayed by server to clients to inform they should stop rendering this player. & None. \\
+			\hline
+			\tt PLAYER\_MOVE & $3$ & Used by clients to update inform the server of a change in a player's location. Relayed by server to clients so they can update where the player is being displayed. & New player position $(x,y,z,\theta)$, $\theta=$ yaw. \\
+			\hline
+			\tt CHUNK\_DATA & $5$ & Packs entire chunk block array into packet and sends to player so they can load and display a chunk. & Flattened chunk data array. \\
+			\hline
+			\tt TIME & $6$ & Informs the client that the in-game time has changed, sent every tick. & Current time as minutes from midnight (accurate to second). \\
+			\hline
+			\tt BLOCK\_CHANGE & $7$ & Used by a client to inform the server that the world has changed, server updates state and sends updated \texttt{CHUNK\_DATA} packet to all clients. & Location of block to change and new block type. \\
+			\hline
+		\end{tabularx}
+		\caption{List of packets types exchanged between clients and game servers.}
+		\label{tab:gamepackets}
+	\end{table}
 	
 	\subsection{Chunk Thread}
 	\label{sec:cthread}
+	The chunk thread performs the computation for one chunk of the world. In theory, the network should contain no more than one chunk thread for any given chunk. Meaning that clients connecting to the same chunk will always find the same server.
 	
-	\section{DHT Interface}
+	It is important here to make a distinction between a `client' and a `player', a client is any instance of the software described in \cref{sec:client} and has an associated player with a position in the world. This client may be connected to multiple chunk threads across the network, however, the player is only resident in one of these chunks, in all the other chunks the client is simply listening to updates from this server in order to render this chunk to the user.
+	
+	The computation runs in a continuous loop, it pops any packets from its receive queue and performs the appropriate action as explained in table \ref{tab:gamepackets}, this may involve updating the game state and hence, sending packets to some of the clients connected. It then steps the game time and sends all players in this chunk a packet informing them of the time change. Next it checks if any player has not been heard of for a certain period of time and removes it, assuming it has gone offline.
+	
+	When there are no active clients for this chunk thread it will unload, saving the state and stopping the thread so as not to waste resources. This ensures that the number or chunk threads active on a given node at a particular time is kept to a minimum.
+	
+	\subsection{DHT Interface}
 	\label{sec:interface}
+	As previously explained, in order for clients to query the DHT (and thus retrieve their saved player data and the locations of chunks in the network) they must have some method to query the DHT. In order to do this they connect to a game server and perform the DHT handshake as described in \cref{sec:handshake}. This connection is then given a dedicated thread to respond to queries to the DHT. The current protocol allows a client to either get the \textless IP, port\textgreater~ for a particular chunk (the chunk is generated if does not exist in the network) or download player save data (location primarily).
 	
-	\subsection{Protocol}
+	\subsubsection{Protocol}
+	The thread process one request at a time and is not guaranteed to respond to requests issued while another request is pending. There are two packet types chunk query (type $0$) and player query (type $1$), a packet's first byte is its packet type. To query a chunk location a packet is sent consisting of a leading $0$ byte (packet type) followed by the JSON encoding of the coordinates of the chunk (as a JSON list). The server replies with the JSON list \texttt{[IP address, port]}. To query player data a packet consisting of a leading $1$ byte (packet type) followed by the JSON attribute-value pair: \texttt{\{`name':player\_name\}} where \texttt{player\_name} is the username of the player to query. The server responds with the JSON representation of the player's coordinates. If the player was not found then it returns $(0,32,0)$ (the default spawn location). Note that all the JSON strings are encoded as bytes for sending using UTF-8.
 	
 	\section{Client}
+	\label{sec:client}
+	
+	\subsection{Architecture} % talk about multithreading and packets -> updates
+	
+	\subsection{Mesh Generation}
+	
+	\subsection{Chunk Loading \& Unloading}
 	
 	\cleardoublepage
 	\chapter{Evaluation}
