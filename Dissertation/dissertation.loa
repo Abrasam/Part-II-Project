@@ -2,3 +2,4 @@
 \contentsline {algorithm}{\numberline {2}{\ignorespaces Datagram handling in my JSON RPC framework.}}{14}{algorithm.2}%
 \contentsline {algorithm}{\numberline {3}{\ignorespaces Generate Procedure Pseudocode.}}{15}{algorithm.3}%
 \contentsline {algorithm}{\numberline {4}{\ignorespaces The mesh generation algorithm used by the client.}}{23}{algorithm.4}%
+\contentsline {algorithm}{\numberline {5}{\ignorespaces Algorithm for maintaining the correct set of loaded chunks by the client.}}{24}{algorithm.5}%

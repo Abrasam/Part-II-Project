@@ -7,6 +7,9 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{cleveref}
+\usepackage{dirtree}
+\usepackage{xcolor}
+\usepackage{wrapfig}
 
 \crefname{section}{§}{§§}
 \Crefname{section}{§}{§§}
@@ -21,6 +24,9 @@
 
 \renewcommand{\baselinestretch}{1.1}    % adjust line spacing to make
 % more readable
+
+\renewcommand\DTstyle{\ttfamily\textcolor{blue}}
+\renewcommand\DTstylecomment{\ttfamily\textcolor{gray}}
 
 \setcounter{secnumdepth}{4}
 \setcounter{tocdepth}{4}
@@ -242,6 +248,7 @@
 	For this section of the project I decided to use \unity, rather than \emph{LWJGL}, because the graphical element was simpler and as graphics is not the focus of my project this felt appropriate.
 	
 	\subsection{\unity}
+	\unity{} is a 3D game engine which is widely used. It is fairly easy to learn yet quite powerful and expressive making it a popular tool in the modern games industry. A simple overview is all that is needed for this project. \unity{} provides us with a 3D world populated with game objects. These game objects can have \emph{components} attached to them, such as a mesh renderer (to render a 3D mesh) or light source for example. However, most importantly you are able to assign scripts as components which you can write yourself, these scripts have a number of built-in methods which \unity{} calls at particular times, most importantly we have the {\tt Start()} method, which is called upon creating the component, the {\tt Update()} method which is called each frame and the {\tt FixedUpdate()} method which is called each time the physics engine updates. These scripts have access to a powerful API allowing us to influence the game world.
 	
 	\section{World \& Terrain}
 	The game world will be analagous to that of \emph{Minecraft}, in that it will consist of voxels (i.e. blocks) arranged in a 3D grid. An example of \emph{Minecraft}'s terrain can be seen in figure \ref{fig:minecraft}. The \emph{Minecraft} world is broken into `chunks' each $16\times16\times256$ blocks, then each chunk is simply a 3D array of block data.
@@ -289,6 +296,7 @@
 	As such, a custom implementation was devised with additional RPCs and a bespoke high-level interface with the required \texttt{PUT}, \texttt{GET} and \texttt{GENERATE} procedures.
 	
 	\subsection{RPC Framework}
+	\label{sec:rpcframework}
 	In order for \kademlia{} nodes to communicate with each other we need a method of issuing RPCs to remote machines and retrieving the results. In order to do this I used \emph{asyncio}'s \texttt{DatagramProtocol} class which is a base class for implementing protocols over UDP. This class provides overrideable methods such as \texttt{datagram\_received()} which is called when the underlying socket receives a UDP datagram. I wrote a general-purpose RPC system because at the time I was unsure how many RPCs I would need and wanted to be able to add and remove them on the fly. This proved useful when revising my \kademlia{} implementation to include the separate \texttt{STORE} and \texttt{FIND\_VALUE} RPCs.
 	
 	In order to implement the RPC framework I designed a \emph{JSON} format for RPC calls and responses (see table \ref{tab:rpcjson} for details). I created two function decorators in Python: \texttt{@rpc} and \texttt{@stub}. \texttt{@rpc} adds no special behaviour and simply marks that this method may be called remotely; \texttt{@stub} replaces the supplied method with a method which takes the same arguments and computes the JSON RPC string to be sent to the other machine, then sends this message and awaits a reply before returning the result (or \texttt{None} on a timeout), this process is outlined in algorithm \ref{alg:rpcstub}.
@@ -518,13 +526,15 @@
 	\end{table}
 	
 	\subsubsection{Network Thread}
+	\label{sec:nthread}
 	The network thread has access to send/receive queues for each chunk the client is connected to. It takes received packets from these queues and processes them ready to be sent to the game thread. Some packets require an amount of computationally intensive pre-processing before they are ready to be used by the game. For example, packets of type \texttt{CHUNK\_DATA} require a large amount of processing as the array needs to be unflattened and then the chunk's mesh data needs to be generated -- this can take $10$s of frames. This computation is performed in the network thread which has no bearing on the client's frame rate. Once any pre-processing is performed a state update is sent to the game thread which is rendering the world.
 	
 	The network thread also receives updates from the game thread, these updates can be player movement or block changes. Where appropriate, it converts these updates into a packet and queues these for sending to the relevant chunk's server.
 	
-	Finally, the network thread ensures that the correct chunks are loaded, locating and loading those which are needed and unloading those which are no longer needed. This is discussed in detail in \cref{sec:loading}.
+	Finally, the network thread ensures that the correct chunks are loaded, locating and loading those which are needed and unloading those which are no longer needed. This is discussed in detail in \cref{sec:loading}. To do this is maintains a connection to a \voxpop{} node where the connection has been setup to be in DHT query mode, allowing the client to use this node to query the DHT.
 	
 	\subsubsection{Game Thread}
+	\label{sec:gamethread}
 	This is the main \unity{} thread. The part that is of interest to this project is the \texttt{update()} method in our \texttt{World} script which is executed each frame. This has access to the incoming and outgoing update queues used to exchange state updates between the network thread and the game thread. The game thread simply performs the necessary steps to make state updates received from the network thread visible to the user, and it sends updates to the network thread when the user does something which updates the state of the world.
 	
 	Details of the types of updates exchanged can be seen in table \ref{tab:updates}. Some of these are very similar to the packets from table \ref{tab:gamepackets} as expected. Within the game thread each player has an object to represent it (in this prototype they are simply a cube) and each chunk has an object to represent it (a 3D mesh with an associated `Chunk' object containing the block array and the mesh's data -- details of mesh data generation are in \cref{sec:mesh}).
@@ -572,8 +582,82 @@
 	
 	\subsection{Chunk Loading \& Unloading}
 	\label{sec:loading}
+	As noted in \cref{sec:nthread} the network thread is responsible for ensuring the correct chunks are loaded, it uses the DHT query connection for this purpose. The rule for determining whether a chunk should be loaded is simple: a chunk should be loaded if it is not already loaded and it is within a $3\times3$ grid of chunks centred on the player. Similarly, a chunk should be unloaded if it is outside of a $9\times9$ grid of chunks centred on the player.
 	
-	\section{Repository Overview}
+	Each time the network thread processes a \texttt{PLAYER\_MOVE} update from the game thread it checks to see if there are any chunks to unload, if so it unloads them (i.e. ends the connection and sends a \texttt{CHUNK\_UNLOAD} update to the game thread). Then it checks if there are any chunks to load, if so it queries their locations using the DHT connection, connects to them and loads them (it only sends the \texttt{CHUNK\_LOAD} update when it receives the \texttt{CHUNK\_DATA} packet from the server for this chunk). This process is outlined in algorithm \ref{alg:load}.
+	
+	\begin{algorithm}
+		\begin{algorithmic}
+			\For{chunk $\in$ loaded}
+				\If{$|\mathrm{chunk.x} - \mathrm{player.chunk.x}| \geq 5$ OR $|\mathrm{chunk.y} - \mathrm{player.chunk.y}| \geq 5$}
+					\State unload(chunk);
+				\EndIf
+			\EndFor
+			\State chunk\_position $\gets$ (player.chunk.x, player.chunk.y);
+			\For{$-1 \leq i \leq 1$}
+				\For{$-1 \leq j \leq 1$}
+					\If{chunk at chunk\_position + $(i,j)$ is not loaded}
+						\State s $\gets$ query\_chunk\_from\_dht(chunk\_position + $(i,j)$);
+						\State load chunk from server s;
+					\EndIf
+				\EndFor
+			\EndFor
+		\end{algorithmic}
+		\caption{Algorithm for maintaining the correct set of loaded chunks by the client.}
+		\label{alg:load}
+	\end{algorithm}
+	
+	\section{Overview}
+	This section provides an overview of the project and the files contained within my repository (which are shown in figure \ref{fig:dir} shows).
+	
+	\begin{wrapfigure}{R}{5.5cm}
+		\dirtree{%
+			.1 \voxpop.
+			.2 Client.
+			.3 Assets.
+			.4 Code.
+			.5 Chunk.cs.
+			.5 Constants.cs.
+			.5 Controller.cs.
+			.5 Network.cs.
+			.5 WireFrame.cs.
+			.5 World.cs.
+			.4 $\dots$.
+			.2 Server.
+			.3 main.py.
+			.3 game.
+			.4 chunkthread.py.
+			.4 const.py.
+			.4 world.py.
+			.3 kademlia.
+			.4 node.py.
+			.4 protocol.py.
+			.4 router.py.
+			.4 server.py.
+			.4 storage.py.
+			.3 tests.
+			.4 $\dots$.
+			.2 Test Client.
+			.3 test\_client.py.
+		}
+		\caption{Directory overview of \voxpop{}.}
+		\label{fig:dir}
+	\end{wrapfigure}
+	
+	\subsection{Client}
+	The client takes the form of a \unity{} project. As noted, Unity allows you to assign scripts to game objects which then have methods such as \texttt{Update()} and \texttt{Start()} which are called at the appropriate times (in these cases: each frame and when the object is created respectively).
+	
+	The client has $6$ files of code, $3$ of which contains scripts able to be assigned to objects. {\tt Controller.cs} is a script assigned to the player object which takes user input and moves the player, obeying physics and collisions. {\tt WireFrame.cs} is another script applied to the player object which simply renders a wire frame cube around the block the player is looking at. {\tt World.cs} is a script applied to the (initially) world object which performs the game thread actions described in \cref{sec:gamethread}.
+	
+	The other $3$ files contain classes and data used by the aforementioned scripts. In {\tt Chunk.cs} we have a class for chunks, these contain the chunk's block array and mesh data, and provide a number of methods for querying the contents of the chunk (such as {\tt IsSolid(Vector3 localPos)} for querying if a block is solid at position {\tt localPos} relative to the chunk). {\tt Network.cs} contains the {\tt NetworkThread} class which is used to execute the network thread as explained in \cref{sec:nthread}. Finally, {\tt Constants.cs} contains a number of constants such as the tick rate, chunk size and various pieces of data needed for mesh generation.
+	
+	\subsection{Server}
+	The server is split into two main parts, the \kademlia{} implementation and the game server. Within the game server we have {\tt chunkthread.py} which contains the {\tt ChunkThread} class which is used to execute the chunk thread as discussed in \cref{sec:cthread}. We also have {\tt world.py} which contains classes for maintaining state about the world, namely {\tt Chunk} and {\tt Player}. We have {\tt const.py} which contains a number of important constants such as a {\tt PacketType} enumeration. Finally we have {\tt main.py} which performs the main loop of a \voxpop{} node, i.e. waiting for new connections and performing the handshake procedure from \cref{sec:handshake}. The code for the DHT interface thread (see \cref{sec:interface}) is here too.
+	
+	Within the \kademlia{} folder we have {\tt node.py} and {\tt storage.py} which contain simple classes to represent a \kademlia{} Node and the local storage on a node respectively. {\tt router.py} contains the \K-bucket class and routing table class. {\tt protocol.py} contains the \kademlia{} RPC implementation as well as the RPC framework outlined in \cref{sec:rpcframework}. Finally, {\tt server.py} contains the high level interface for the \kademlia{} network, allowing the following operations to be performed: {\tt run()} (initialise a node), {\tt get\_chunk()} (lookup a chunk and generate it if it does not exist), {\tt get\_player()} and {\tt save\_player()} (retrieve or save player save data), {\tt generate\_chunk()} and {\tt republish\_chunk()}.
+	
+	\subsection{Test Client}
+	The test client is a single script which simply initialises a configurable number of dummy players and connects them to the network in random positions, it then moves them around randomly to simulate activity.
 	
 	\cleardoublepage
 	\chapter{Evaluation}

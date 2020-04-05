@@ -1,10 +1,11 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces A screenshot of terrain from the game \emph {Minecraft}.}}{8}{figure.2.1}%
+\contentsline {figure}{\numberline {2.1}{\ignorespaces A screenshot of terrain from the game \emph {Minecraft}.}}{9}{figure.2.1}%
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {3.1}{\ignorespaces Diagram giving an overview of \emph {VoxelPopuli}{} architecture.}}{12}{figure.3.1}%
 \contentsline {figure}{\numberline {3.2}{\ignorespaces A screenshot of the \emph {VoxelPopuli}{} client connected to a world.}}{20}{figure.3.2}%
 \contentsline {figure}{\numberline {3.3}{\ignorespaces A diagram of mapping between vertices and triangles for a simplified face of a cube.}}{23}{figure.3.3}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Directory overview of \emph {VoxelPopuli}{}.}}{25}{figure.3.4}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

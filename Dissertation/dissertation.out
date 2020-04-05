@@ -41,8 +41,11 @@
 \BOOKMARK [3][-]{subsubsection.3.3.1.2}{Game Thread}{subsection.3.3.1}% 41
 \BOOKMARK [2][-]{subsection.3.3.2}{Chunk Mesh Generation}{section.3.3}% 42
 \BOOKMARK [2][-]{subsection.3.3.3}{Chunk Loading \046 Unloading}{section.3.3}% 43
-\BOOKMARK [1][-]{section.3.4}{Repository Overview}{chapter.3}% 44
-\BOOKMARK [0][-]{chapter.4}{Evaluation}{}% 45
-\BOOKMARK [0][-]{chapter.5}{Conclusion}{}% 46
-\BOOKMARK [0][-]{chapter.5}{Bibliography}{}% 47
-\BOOKMARK [0][-]{appendix.A}{Proposal}{}% 48
+\BOOKMARK [1][-]{section.3.4}{Overview}{chapter.3}% 44
+\BOOKMARK [2][-]{subsection.3.4.1}{Client}{section.3.4}% 45
+\BOOKMARK [2][-]{subsection.3.4.2}{Server}{section.3.4}% 46
+\BOOKMARK [2][-]{subsection.3.4.3}{Test Client}{section.3.4}% 47
+\BOOKMARK [0][-]{chapter.4}{Evaluation}{}% 48
+\BOOKMARK [0][-]{chapter.5}{Conclusion}{}% 49
+\BOOKMARK [0][-]{chapter.5}{Bibliography}{}% 50
+\BOOKMARK [0][-]{appendix.A}{Proposal}{}% 51
