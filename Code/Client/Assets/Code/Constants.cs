@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class Data {
+public static class Constants {
 
     public static readonly int ChunkSize = 32;
     public static readonly float TickLength = 1 / 20;
@@ -27,7 +27,7 @@ public static class Data {
 		{1, 2, 5, 6}
 	};
 
-    public static readonly Vector3[] faceOffsets = new Vector3[6] {
+    public static readonly Vector3[] faceNormals = new Vector3[6] {
 
         new Vector3(0.0f, 0.0f, -1.0f),
         new Vector3(0.0f, 0.0f, 1.0f),

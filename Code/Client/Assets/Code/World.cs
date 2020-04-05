@@ -20,13 +20,13 @@ public class World : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        byte[,,] blocks = new byte[Data.ChunkSize, Data.ChunkSize, Data.ChunkSize];
-        for (int i = 0; i < Data.ChunkSize; i++) {
-            for (int j = 0; j < Data.ChunkSize; j++) {
-                for (int k = 0; k < Data.ChunkSize; k++) {
-                    if (j == Data.ChunkSize - 1) {
+        byte[,,] blocks = new byte[Constants.ChunkSize, Constants.ChunkSize, Constants.ChunkSize];
+        for (int i = 0; i < Constants.ChunkSize; i++) {
+            for (int j = 0; j < Constants.ChunkSize; j++) {
+                for (int k = 0; k < Constants.ChunkSize; k++) {
+                    if (j == Constants.ChunkSize - 1) {
                         blocks[i, j, k] = 2;
-                    } else if (j > Data.ChunkSize - 5) {
+                    } else if (j > Constants.ChunkSize - 5) {
                         blocks[i, j, k] = 3;
                     } else {
                         blocks[i, j, k] = 1;
@@ -52,7 +52,7 @@ public class World : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         tickTimer += Time.deltaTime;
-        if (tickTimer > Data.TickLength) {
+        if (tickTimer > Constants.TickLength) {
             tickTimer = 0;
             //Push events to queue.
             events.Enqueue(new Update(UpdateType.PLAYER_MOVE, username, new float[] { player.transform.position.x, player.transform.position.y, player.transform.position.z, player.transform.eulerAngles.y }));
@@ -83,7 +83,7 @@ public class World : MonoBehaviour {
                             Chunk chunk3;
                             float[] arg = (float[])update.arg;
                             Vector3 pos = new Vector3(arg[0], arg[1], arg[2]);
-                            if (chunks.TryGetValue(new Vector2(Mathf.FloorToInt(pos.x / Data.ChunkSize), Mathf.FloorToInt(pos.z / Data.ChunkSize)), out chunk3)) {
+                            if (chunks.TryGetValue(new Vector2(Mathf.FloorToInt(pos.x / Constants.ChunkSize), Mathf.FloorToInt(pos.z / Constants.ChunkSize)), out chunk3)) {
                                 GameObject moved = chunk3.GetPlayer(update.player);
                                 if (moved != null) {
                                     moved.transform.position = pos + Vector3.up;
@@ -145,11 +145,11 @@ public class World : MonoBehaviour {
         int yi = Mathf.FloorToInt(y);
         int zi = Mathf.FloorToInt(z);
 
-        int chunkX = Mathf.FloorToInt(xi / (float)Data.ChunkSize);
-        int chunkY = Mathf.FloorToInt(zi / (float)Data.ChunkSize);
+        int chunkX = Mathf.FloorToInt(xi / (float)Constants.ChunkSize);
+        int chunkY = Mathf.FloorToInt(zi / (float)Constants.ChunkSize);
 
-        xi -= (chunkX * Data.ChunkSize);
-        zi -= (chunkY * Data.ChunkSize);
+        xi -= (chunkX * Constants.ChunkSize);
+        zi -= (chunkY * Constants.ChunkSize);
 
         Chunk chunk;
         if (chunks.TryGetValue(new Vector2(chunkX, chunkY), out chunk)) {

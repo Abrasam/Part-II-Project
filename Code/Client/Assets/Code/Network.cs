@@ -177,8 +177,8 @@ public class NetworkThread {
     }
 
     private void UpdateChunks(Vector3 pos) {
-        int chunkX = Mathf.FloorToInt(pos.x / Data.ChunkSize);
-        int chunkY = Mathf.FloorToInt(pos.z / Data.ChunkSize);
+        int chunkX = Mathf.FloorToInt(pos.x / Constants.ChunkSize);
+        int chunkY = Mathf.FloorToInt(pos.z / Constants.ChunkSize);
         List<ChunkThread> rem = new List<ChunkThread>();
         foreach (ChunkThread ct in servers) {
             Vector2 chunk = ct.GetChunkCoord();
@@ -226,7 +226,7 @@ public class NetworkThread {
                         current.Send(new Packet((int)PacketType.PLAYER_DEREGISTER, new float[] {coord.x, coord.y}, player));
                     }
                     current = ct;
-                    current.Send(new Packet((int)PacketType.PLAYER_REGISTER, new float[] {Mathf.FloorToInt(pos.x/Data.ChunkSize), Mathf.FloorToInt(pos.z/Data.ChunkSize)}, player));
+                    current.Send(new Packet((int)PacketType.PLAYER_REGISTER, new float[] {Mathf.FloorToInt(pos.x/Constants.ChunkSize), Mathf.FloorToInt(pos.z/Constants.ChunkSize)}, player));
                     break;
                 }
             }
@@ -261,11 +261,11 @@ public class NetworkThread {
                     Packet p = s.recv.Take();
                     switch (p.type) {
                         case (int)PacketType.CHUNK_DATA:
-                            byte[,,] chunkData = new byte[Data.ChunkSize, Data.ChunkSize, Data.ChunkSize];
-                            for (int x = 0; x < Data.ChunkSize; x++) {
-                                for (int y = 0; y < Data.ChunkSize; y++) {
-                                    for (int z = 0; z < Data.ChunkSize; z++) {
-                                        chunkData[x, y, z] = (byte)p.args[2 + Data.ChunkSize * Data.ChunkSize * x + Data.ChunkSize * y + z];
+                            byte[,,] chunkData = new byte[Constants.ChunkSize, Constants.ChunkSize, Constants.ChunkSize];
+                            for (int x = 0; x < Constants.ChunkSize; x++) {
+                                for (int y = 0; y < Constants.ChunkSize; y++) {
+                                    for (int z = 0; z < Constants.ChunkSize; z++) {
+                                        chunkData[x, y, z] = (byte)p.args[2 + Constants.ChunkSize * Constants.ChunkSize * x + Constants.ChunkSize * y + z];
                                     }
                                 }
                             }
@@ -288,7 +288,7 @@ public class NetworkThread {
                     }
                 }
             }
-            Thread.Sleep((int)(Data.TickLength * 1000));
+            Thread.Sleep((int)(Constants.TickLength * 1000));
         }
     }
 

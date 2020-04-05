@@ -491,18 +491,6 @@
 	\subsection{Architecture} % talk about multithreading and packets -> updates
 	The client operates two main threads as well as a two threads (one each for receiving and sending) for each chunk it is connected to. The two main threads exist to separate long, blocking processes from the thread rendering the world, this prevents frame rate stuttering\footnote{Where the frame rate drops briefly, causing the game to appear to momentarily freeze}. The two main threads will be referred to as the \emph{network thread} and the \emph{game thread}.
 	
-	\subsubsection{Network Thread}
-	The network thread has access to send/receive queues for each chunk the client is connected to. It takes received packets from these queues and processes them ready to be sent to the game thread. Some packets require an amount of computationally intensive pre-processing before they are ready to be used by the game. For example, packets of type \texttt{CHUNK\_DATA} require a large amount of processing as the array needs to be unflattened and then the chunk's mesh data needs to be generated -- this can take $10$s of frames. This computation is performed in the network thread which has no bearing on the client's frame rate. Once any pre-processing is performed a state update is sent to the game thread which is rendering the world.
-	
-	The network thread also receives updates from the game thread, these updates can be player movement or block changes. Where appropriate, it converts these updates into a packet and queues these for sending to the relevant chunk's server.
-	
-	Finally, the network thread ensures that the correct chunks are loaded, locating and loading those which are needed and unloading those which are no longer needed. This is discussed in detail in \cref{sec:loading}.
-	
-	\subsubsection{Game Thread}
-	This is the main \unity{} thread. The part that is of interest to this project is the \texttt{update()} method in our \texttt{World} script which is executed each frame. This has access to the incoming and outgoing update queues used to exchange state updates between the network thread and the game thread. The game thread simply performs the necessary steps to make state updates received from the network thread visible to the user, and it sends updates to the network thread when the user does something which updates the state of the world.
-	
-	Details of the types of updates exchanged can be seen in table \ref{tab:updates}. Some of these are very similar to the packets from table \ref{tab:gamepackets} as expected. Within the game thread each player has an object to represent it (in this prototype they are simply a cube) and each chunk has an object to represent it (a 3D mesh with an associated `Chunk' object containing the block array and the mesh's data -- details of mesh data generation are in \cref{sec:mesh}).
-	
 	\begin{table}
 		\begin{tabularx}{\textwidth}{| l | X | p{3cm} |}
 			\hline
@@ -529,8 +517,58 @@
 		\label{tab:updates}
 	\end{table}
 	
+	\subsubsection{Network Thread}
+	The network thread has access to send/receive queues for each chunk the client is connected to. It takes received packets from these queues and processes them ready to be sent to the game thread. Some packets require an amount of computationally intensive pre-processing before they are ready to be used by the game. For example, packets of type \texttt{CHUNK\_DATA} require a large amount of processing as the array needs to be unflattened and then the chunk's mesh data needs to be generated -- this can take $10$s of frames. This computation is performed in the network thread which has no bearing on the client's frame rate. Once any pre-processing is performed a state update is sent to the game thread which is rendering the world.
+	
+	The network thread also receives updates from the game thread, these updates can be player movement or block changes. Where appropriate, it converts these updates into a packet and queues these for sending to the relevant chunk's server.
+	
+	Finally, the network thread ensures that the correct chunks are loaded, locating and loading those which are needed and unloading those which are no longer needed. This is discussed in detail in \cref{sec:loading}.
+	
+	\subsubsection{Game Thread}
+	This is the main \unity{} thread. The part that is of interest to this project is the \texttt{update()} method in our \texttt{World} script which is executed each frame. This has access to the incoming and outgoing update queues used to exchange state updates between the network thread and the game thread. The game thread simply performs the necessary steps to make state updates received from the network thread visible to the user, and it sends updates to the network thread when the user does something which updates the state of the world.
+	
+	Details of the types of updates exchanged can be seen in table \ref{tab:updates}. Some of these are very similar to the packets from table \ref{tab:gamepackets} as expected. Within the game thread each player has an object to represent it (in this prototype they are simply a cube) and each chunk has an object to represent it (a 3D mesh with an associated `Chunk' object containing the block array and the mesh's data -- details of mesh data generation are in \cref{sec:mesh}).
+	
 	\subsection{Chunk Mesh Generation}
 	\label{sec:mesh}
+	In computer graphics, a \emph{mesh} is a collection of vertices, edges and faces which make up a 3D object. For each chunk we must generate a mesh from the block array in order to render the chunk to the player. In order to do this we must construct 2 arrays; firstly, we need to compute the array of vertices in the mesh, then we need the array mapping these vertices to triangles. In order to do this, for each triangle we need the indices of the 3 vertices that make up that triangle, we then add these 3 indices to the triangles array.
+	
+	\begin{figure}
+		\centering
+		\includegraphics[width=0.5\textwidth]{diag2.png}
+		\caption{A diagram of mapping between vertices and triangles for a simplified face of a cube.}
+		\label{fig:mesh}
+	\end{figure}
+	
+	In order to apply textures to the faces we also need to provide a texture coordinate (often referred to as a \emph{uv} coordinate) to each vertex. This is supplied in an array too, where the indices in the vertex array correspond to the indices of the texture coordinate of that vertex in the uv array. Once we have computed our vertex, triangle and uv arrays we can supply these to unity which will be able to generate and render the mesh for us. This process is very computationally intensive, for our chunks it involves iterating over all $32^3 = 32768$ blocks and performing $6$ iterations ($1$ per face) for each block. Pseudocode for the mesh generation algorithm is supplied in algorithm \ref{alg:mesh}, this approach is based on similar methods found in various open source voxel-based games. Figure \ref{fig:mesh} shows how a face of the cube is produced by two triangles.
+	
+	\begin{algorithm}
+		\begin{algorithmic}
+			\State blocks[][][] $\gets$ chunk block array;
+			\State vertices[] $\gets$ new vec3 array;
+			\State triangles[] $\gets$ new int array;
+			\State uvs[] $\gets$ new vec3 array;
+			\State vertex $\gets 0$;
+			\For{$0 \leq x <$ \tt CHUNK\_SIZE}
+				\For{$0 \leq y <$ \tt CHUNK\_SIZE}
+					\For{$0 \leq z <$ \tt CHUNK\_SIZE}
+						\For{each face}
+							\If{blocks[x][y][z] is air OR\\ blocks[x][y][z] + faceNormal is not air}
+								\State continue;
+							\EndIf
+							\State add vertices for this face;
+							\State add uv coordinates for correct texture;
+							\State triangles += [vertex+0, vertex+1, vertex+2];
+							\State triangles += [vertex+2, vertex+1, vertex+3];
+							\State vertex $\gets$ vertex + 4;
+						\EndFor
+					\EndFor
+				\EndFor
+			\EndFor
+		\end{algorithmic}
+		\caption{The mesh generation algorithm used by the client.}
+		\label{alg:mesh}
+	\end{algorithm}
 	
 	\subsection{Chunk Loading \& Unloading}
 	\label{sec:loading}

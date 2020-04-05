@@ -34,7 +34,7 @@ public class Chunk {
         meshRenderer.material = world.material;
 
         me.transform.SetParent(world.transform);
-        me.transform.position = new Vector3(chunkPos.x * Data.ChunkSize, 0, chunkPos.y * Data.ChunkSize);
+        me.transform.position = new Vector3(chunkPos.x * Constants.ChunkSize, 0, chunkPos.y * Constants.ChunkSize);
 
         UpdateMesh();
 
@@ -47,7 +47,7 @@ public class Chunk {
         int y = Mathf.FloorToInt(localPos.y);
         int z = Mathf.FloorToInt(localPos.z);
 
-        if (x < 0 || x >= Data.ChunkSize || z < 0 || z >= Data.ChunkSize || y < 0 || y >= Data.ChunkSize) {
+        if (x < 0 || x >= Constants.ChunkSize || z < 0 || z >= Constants.ChunkSize || y < 0 || y >= Constants.ChunkSize) {
             return false;
         }
 
@@ -62,25 +62,25 @@ public class Chunk {
 
         int t = 0;
 
-        for (int y = 0; y < Data.ChunkSize; y++) {
-            for (int x = 0; x < Data.ChunkSize; x++) {
-                for (int z = 0; z < Data.ChunkSize; z++) {
+        for (int y = 0; y < Constants.ChunkSize; y++) {
+            for (int x = 0; x < Constants.ChunkSize; x++) {
+                for (int z = 0; z < Constants.ChunkSize; z++) {
                     for (int i = 0; i < 6; i++) {
 
                         Vector3 pos = new Vector3(x, y, z);
 
-                        if (blocks[x, y, z] == 0 || IsSolid(pos + Data.faceOffsets[i])) continue;
+                        if (blocks[x, y, z] == 0 || IsSolid(pos + Constants.faceNormals[i])) continue;
 
-                        if (y == Data.ChunkSize - 1 && i == 2) {
+                        if (y == Constants.ChunkSize - 1 && i == 2) {
                             t += 1;
                         }
 
-                        verts.Add(pos + Data.vertices[Data.triangles[i, 0]]);
-                        verts.Add(pos + Data.vertices[Data.triangles[i, 1]]);
-                        verts.Add(pos + Data.vertices[Data.triangles[i, 2]]);
-                        verts.Add(pos + Data.vertices[Data.triangles[i, 3]]);
+                        verts.Add(pos + Constants.vertices[Constants.triangles[i, 0]]);
+                        verts.Add(pos + Constants.vertices[Constants.triangles[i, 1]]);
+                        verts.Add(pos + Constants.vertices[Constants.triangles[i, 2]]);
+                        verts.Add(pos + Constants.vertices[Constants.triangles[i, 3]]);
 
-                        Vector2 coord = Data.textureCoords[blocks[x, y, z] - 1, i];
+                        Vector2 coord = Constants.textureCoords[blocks[x, y, z] - 1, i];
                         uvs.Add(coord);
                         uvs.Add(coord + new Vector2(0f, 0.5f));
                         uvs.Add(coord + new Vector2(0.5f, 0f));

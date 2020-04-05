@@ -38,11 +38,11 @@
 \contentsline {section}{\numberline {3.3}Client}{19}{section.3.3}%
 \contentsline {subsection}{\numberline {3.3.1}Architecture}{20}{subsection.3.3.1}%
 \contentsline {subsubsection}{\numberline {3.3.1.1}Network Thread}{20}{subsubsection.3.3.1.1}%
-\contentsline {subsubsection}{\numberline {3.3.1.2}Game Thread}{21}{subsubsection.3.3.1.2}%
-\contentsline {subsection}{\numberline {3.3.2}Chunk Mesh Generation}{21}{subsection.3.3.2}%
-\contentsline {subsection}{\numberline {3.3.3}Chunk Loading \& Unloading}{21}{subsection.3.3.3}%
-\contentsline {section}{\numberline {3.4}Repository Overview}{21}{section.3.4}%
-\contentsline {chapter}{\numberline {4}Evaluation}{23}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Conclusion}{25}{chapter.5}%
-\contentsline {chapter}{Bibliography}{27}{chapter.5}%
-\contentsline {chapter}{\numberline {A}Proposal}{29}{appendix.A}%
+\contentsline {subsubsection}{\numberline {3.3.1.2}Game Thread}{22}{subsubsection.3.3.1.2}%
+\contentsline {subsection}{\numberline {3.3.2}Chunk Mesh Generation}{22}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}Chunk Loading \& Unloading}{24}{subsection.3.3.3}%
+\contentsline {section}{\numberline {3.4}Repository Overview}{24}{section.3.4}%
+\contentsline {chapter}{\numberline {4}Evaluation}{25}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Conclusion}{27}{chapter.5}%
+\contentsline {chapter}{Bibliography}{29}{chapter.5}%
+\contentsline {chapter}{\numberline {A}Proposal}{31}{appendix.A}%
