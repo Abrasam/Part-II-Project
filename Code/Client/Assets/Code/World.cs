@@ -44,7 +44,7 @@ public class World : MonoBehaviour {
 
         username = "Abrasam";// string.Join("",bytes);
 
-        nt = new NetworkThread(this, username, updates, events, "5.135.160.191", 24001); //5.135.160.191 28015
+        nt = new NetworkThread(this, username, updates, events, "5.135.160.191", 28015); //5.135.160.191 28015
         player.transform.position = nt.GetLocation();
         nt.Start();
     }
@@ -53,6 +53,7 @@ public class World : MonoBehaviour {
     void Update() {
         tickTimer += Time.deltaTime;
         if (tickTimer > Data.TickLength) {
+            tickTimer = 0;
             //Push events to queue.
             events.Enqueue(new Update(UpdateType.PLAYER_MOVE, username, new float[] { player.transform.position.x, player.transform.position.y, player.transform.position.z, player.transform.eulerAngles.y }));
             //Pop packets from queue.

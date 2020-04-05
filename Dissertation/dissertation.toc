@@ -15,6 +15,7 @@
 \contentsline {subsection}{\numberline {2.3.7}Bootstrap}{6}{subsection.2.3.7}%
 \contentsline {section}{\numberline {2.4}Game Server}{7}{section.2.4}%
 \contentsline {section}{\numberline {2.5}Client}{7}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}\emph {Unity}}{8}{subsection.2.5.1}%
 \contentsline {section}{\numberline {2.6}World \& Terrain}{8}{section.2.6}%
 \contentsline {section}{\numberline {2.7}Professional Practice}{9}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}Ethical Implications}{9}{subsection.2.7.1}%
@@ -35,10 +36,13 @@
 \contentsline {subsection}{\numberline {3.2.4}DHT Interface}{19}{subsection.3.2.4}%
 \contentsline {subsubsection}{\numberline {3.2.4.1}Protocol}{19}{subsubsection.3.2.4.1}%
 \contentsline {section}{\numberline {3.3}Client}{19}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}Architecture}{19}{subsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.3.2}Mesh Generation}{19}{subsection.3.3.2}%
-\contentsline {subsection}{\numberline {3.3.3}Chunk Loading \& Unloading}{19}{subsection.3.3.3}%
-\contentsline {chapter}{\numberline {4}Evaluation}{21}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Conclusion}{23}{chapter.5}%
-\contentsline {chapter}{Bibliography}{25}{chapter.5}%
-\contentsline {chapter}{\numberline {A}Proposal}{27}{appendix.A}%
+\contentsline {subsection}{\numberline {3.3.1}Architecture}{20}{subsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.1.1}Network Thread}{20}{subsubsection.3.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.3.1.2}Game Thread}{21}{subsubsection.3.3.1.2}%
+\contentsline {subsection}{\numberline {3.3.2}Chunk Mesh Generation}{21}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}Chunk Loading \& Unloading}{21}{subsection.3.3.3}%
+\contentsline {section}{\numberline {3.4}Repository Overview}{21}{section.3.4}%
+\contentsline {chapter}{\numberline {4}Evaluation}{23}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Conclusion}{25}{chapter.5}%
+\contentsline {chapter}{Bibliography}{27}{chapter.5}%
+\contentsline {chapter}{\numberline {A}Proposal}{29}{appendix.A}%

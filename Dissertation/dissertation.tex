@@ -30,6 +30,7 @@
 \newcommand{\unity}{\emph{Unity}}
 \newcommand{\kademlia}{\emph{Kademlia}}
 \newcommand{\K}{$k$}
+\newcommand{\voxpop}{\emph{VoxelPopuli}}
 
 \begin{document}
 	
@@ -42,7 +43,7 @@
 	\vspace*{60mm}
 	\begin{center}
 		\Huge
-		{\bf Voxel Populi:\\ A Decentralised Peer-to-Peer Voxel-Based World} \\
+		{\bf \voxpop:\\ A Decentralised Peer-to-Peer Voxel-Based World} \\
 		\vspace*{5mm}
 		Computer Science Tripos \\
 		\vspace*{5mm}
@@ -240,6 +241,8 @@
 	
 	For this section of the project I decided to use \unity, rather than \emph{LWJGL}, because the graphical element was simpler and as graphics is not the focus of my project this felt appropriate.
 	
+	\subsection{\unity}
+	
 	\section{World \& Terrain}
 	The game world will be analagous to that of \emph{Minecraft}, in that it will consist of voxels (i.e. blocks) arranged in a 3D grid. An example of \emph{Minecraft}'s terrain can be seen in figure \ref{fig:minecraft}. The \emph{Minecraft} world is broken into `chunks' each $16\times16\times256$ blocks, then each chunk is simply a 3D array of block data.
 	\begin{figure}
@@ -270,12 +273,12 @@
 	
 	\begin{figure}
 		\includegraphics[width=\textwidth]{diag1.png}
-		\caption{Diagram giving an overview of \emph{Voxel Populi} architecture.}
+		\caption{Diagram giving an overview of \voxpop{} architecture.}
 		\label{fig:diagram1}
 	\end{figure}
-	The client needs to connect to a single node from the \emph{VoxelPopuli} network, which it will use as a `stepping stone' to access the whole network via. It uses this stepping stone node to query the DHT to find the \textless IP, port\textgreater~of the game servers responsible for the chunks it needs. It then initiates connections with each of these game servers in parallel, registers the player in that chunk and downloads the world data.
+	The client needs to connect to a single node from the \voxpop{} network, which it will use as a `stepping stone' to access the whole network via. It uses this stepping stone node to query the DHT to find the \textless IP, port\textgreater~of the game servers responsible for the chunks it needs. It then initiates connections with each of these game servers in parallel, registers the player in that chunk and downloads the world data.
 	
-	The \emph{VoxelPopuli} server consists of two distinct parts, the \kademlia{} node and the game server. Thus for each node in the network there are two \emph{virtual} nodes. The \kademlia{} nodes are not visible to a client. In order to query the DHT, clients connect to any game server and initiate a special type of session specifically for DHT access. The game server then performs queries to the DHT on behalf of the client. Further details of this special session are in \cref{sec:interface}. Note that for simplicity's sake the \kademlia{} node and game server bind to the same IP address with the game server port being the \kademlia{} port incremented by $1$.
+	The \voxpop{} server consists of two distinct parts, the \kademlia{} node and the game server. Thus for each node in the network there are two \emph{virtual} nodes. The \kademlia{} nodes are not visible to a client. In order to query the DHT, clients connect to any game server and initiate a special type of session specifically for DHT access. The game server then performs queries to the DHT on behalf of the client. Further details of this special session are in \cref{sec:interface}. Note that for simplicity's sake the \kademlia{} node and game server bind to the same IP address with the game server port being the \kademlia{} port incremented by $1$.
 	
 	\section{Kademlia}
 	This section introduces my bespoke implementation of the \kademlia{} specification. A custom implementation of \kademlia{} was necessary for two main reasons:
@@ -382,7 +385,7 @@
 	\end{algorithm}
 	
 	\section{Game Server}
-	The game server is responsible for performing the computation and maintaining the state for a number of chunks concurrently. It is also responsible for providing clients with a method of querying the DHT to locate chunks in the \emph{VoxelPopuli} network and to retrieve player data.
+	The game server is responsible for performing the computation and maintaining the state for a number of chunks concurrently. It is also responsible for providing clients with a method of querying the DHT to locate chunks in the \voxpop{} network and to retrieve player data.
 	
 	\subsection{Server State}
 	The game server state consists of a set of active client connections (and two queues for each connection, one for receiving and one for sending data) and the state for each of the chunks it is responsible for. Chunk state consists of the world data for that chunk, represented as a 3D array\footnote{The current size of a chunk is $32\times32\times32$ blocks.},  of integers ranging between $0-3$ to represent different voxel types (see table \ref{tab:blocks}); the set of players currently active in this chunk and their locations; a list of clients who are subscribed to updates on this chunk and $(x,y)$ -- the coordinates of this chunk in the world. Note here that a client may be connected to a single game server multiple times because it is connected to multiple of the chunks this server is responsible for.
@@ -396,7 +399,7 @@
 			\textbf{Integer Value} & 0 & 1 & 2 & 3 \\
 			\hline
 		\end{tabularx}
-		\caption{\emph{VoxelPopuli} block types.}
+		\caption{\voxpop{} block types.}
 		\label{tab:blocks}
 	\end{table}
 	
@@ -409,13 +412,13 @@
 	\label{sec:handshake}
 	When the server receives a new connection it waits for a JSON message from the new client, this message is decoded and it should contain a \emph{type} field. This \emph{type} field can take four different values, depending on which the server will take different actions. The possible values are:
 	\begin{itemize}
-		\item \textbf{``connect''} -- this means that the client wishes to connect to a chunk resident on this \emph{VoxelPopuli} server. There will be a field called \emph{chunk} which contains the chunk coordinates of the chunk to be connected to. The server will then perform the following:
+		\item \textbf{``connect''} -- this means that the client wishes to connect to a chunk resident on this \voxpop{} server. There will be a field called \emph{chunk} which contains the chunk coordinates of the chunk to be connected to. The server will then perform the following:
 		\begin{enumerate}
 			\item Check if the relevant chunk is indeed resident and generated on this server. If not it will send a failure message to the client and return.
 			\item Check whether the chunk is loaded and if not load it by starting a new chunk processing thread for this chunk (see \cref{sec:cthread}).
 			\item Add this client to the chunk processing thread's client list.
 		\end{enumerate}
-		\item \textbf{``generate''} -- this means that the client (in fact another \emph{VoxelPopuli} server in this case) is requesting that a supplied chunk be generated. Again the \emph{chunk} field will be present, containing the coordinates of the chunk to be generated. The server will simply generate the chunk and add it to its set of chunks, however, it will not load it.
+		\item \textbf{``generate''} -- this means that the client (in fact another \voxpop{} server in this case) is requesting that a supplied chunk be generated. Again the \emph{chunk} field will be present, containing the coordinates of the chunk to be generated. The server will simply generate the chunk and add it to its set of chunks, however, it will not load it.
 		\item \textbf{``dht''} -- this means that the client does not wish to use this node as a game server but instead as an access point to the DHT. In this case we launch a new, dedicated, thread to handle DHT queries, details of this thread can be found in \cref{sec:interface}.
 		\item \textbf{``ping''} -- used to query whether a game server is alive, returns the \texttt{UTF-8} encoding of the string \emph{``pong''}.
 	\end{itemize}
@@ -477,12 +480,62 @@
 	
 	\section{Client}
 	\label{sec:client}
+	The client is the user's entry point into the world, it renders the world (and other players) and allows the player to move around within it; it provides a basic physics simulation for realistic movement and collisions and it allows the user to make changes to the world by breaking and placing blocks. A screenshot of the client in action can be seen in fig \ref{fig:client}. The client was written in C\# using the \unity{} game engine.
+	
+	\begin{figure}
+		\includegraphics[width=\textwidth]{client.png}
+		\caption{A screenshot of the \voxpop{} client connected to a world.}
+		\label{fig:client}
+	\end{figure}
 	
 	\subsection{Architecture} % talk about multithreading and packets -> updates
+	The client operates two main threads as well as a two threads (one each for receiving and sending) for each chunk it is connected to. The two main threads exist to separate long, blocking processes from the thread rendering the world, this prevents frame rate stuttering\footnote{Where the frame rate drops briefly, causing the game to appear to momentarily freeze}. The two main threads will be referred to as the \emph{network thread} and the \emph{game thread}.
 	
-	\subsection{Mesh Generation}
+	\subsubsection{Network Thread}
+	The network thread has access to send/receive queues for each chunk the client is connected to. It takes received packets from these queues and processes them ready to be sent to the game thread. Some packets require an amount of computationally intensive pre-processing before they are ready to be used by the game. For example, packets of type \texttt{CHUNK\_DATA} require a large amount of processing as the array needs to be unflattened and then the chunk's mesh data needs to be generated -- this can take $10$s of frames. This computation is performed in the network thread which has no bearing on the client's frame rate. Once any pre-processing is performed a state update is sent to the game thread which is rendering the world.
+	
+	The network thread also receives updates from the game thread, these updates can be player movement or block changes. Where appropriate, it converts these updates into a packet and queues these for sending to the relevant chunk's server.
+	
+	Finally, the network thread ensures that the correct chunks are loaded, locating and loading those which are needed and unloading those which are no longer needed. This is discussed in detail in \cref{sec:loading}.
+	
+	\subsubsection{Game Thread}
+	This is the main \unity{} thread. The part that is of interest to this project is the \texttt{update()} method in our \texttt{World} script which is executed each frame. This has access to the incoming and outgoing update queues used to exchange state updates between the network thread and the game thread. The game thread simply performs the necessary steps to make state updates received from the network thread visible to the user, and it sends updates to the network thread when the user does something which updates the state of the world.
+	
+	Details of the types of updates exchanged can be seen in table \ref{tab:updates}. Some of these are very similar to the packets from table \ref{tab:gamepackets} as expected. Within the game thread each player has an object to represent it (in this prototype they are simply a cube) and each chunk has an object to represent it (a 3D mesh with an associated `Chunk' object containing the block array and the mesh's data -- details of mesh data generation are in \cref{sec:mesh}).
+	
+	\begin{table}
+		\begin{tabularx}{\textwidth}{| l | X | p{3cm} |}
+			\hline
+			\bf Update Type & Purpose & Arguments \\
+			\hline
+			\tt PLAYER\_MOVE & Used by the network thread to inform the game thread that another player has moved and the object representing that player should be moved. & Player name and new location.\\
+			\cline{2-2}
+			\tt & Used by the game thread to inform the network thread that the player associated with this client has moved so that the network thread can relay this to the server. & \\
+			\hline
+			\tt LOAD\_CHUNK & Used by the network thread to make the game thread load in newly downloaded chunk data. & Chunk coordinates, block array and mesh data. (Encapsulated as a `Chunk` object.) \\
+			\hline
+			\tt UNLOAD\_CHUNK & Used by the network thread to make the game thread unload a chunk, removing it from the game world. & Chunk coordinates. \\
+			\hline
+			\tt PLAYER\_ADD & Used by the network thread to inform the game thread of a player appearing in a particular chunk, the game thread will add an object to the world to represent this player. & New player's location and name. \\
+			\hline
+			\tt PLAYER\_REMOVE & Used by the network thread to inform the game thread a player has left a particular chunk, the game thread removes the player from the world. & The player's name. \\
+			\hline
+			\tt TIME & Network thread informs the game thread a \texttt{TIME} packet has been received, the game thread will move the game's light object to reflect this. & The new time. \\
+			\hline
+			\tt BLOCK\_CHANGE & Used by the game thread to inform the network thread the player has broken or placed a block. & The position of the block to be updated and its new type.\\
+			\hline
+		\end{tabularx}
+		\caption{Details of the updates exchanged between the network and game threads of the client.}
+		\label{tab:updates}
+	\end{table}
+	
+	\subsection{Chunk Mesh Generation}
+	\label{sec:mesh}
 	
 	\subsection{Chunk Loading \& Unloading}
+	\label{sec:loading}
+	
+	\section{Repository Overview}
 	
 	\cleardoublepage
 	\chapter{Evaluation}

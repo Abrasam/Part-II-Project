@@ -278,7 +278,6 @@ public class NetworkThread {
                             incomingUpdates.Enqueue(new Update(UpdateType.PLAYER_ADD, p.player, new Vector2(p.args[0], p.args[1])));
                             break;
                         case (int)PacketType.PLAYER_DEREGISTER:
-                            Debug.Log("DEREGISTER");
                             incomingUpdates.Enqueue(new Update(UpdateType.PLAYER_REMOVE, p.player, new Vector2(p.args[0], p.args[1])));
                             break;
                         case (int)PacketType.TIME:

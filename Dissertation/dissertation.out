@@ -15,30 +15,34 @@
 \BOOKMARK [2][-]{subsection.2.3.7}{Bootstrap}{section.2.3}% 15
 \BOOKMARK [1][-]{section.2.4}{Game Server}{chapter.2}% 16
 \BOOKMARK [1][-]{section.2.5}{Client}{chapter.2}% 17
-\BOOKMARK [1][-]{section.2.6}{World \046 Terrain}{chapter.2}% 18
-\BOOKMARK [1][-]{section.2.7}{Professional Practice}{chapter.2}% 19
-\BOOKMARK [2][-]{subsection.2.7.1}{Ethical Implications}{section.2.7}% 20
-\BOOKMARK [2][-]{subsection.2.7.2}{Methodology}{section.2.7}% 21
-\BOOKMARK [2][-]{subsection.2.7.3}{Tooling}{section.2.7}% 22
-\BOOKMARK [2][-]{subsection.2.7.4}{Documentation}{section.2.7}% 23
-\BOOKMARK [0][-]{chapter.3}{Implementation}{}% 24
-\BOOKMARK [1][-]{section.3.1}{Kademlia}{chapter.3}% 25
-\BOOKMARK [2][-]{subsection.3.1.1}{RPC Framework}{section.3.1}% 26
-\BOOKMARK [2][-]{subsection.3.1.2}{Custom RPC Specification}{section.3.1}% 27
-\BOOKMARK [2][-]{subsection.3.1.3}{Generate Procedure}{section.3.1}% 28
-\BOOKMARK [1][-]{section.3.2}{Game Server}{chapter.3}% 29
-\BOOKMARK [2][-]{subsection.3.2.1}{Server State}{section.3.2}% 30
-\BOOKMARK [2][-]{subsection.3.2.2}{Protocol}{section.3.2}% 31
-\BOOKMARK [3][-]{subsubsection.3.2.2.1}{Handshake}{subsection.3.2.2}% 32
-\BOOKMARK [3][-]{subsubsection.3.2.2.2}{Game}{subsection.3.2.2}% 33
-\BOOKMARK [2][-]{subsection.3.2.3}{Chunk Thread}{section.3.2}% 34
-\BOOKMARK [2][-]{subsection.3.2.4}{DHT Interface}{section.3.2}% 35
-\BOOKMARK [3][-]{subsubsection.3.2.4.1}{Protocol}{subsection.3.2.4}% 36
-\BOOKMARK [1][-]{section.3.3}{Client}{chapter.3}% 37
-\BOOKMARK [2][-]{subsection.3.3.1}{Architecture}{section.3.3}% 38
-\BOOKMARK [2][-]{subsection.3.3.2}{Mesh Generation}{section.3.3}% 39
-\BOOKMARK [2][-]{subsection.3.3.3}{Chunk Loading \046 Unloading}{section.3.3}% 40
-\BOOKMARK [0][-]{chapter.4}{Evaluation}{}% 41
-\BOOKMARK [0][-]{chapter.5}{Conclusion}{}% 42
-\BOOKMARK [0][-]{chapter.5}{Bibliography}{}% 43
-\BOOKMARK [0][-]{appendix.A}{Proposal}{}% 44
+\BOOKMARK [2][-]{subsection.2.5.1}{Unity}{section.2.5}% 18
+\BOOKMARK [1][-]{section.2.6}{World \046 Terrain}{chapter.2}% 19
+\BOOKMARK [1][-]{section.2.7}{Professional Practice}{chapter.2}% 20
+\BOOKMARK [2][-]{subsection.2.7.1}{Ethical Implications}{section.2.7}% 21
+\BOOKMARK [2][-]{subsection.2.7.2}{Methodology}{section.2.7}% 22
+\BOOKMARK [2][-]{subsection.2.7.3}{Tooling}{section.2.7}% 23
+\BOOKMARK [2][-]{subsection.2.7.4}{Documentation}{section.2.7}% 24
+\BOOKMARK [0][-]{chapter.3}{Implementation}{}% 25
+\BOOKMARK [1][-]{section.3.1}{Kademlia}{chapter.3}% 26
+\BOOKMARK [2][-]{subsection.3.1.1}{RPC Framework}{section.3.1}% 27
+\BOOKMARK [2][-]{subsection.3.1.2}{Custom RPC Specification}{section.3.1}% 28
+\BOOKMARK [2][-]{subsection.3.1.3}{Generate Procedure}{section.3.1}% 29
+\BOOKMARK [1][-]{section.3.2}{Game Server}{chapter.3}% 30
+\BOOKMARK [2][-]{subsection.3.2.1}{Server State}{section.3.2}% 31
+\BOOKMARK [2][-]{subsection.3.2.2}{Protocol}{section.3.2}% 32
+\BOOKMARK [3][-]{subsubsection.3.2.2.1}{Handshake}{subsection.3.2.2}% 33
+\BOOKMARK [3][-]{subsubsection.3.2.2.2}{Game}{subsection.3.2.2}% 34
+\BOOKMARK [2][-]{subsection.3.2.3}{Chunk Thread}{section.3.2}% 35
+\BOOKMARK [2][-]{subsection.3.2.4}{DHT Interface}{section.3.2}% 36
+\BOOKMARK [3][-]{subsubsection.3.2.4.1}{Protocol}{subsection.3.2.4}% 37
+\BOOKMARK [1][-]{section.3.3}{Client}{chapter.3}% 38
+\BOOKMARK [2][-]{subsection.3.3.1}{Architecture}{section.3.3}% 39
+\BOOKMARK [3][-]{subsubsection.3.3.1.1}{Network Thread}{subsection.3.3.1}% 40
+\BOOKMARK [3][-]{subsubsection.3.3.1.2}{Game Thread}{subsection.3.3.1}% 41
+\BOOKMARK [2][-]{subsection.3.3.2}{Chunk Mesh Generation}{section.3.3}% 42
+\BOOKMARK [2][-]{subsection.3.3.3}{Chunk Loading \046 Unloading}{section.3.3}% 43
+\BOOKMARK [1][-]{section.3.4}{Repository Overview}{chapter.3}% 44
+\BOOKMARK [0][-]{chapter.4}{Evaluation}{}% 45
+\BOOKMARK [0][-]{chapter.5}{Conclusion}{}% 46
+\BOOKMARK [0][-]{chapter.5}{Bibliography}{}% 47
+\BOOKMARK [0][-]{appendix.A}{Proposal}{}% 48
