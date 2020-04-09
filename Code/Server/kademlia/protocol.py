@@ -179,6 +179,7 @@ class KademliaNode(asyncio.DatagramProtocol):
                 if res[i] is None:
                     continue
                 if value and type(res[i]) != list:  # this means we cannot store lists in DHT.
+                    print(f"queried {len(queried)} nodes")
                     return res[i]  # have found value, return it.
                 nodes += list(map(lambda x: self.table.get_node_if_contact(x[0]) if self.table.get_node_if_contact(x[0]) is not None else Node(x[0], (x[1], x[2])), res[i]))
             nodes = list(set(nodes))
@@ -189,7 +190,7 @@ class KademliaNode(asyncio.DatagramProtocol):
                 if n not in queried:
                     continue
             break
-
+        print(f"queried {len(queried)} nodes")
         return None if value else nodes
 
     async def insert(self, key, value, store_type=None):
