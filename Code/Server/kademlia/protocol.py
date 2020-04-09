@@ -18,6 +18,7 @@ def stub(func):
         loop = asyncio.get_event_loop()
         msg = {"id": random.getrandbits(32), "node": self.id, "call": True, "rpc": func.__name__[4:], "args": args}
         self.transport.sendto(json.dumps(msg).encode("UTF-8"), node.addr)
+        #print("sent rpc " + json.dumps(msg) + " to " + str(node.addr) + " id: " + str(node.id))
         f = asyncio.Future()
         self.waiting[msg["id"]] = (f, loop.call_later(TIMEOUT+random.randint(0,TIMEOUT), self._timeout, msg["id"]), node)
         await f
@@ -163,7 +164,6 @@ class KademliaNode(asyncio.DatagramProtocol):
 
     async def lookup(self, key_or_id, value=False, find_type=None):
         nodes = self.table.nearest_nodes_to(key_or_id)
-        #print(nodes)
         queried = [Node(self.id, ())]
         found_new = False
         while len(nodes) > 0:
@@ -172,26 +172,53 @@ class KademliaNode(asyncio.DatagramProtocol):
             unqueried = list(filter(lambda n: n not in queried and (n not in self._timeouts or time.monotonic() - self._timeouts[n] > 600), nodes)) # don't query recently failed nodes
             for i in range(0, min(ALPHA if found_new else K, len(unqueried))):
                 multicast.append(unqueried.pop(0))
-            #print("ASKING: " + str(multicast))
             res = await asyncio.gather(*[find_type(n, key_or_id) if value else self.ext_find_node(n, key_or_id) for n in multicast])
             queried += multicast
             for i in range(0, len(res)):
                 if res[i] is None:
                     continue
                 if value and type(res[i]) != list:  # this means we cannot store lists in DHT.
-                    print(f"queried {len(queried)} nodes")
                     return res[i]  # have found value, return it.
                 nodes += list(map(lambda x: self.table.get_node_if_contact(x[0]) if self.table.get_node_if_contact(x[0]) is not None else Node(x[0], (x[1], x[2])), res[i]))
             nodes = list(set(nodes))
             nodes.sort(key=lambda n: n.id ^ key_or_id)
             nodes = nodes[:K]  # only keep K best.
-            found_new = best == nodes[0]
-            for n in nodes:
-                if n not in queried:
-                    continue
+            found_new = (best != nodes[0])
+            if found_new or len(list(filter(lambda x: x not in queried, nodes))) > 0:
+                continue
             break
-        print(f"queried {len(queried)} nodes")
         return None if value else nodes
+
+    async def lookup_c(self, key_or_id, value=False, find_type=None):
+        nodes = self.table.nearest_nodes_to(key_or_id)
+        queried = [Node(self.id, ())]
+        found_new = False
+        while len(nodes) > 0:
+            best = nodes[0]
+            multicast = []
+            unqueried = list(filter(
+                lambda n: n not in queried and (n not in self._timeouts or time.monotonic() - self._timeouts[n] > 600),
+                nodes))  # don't query recently failed nodes
+            for i in range(0, min(ALPHA if found_new else K, len(unqueried))):
+                multicast.append(unqueried.pop(0))
+            res = await asyncio.gather(
+                *[find_type(n, key_or_id) if value else self.ext_find_node(n, key_or_id) for n in multicast])
+            queried += multicast
+            for i in range(0, len(res)):
+                if res[i] is None:
+                    continue
+                if value and type(res[i]) != list:  # this means we cannot store lists in DHT.
+                    return res[i]  # have found value, return it.
+                nodes += list(map(lambda x: self.table.get_node_if_contact(x[0]) if self.table.get_node_if_contact(
+                    x[0]) is not None else Node(x[0], (x[1], x[2])), res[i]))
+            nodes = list(set(nodes))
+            nodes.sort(key=lambda n: n.id ^ key_or_id)
+            nodes = nodes[:K]  # only keep K best.
+            found_new = (best != nodes[0])
+            if found_new or len(list(filter(lambda x: x not in queried, nodes))) > 0:
+                continue
+            break
+        return len(queried)
 
     async def insert(self, key, value, store_type=None):
         nodes = await self.lookup(key)
