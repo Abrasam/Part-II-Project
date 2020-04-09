@@ -31,8 +31,9 @@ async def test():
         res.append((n, mu))
         sigma = (sum(map(lambda x: (x - mu)**2, counts))/100)**0.5
         errs.append((n, sigma))
-        print(f"{n}\t{mu}\t\t{sigma}\t\t{tm/20.}")
+        print(f"{n}\t{mu}\t\t{sigma}\t\t\t{tm/20.}")
         last = n
     print(res)
+    print(errs)
 
 asyncio.run(test())
