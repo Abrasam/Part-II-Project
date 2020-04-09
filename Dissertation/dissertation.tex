@@ -214,7 +214,7 @@
 	\end{table}
 	
 	\subsection{Node Lookup}
-	The lookup procedure is used to locate the \K closest nodes to a supplied identifier. The lookup procedure has one parameter, the concurrency factor $\alpha$. It proceeds as follows:
+	The lookup procedure is used to locate the \K~closest nodes to a supplied identifier. The lookup procedure has one parameter, the concurrency factor $\alpha$. It proceeds as follows:
 	\begin{enumerate}
 		\item Find $\alpha$ closest nodes from own \K-buckets.
 		\item Send \texttt{FIND\_NODE} RPCs to these $\alpha$ nodes searching for supplied identifier.
