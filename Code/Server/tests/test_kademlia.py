@@ -13,6 +13,7 @@ async def test():
     port = base_port
     servers = []
     res = []
+    errs = []
 
     last = 1
     for n in ns:
@@ -21,13 +22,16 @@ async def test():
             s = DHTServer((ip, port))
             servers.append(s)
             await s.run(bootstrap=Node(0, (ip, base_port)))
-        t = 0
+        counts = []
         tm = time.time()
-        for i in range(20):
-            t += await root.server.lookup_c(random.getrandbits(160))
+        for i in range(100):
+            counts.append(await root.server.lookup_c(random.getrandbits(160)))
         tm = time.time() - tm
-        res.append((n, t/20.))
-        print(f"{n}\t{t/20.}\t\t{tm/20.}")
+        mu = sum(counts)/100.
+        res.append((n, mu))
+        sigma = (sum(map(lambda x: (x - mu)**2, counts))/100)**0.5
+        errs.append((n, sigma))
+        print(f"{n}\t{mu}\t\t{sigma}\t\t{tm/20.}")
         last = n
     print(res)
 
