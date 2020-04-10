@@ -6,8 +6,6 @@ if len(sys.argv) < 2:
 
 CHUNK_SIZE = 32
 
-me = random.getrandbits(160)
-
 num_clients = int(sys.argv[1])
 addr = (sys.argv[2], int(sys.argv[3]))
 clients = []
@@ -22,7 +20,7 @@ class Client:
 
     def update(self):
         if not self.init:
-            self.server.send(json.dumps({"type":1,"args":[CHUNK_SIZE*self.x,CHUNK_SIZE*self.y],"player":f"testplayer{me+self.id}"}).encode() + b'\n')
+            self.server.send(json.dumps({"type":1,"args":[CHUNK_SIZE*self.x,CHUNK_SIZE*self.y],"player":f"testplayer{self.id}"}).encode() + b'\n')
         try:
             self.server.recv(102400)
         except:
@@ -40,7 +38,7 @@ if ok == b'ok':
 for i in range(num_clients):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect(addr)
-    s.send(json.dumps({"type":"connect","player":f"test_{me+i}","chunk":(0,0)}).encode())
+    s.send(json.dumps({"type":"connect","player":f"test_{i}","chunk":(0,0)}).encode())
     ok = s.recv(2)
     if ok != b'ok':
         print("Error",file=sys.stderr)
