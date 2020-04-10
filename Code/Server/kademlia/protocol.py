@@ -189,7 +189,7 @@ class KademliaNode(asyncio.DatagramProtocol):
             break
         return None if value else nodes
 
-    async def lookup_c(self, key_or_id, value=False, find_type=None):
+    async def lookup_count(self, key_or_id, value=False, find_type=None):
         nodes = self.table.nearest_nodes_to(key_or_id)
         queried = [Node(self.id, ())]
         found_new = False

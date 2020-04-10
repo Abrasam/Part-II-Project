@@ -25,7 +25,7 @@ async def test():
         counts = []
         tm = time.time()
         for i in range(100):
-            counts.append(await root.server.lookup_c(random.getrandbits(160)))
+            counts.append(await root.server.lookup_count(random.getrandbits(160)))
         tm = time.time() - tm
         mu = sum(counts)/100.
         res.append((n, mu))
