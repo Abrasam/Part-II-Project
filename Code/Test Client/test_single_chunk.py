@@ -36,14 +36,15 @@ s.close()
 if ok == b'ok':
     print("Successfully generated chunk (0,0).")
 for i in range(num_clients):
+    ii = random.getrandbits(16)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect(addr)
-    s.send(json.dumps({"type":"connect","player":f"test_{i}","chunk":(0,0)}).encode())
+    s.send(json.dumps({"type":"connect","player":f"{ii}","chunk":(0,0)}).encode())
     ok = s.recv(2)
     if ok != b'ok':
         print("Error",file=sys.stderr)
     else:
-        clients.append(Client(0,0,i,s))
+        clients.append(Client(0,0,ii,s))
 while True:
     for c in clients:
         c.update()
