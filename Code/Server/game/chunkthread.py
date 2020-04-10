@@ -2,6 +2,7 @@ import json
 import threading
 import time
 import datetime
+import socket
 import asyncio
 from collections import deque
 from queue import Empty, Queue
@@ -24,8 +25,10 @@ class ChunkThread(threading.Thread):
         self.start()
 
     def run(self):
+        # ticks = 0
+        # timer = 0
         while True:
-            t = time.time()
+            t = time.monotonic()
             try:
                 n = self.q.qsize()
                 for _ in range(n):
@@ -37,12 +40,19 @@ class ChunkThread(threading.Thread):
                 tmp = datetime.datetime.utcnow()
                 client.send(Packet(PacketType.TIME, [tmp.hour*60+tmp.minute+tmp.second/60]).dict())
             for c in self.players:
-                if t - self.players[c].touched > 5:
+                tim = time.monotonic()
+                if tim - self.players[c].touched > 5:
                     c.socket.close()
                     self.remove_client(c)
-            time.sleep(max(0,TICK_LENGTH - (time.time() - t)))
+            time.sleep(max(0,TICK_LENGTH - (time.monotonic() - t)))
             if self.done and self.q.empty():
                 return
+            '''ticks += 1
+            timer += time.monotonic() - t
+            if timer > 5:
+                print("TPS:" + str(ticks / timer))
+                timer = 0
+                ticks = 0'''
 
     def _process_packet(self, packet, sender):
         if packet["type"] == PacketType.PLAYER_REGISTER.value:
