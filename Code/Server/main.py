@@ -80,7 +80,6 @@ def ctrl_loop():
     t = time.monotonic()
 
     while True:
-        tim = time.monotonic()
         if time.monotonic() - t > 3600:
             for coord in chunks:
                 asyncio.run_coroutine_threadsafe(dht.republish_chunk(coord, (bind_ip, base_port + 1)), dht.loop)
@@ -160,7 +159,6 @@ def ctrl_loop():
             print(list(map(lambda x: x.fileno(), sockets)))
         except ValueError:
             print(list(map(lambda x: x.fileno(), sockets)))
-        time.sleep(max(0,TICK_LENGTH - (time.monotonic() - tim)))
 
 game_server_ctrl_thread = threading.Thread(target=ctrl_loop)
 game_server_ctrl_thread.setDaemon(True)
