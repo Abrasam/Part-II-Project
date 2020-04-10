@@ -91,7 +91,7 @@ def ctrl_loop():
                 s.close()
                 del clients[s]
         try:
-            readable, writable, exceptional = select.select(sockets, sockets, sockets, 10)
+            readable, writable, exceptional = select.select(sockets, list(filter(lambda x: s in clients and len(clients[s].to_send) > 0, sockets)), sockets, 10)
             for r in readable:
                 if r == ss:
                     s, addr = ss.accept()
