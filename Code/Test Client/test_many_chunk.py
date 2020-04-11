@@ -35,7 +35,7 @@ for i in range(num_clients):
     s.close()
 
     if ok == b'ok':
-        print("Successfully generated chunk (0,0).")
+        print(f"Successfully generated chunk ({i},0).")
     ii = random.getrandbits(16)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect(addr)
