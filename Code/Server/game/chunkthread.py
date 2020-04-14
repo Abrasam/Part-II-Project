@@ -28,6 +28,8 @@ class ChunkThread(threading.Thread):
         # ticks = 0
         # timer = 0
         while True:
+            print(len(self.players))
+            print(len(self.clients))
             t = time.monotonic()
             try:
                 n = self.q.qsize()
