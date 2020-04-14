@@ -22,16 +22,18 @@ async def test():
             s = DHTServer((ip, port))
             servers.append(s)
             await s.run(bootstrap=Node(0, (ip, base_port)))
+        node_to_use = Node(servers[1].id, servers[1].addr)
         counts = []
-        tm = time.time()
         for i in range(100):
-            counts.append(await root.server.lookup_count(random.getrandbits(160)))
-        tm = time.time() - tm
+            tm = time.time()
+            await root.server.ext_ping(node_to_use)
+            tm = time.time() - tm
+            counts.append(tm)
         mu = sum(counts)/100.
         res.append((n, mu))
         sigma = (sum(map(lambda x: (x - mu)**2, counts))/100)**0.5
         errs.append((n, sigma))
-        print(f"{n}\t{mu}\t\t{sigma}\t\t\t{tm/20.}")
+        print(f"{n}\t{mu}\t\t{sigma}")
         last = n
     print(res)
     print(errs)
