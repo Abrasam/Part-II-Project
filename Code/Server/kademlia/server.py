@@ -15,7 +15,7 @@ class DHTServer:
 
     async def run(self, bootstrap=None):
         self.loop = asyncio.get_running_loop()
-        self.server = KademliaNode(self.id)
+        self.server = KademliaNode(self.id, self.addr)
         _, _ = await self.loop.create_datagram_endpoint(lambda: self.server, local_addr=('0.0.0.0', self.addr[1]))
         if bootstrap is not None:
             await self.server.bootstrap(bootstrap)

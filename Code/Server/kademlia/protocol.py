@@ -33,8 +33,9 @@ def rpc(func):
 
 
 class KademliaNode(asyncio.DatagramProtocol):
-    def __init__(self, id):
+    def __init__(self, id, addr):
         self.id = id
+        self.addr = addr
         self.waiting = {}
         self.transport = None
         self.table = RoutingTable(self, K)
