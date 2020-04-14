@@ -163,7 +163,7 @@ class KademliaNode(asyncio.DatagramProtocol):
         self.players[key] = value
 
     async def lookup(self, key_or_id, value=False, find_type=None):
-        nodes = self.table.nearest_nodes_to(key_or_id)
+        nodes = self.table.nearest_nodes_to(key_or_id) + [Node(self.id,())]
         queried = [Node(self.id, ())]
         found_new = False
         while len(nodes) > 0:
