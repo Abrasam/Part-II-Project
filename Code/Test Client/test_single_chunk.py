@@ -21,6 +21,7 @@ class Client:
     def update(self):
         if not self.init:
             self.server.send(json.dumps({"type":1,"args":[CHUNK_SIZE*self.x,CHUNK_SIZE*self.y],"player":f"testplayer{self.id}"}).encode() + b'\n')
+            self.init = True
         try:
             self.server.recv(102400)
         except:

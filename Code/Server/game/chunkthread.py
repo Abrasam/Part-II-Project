@@ -28,8 +28,6 @@ class ChunkThread(threading.Thread):
         # ticks = 0
         # timer = 0
         while True:
-            print(len(self.players))
-            print(len(self.clients))
             t = time.monotonic()
             try:
                 n = self.q.qsize()
@@ -65,7 +63,6 @@ class ChunkThread(threading.Thread):
                     c.send(packet)
         elif packet["type"] == PacketType.PLAYER_DEREGISTER.value:
             if sender in self.players:
-
                 asyncio.run_coroutine_threadsafe(self.dht.save_player(self.players[sender].name, self.players[sender].location), self.dht.loop)
                 del self.players[sender]
                 for c in self.clients:

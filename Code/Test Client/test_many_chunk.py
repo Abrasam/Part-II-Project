@@ -21,8 +21,13 @@ class Client:
 
     def update(self):
         if not self.init:
-            self.server.send(json.dumps({"type":1,"args":[CHUNK_SIZE*self.x,CHUNK_SIZE*self.y],"player":f"testplayer{self.id}"}).encode() + b'\n')
-        self.server.send(json.dumps({"type":3,"args":[CHUNK_SIZE*self.x+CHUNK_SIZE/2+random.randint(-CHUNK_SIZE/4,CHUNK_SIZE/4),CHUNK_SIZE+1,CHUNK_SIZE*self.y+CHUNK_SIZE/2+random.randint(-CHUNK_SIZE/4,CHUNK_SIZE/4),random.random()*3.14],"player":f"testplayer{self.id}"}).encode() + b'\n')
+            self.server.send(json.dumps({"type":1,"args":[CHUNK_SIZE*self.x,CHUNK_SIZE*self.y],"player":f"{self.id}"}).encode() + b'\n')
+            self.init = True
+        try:
+            self.server.recv(102400)
+        except:
+            pass
+        self.server.send(json.dumps({"type":3,"args":[CHUNK_SIZE*self.x+CHUNK_SIZE/2+random.randint(-CHUNK_SIZE/4,CHUNK_SIZE/4),CHUNK_SIZE+1,CHUNK_SIZE*self.y+CHUNK_SIZE/2+random.randint(-CHUNK_SIZE/4,CHUNK_SIZE/4),random.random()*3.14],"player":f"{self.id}"}).encode() + b'\n')
 
 for i in range(num_chunks):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -41,7 +46,7 @@ for i in range(num_chunks):
         if ok != b'ok':
             print("Error",file=sys.stderr)
         else:
-            clients.append(Client(0,0,ii,s))
+            clients.append(Client(i,0,ii,s))
 while True:
     for c in clients:
         c.update()

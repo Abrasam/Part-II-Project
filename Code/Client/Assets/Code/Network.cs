@@ -272,6 +272,7 @@ public class NetworkThread {
                             incomingUpdates.Enqueue(new Update(UpdateType.LOAD_CHUNK, "", new Chunk(new Vector2(p.args[0], p.args[1]), chunkData)));
                             break;
                         case (int)PacketType.PLAYER_MOVE:
+                            Debug.Log("PLAYER_MOVE " + p.player + " " + p.args);
                             incomingUpdates.Enqueue(new Update(UpdateType.PLAYER_MOVE, p.player, p.args));
                             break;
                         case (int)PacketType.PLAYER_REGISTER:
