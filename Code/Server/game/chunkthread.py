@@ -42,6 +42,7 @@ class ChunkThread(threading.Thread):
             for c in self.players:
                 tim = time.monotonic()
                 if tim - self.players[c].touched > 10:
+                    print("Killing this boi")
                     c.socket.close()
                     self.remove_client(c)
             time.sleep(max(0,TICK_LENGTH - (time.monotonic() - t)))
