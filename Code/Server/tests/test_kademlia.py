@@ -1,6 +1,6 @@
 from kademlia.node import Node
 from kademlia.server import DHTServer
-import sys, asyncio, time, random
+import sys, asyncio, time, random, subprocess
 ip = sys.argv[1]
 base_port = int(sys.argv[2])
 ns = list(map(lambda x: int(x), sys.argv[3].split(",")))
@@ -15,14 +15,15 @@ async def test():
     res = []
     errs = []
 
+    port += 2
+    goto = subprocess.Popen(['python3.8', 'main.py', ip, str(port), "-b", ip, str(base_port), "0", "-i", "83458345"])
+    node_to_use = Node(83458345, (ip, base_port + 2))
     last = 1
     for n in ns:
         for i in range(n-last):
             port += 1
-            s = DHTServer((ip, port))
-            servers.append(s)
-            await s.run(bootstrap=Node(0, (ip, base_port)))
-        node_to_use = Node(servers[1].id, servers[1].addr)
+            p = subprocess.Popen(['python3.8', 'main.py', ip, str(port), "-b", ip, str(base_port), "0"])
+            servers.append(p)
         counts = []
         for i in range(100):
             tm = time.time()
@@ -37,5 +38,8 @@ async def test():
         last = n
     print(res)
     print(errs)
+    for p in servers:
+        p.kill()
+    goto.kill()
 
 asyncio.run(test())

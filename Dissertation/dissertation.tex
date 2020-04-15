@@ -664,8 +664,15 @@
 	\cleardoublepage
 	\chapter{Evaluation}
 	\section{Methodology}
+	This project aims to explore the viability of using a peer-to-peer network topology for a large online world with potentially thousands of players. Unfortunately I do not have access to enough machines (and indeed players) to accurately field test the project. I shall instead be performing two main types of testing to prove the viability of \voxpop{} as a MMO engine. I will be performing local simulations using simulated players (created by my test client) to demonstrate the load that a single server experiences under different scenarios. Then I will create, using AWS, a small network of around $150$ nodes which will be populated by simulated players to prove that the system is able to perform at scale.
+	
+	I will also be testing the system by subjecting it to failure modes such as node failure, and demonstrating that it continues to operate correctly in these scenarios. I will perform a high-level analysis of the security of \voxpop{} and its susceptibility to various attacks. Additionally, I will be investigating the adherence of the \kademlia{} implementation to the specification.
+	
+	Finally some simple tests on the client will be performed and then I will consider the limitations that the peer-to-peer approach presents when compared to the more commonplace client-server model.
 	\section{\kademlia{} Implementation}
 	\section{Scalability}
+		\subsection{Local Simulation}
+		\subsection{Large Scale Simulation}
 	\section{Security}
 	\section{Client Performance}
 	\section{Current Limitations}

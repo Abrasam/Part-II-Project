@@ -47,6 +47,7 @@ for i in range(num_chunks):
             print("Error",file=sys.stderr)
         else:
             clients.append(Client(i,0,ii,s))
+print(len(clients))
 while True:
     for c in clients:
         c.update()
