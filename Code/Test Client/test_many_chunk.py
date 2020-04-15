@@ -24,7 +24,7 @@ class Client:
             self.server.send(json.dumps({"type":1,"args":[CHUNK_SIZE*self.x,CHUNK_SIZE*self.y],"player":f"{self.id}"}).encode() + b'\n')
             self.init = True
         try:
-            self.server.recv(102400)
+            self.server.recv(1024)
         except:
             pass
         self.server.send(json.dumps({"type":3,"args":[CHUNK_SIZE*self.x+CHUNK_SIZE/2+random.randint(-CHUNK_SIZE/4,CHUNK_SIZE/4),CHUNK_SIZE+1,CHUNK_SIZE*self.y+CHUNK_SIZE/2+random.randint(-CHUNK_SIZE/4,CHUNK_SIZE/4),random.random()*3.14],"player":f"{self.id}"}).encode() + b'\n')

@@ -41,7 +41,7 @@ class ChunkThread(threading.Thread):
                 client.send(Packet(PacketType.TIME, [tmp.hour*60+tmp.minute+tmp.second/60]).dict())
             for c in self.players:
                 tim = time.monotonic()
-                if tim - self.players[c].touched > 5:
+                if tim - self.players[c].touched > 10:
                     c.socket.close()
                     self.remove_client(c)
             time.sleep(max(0,TICK_LENGTH - (time.monotonic() - t)))
