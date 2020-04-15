@@ -20,9 +20,11 @@ async def test():
     node_to_use = Node(83458345, (ip, base_port + 2))
     last = 1
     for n in ns:
+        time.sleep(1)
         for i in range(n-last):
             port += 1
             p = subprocess.Popen(['python3.8', 'main.py', ip, str(port), "-b", ip, str(base_port), "0"])
+            time.sleep(0.1)
             servers.append(p)
         counts = []
         for i in range(100):
