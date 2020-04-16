@@ -69,6 +69,6 @@ for i in range(num_clients):
 while True:
     for i in range(num_clients):
         clients[i].update()
-        if random.random() < 0.01:
+        if random.random() < 0.01 and random.random() < 0.1:
             clients[i].move()
     time.sleep(1/20)
