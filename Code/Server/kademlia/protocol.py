@@ -42,7 +42,7 @@ class KademliaNode(asyncio.DatagramProtocol):
         self.chunks = Storage()
         self.players = Storage()
         self._timeouts = {}
-        self._fails = {0:0}
+        self._fails = {}
         loop = asyncio.get_running_loop()
 
         def refresh():
@@ -86,9 +86,10 @@ class KademliaNode(asyncio.DatagramProtocol):
         self._process_contact(node)
 
     def _process_contact(self, node):
+        self._fails[node.id] = 0
         if node.id == self.id:
             return
-        self._fails[node.id] = 0
+
         # send values that need to be sent.
         if self.table.get_node_if_contact(node.id) is not None:  # if node is not new then there's nawt to do.
             return
@@ -108,6 +109,8 @@ class KademliaNode(asyncio.DatagramProtocol):
         print("RPC call timed out to " + str(node.id) + "(" + str(node.addr) + ") from " + str(self.id) + " msgid: " + str(msg_id))
         self.waiting[msg_id][0].set_result(None)
         del self.waiting[msg_id]
+        if node.id not in self._fails:
+            self._fails[node.id] = 0
         self._fails[node.id] = self._fails[node.id] + 1
         if self._fails[node.id] >= 5:
             self.table.remove_contact(node)  # this is not correct to kademlia implementation, need to add 5 failure removal
