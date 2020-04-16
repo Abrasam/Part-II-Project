@@ -22,11 +22,11 @@ class DHTThread:  # todo: make this gracefully die/integrate it into the select 
                 msg = json.loads(data[1:].decode())
                 if data[0] == 0:
                     msg = tuple(msg)
-                    print("Chunk location query")
+                    #print("Chunk location query")
                     future = asyncio.run_coroutine_threadsafe(self.dht.get_chunk(msg), dht.loop)
                     addr = future.result()
                     if addr is None:
-                        print("address invalid/chunk doesn't exist")
+                        #print("address invalid/chunk doesn't exist")
                         future = asyncio.run_coroutine_threadsafe(self.dht.generate_chunk(msg), dht.loop)
                         addr = future.result()
                     self.socket.send(addr.encode() + b'\n')
