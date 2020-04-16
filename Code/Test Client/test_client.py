@@ -1,4 +1,4 @@
-import sys, socket, json, random, time
+import sys, socket, json, random, time, datetime
 
 CHUNK_SIZE = 32
 
@@ -18,8 +18,9 @@ class Client:
     def update(self):
         if not self.init:
             self.current.send(json.dumps({"type":1,"args":[self.x,self.y],"player":f"testplayer{self.id}"}).encode() + b'\n')
+            self.init = True
         try:
-            self.current.recv(102400)
+            len(self.current.recv(1024000))
         except:
             pass
         self.current.send(json.dumps({"type":3,"args":[CHUNK_SIZE*self.x+CHUNK_SIZE/2+random.randint(-CHUNK_SIZE/4,CHUNK_SIZE/4),CHUNK_SIZE+1,CHUNK_SIZE*self.y+CHUNK_SIZE/2+random.randint(-CHUNK_SIZE/4,CHUNK_SIZE/4),0],"player":f"testplayer{self.id}"}).encode() + b'\n')
@@ -72,4 +73,4 @@ while True:
         if random.random() < 0.01 and random.random() < 0.1:
             clients[i].move()
     time.sleep(1/20)
-    print("iter")
+    print(datetime.datetime.now())
