@@ -10,6 +10,7 @@
 \usepackage{dirtree}
 \usepackage{xcolor}
 \usepackage{wrapfig}
+\usepackage{subcaption}
 
 \crefname{section}{§}{§§}
 \Crefname{section}{§}{§§}
@@ -269,7 +270,7 @@
 	
 	
 	\subsection{Tooling}
-	I used the \emph{PyCharm} IDE for the development of the \kademlia{} implementation and my game server as these were both written in \python{} using version $3.8$ due to improvements made to the \emph{asyncio} library in \python{} $3.8$. For the client I used \unity{} with \emph{Microsoft Visual Studio 2017} for editing the \emph{C\#} scripts. \emph{Git} was used for version control, with code pushed to \emph{GitHub} regularly and further backed-up daily to both the SRCF\footnote{Student-Run Computing Facility.} and the MCS using a \emph{cron} job.
+	I used the \emph{PyCharm} IDE for the development of the \kademlia{} implementation and my game server as these were both written in Python using version $3.8$ due to improvements made to the \emph{asyncio} library in Python $3.8$. For the client I used \unity{} with \emph{Microsoft Visual Studio 2017} for editing the \emph{C\#} scripts. \emph{Git} was used for version control, with code pushed to \emph{GitHub} regularly and further backed-up daily to both the SRCF\footnote{Student-Run Computing Facility.} and the MCS using a \emph{cron} job.
 	
 	\subsection{Documentation}
 	\textbf{Pending...}	
@@ -669,7 +670,29 @@
 	I will also be testing the system by subjecting it to failure modes such as node failure, and demonstrating that it continues to operate correctly in these scenarios. I will perform a high-level analysis of the security of \voxpop{} and its susceptibility to various attacks. Additionally, I will be investigating the adherence of the \kademlia{} implementation to the specification.
 	
 	Finally some simple tests on the client will be performed and then I will consider the limitations that the peer-to-peer approach presents when compared to the more commonplace client-server model.
+	
 	\section{\kademlia{} Implementation}
+	In order to prove that my \kademlia{} implementation conforms with the specification, as required by my success criteria, I performed two types of testing.
+	
+	\subsection{Unit Testing}
+	Unit testing was performed on core components of the \kademlia{} specification. These were informed by the unit tests for \emph{OpenDHT}~\cite{opendht} and the Python \kademlia{} library~\cite{pykademlia}. Components tested with unit tests include the \K-bucket class -- ensuring that it performs correctly as nodes are added and removed, the routing table -- ensuring contacts are processed correctly and that it responds correctly to queries and the storage implementation.
+	
+	\subsection{RPC Testing}
+	\subsubsection{Setup}
+	The \kademlia{} specification sets out requirements for the time complexity of each RPC, I needed to prove that my implementation adheres to these requirements. In order to do this I setup a single dedicated server and instantiated a number of \kademlia{} nodes and bootstrapped them to a network to give me a network of a known size. I then performed the relevant RPC a number of times and recorded the average time and standard deviation. The plot can be seen in figure \ref{fig:kadperforma}.
+	\begin{figure}
+		\includegraphics[width=\textwidth]{rpcperformance.png}
+		\caption[RPC Performance]{Computation time of each \kademlia{} RPC as network size increases. The \kademlia{} specification states these should all be $\mathcal{O}(1)$. Error bars represent $\pm\sigma$ over $100$ trials.}
+		\label{fig:kadperforma}
+	\end{figure}
+
+	\subsubsection{Analysis}
+	As can be seen each of {\tt PING}, {\tt STORE\_CHUNK} and {\tt STORE\_PLAYER} are clearly $\mathcal{O}(1)$. The plots for {\tt FIND\_NODE}, {\tt FIND\_CHUNK} and {\tt FIND\_PLAYER} exhibit a slightly different shape. These RPCs still operate in  $\mathcal{O}(1)$ time, however, because the find operations must sort the nodes it knowns of, this takes $\mathcal{O}(n\log(n))$ time, however, as the number of nodes in the routing table is capped at $160 \cdot \K{}$ ($3200$ in the common case where $\K = 20$) this is still $\mathcal{O}(1)$ as the number of nodes grows large.
+	\begin{figure}
+		\includegraphics[width=\textwidth]{lookupgraph.png}
+		\caption[Lookup Procedure Performance]{Number of nodes contacted by a {\tt lookup} procedure as network size increases. The \kademlia{} specification states that this should grow at a rate of $\mathcal{O}(\log{n})$, where $n$ is number of nodes. Error bars represent $\pm\sigma$ over $100$ trials.}
+		\label{fig:kadperformb}
+	\end{figure}
 	\section{Scalability}
 		\subsection{Local Simulation}
 		\subsection{Large Scale Simulation}
@@ -688,11 +711,12 @@
 		\bibitem{shard} ``Sharding'' on Wikipedia. \url{https://en.wikipedia.org/wiki/Shard_(database_architecture)}. Accessed: 2019-10-15.
 		\bibitem{clubpenguin} ``Club Penguin is shutting down''. \url{https://techcrunch.com/2017/01/31/club-penguin-is-shutting-down/}. Accessed: 2019-10-15.
 		\bibitem{SpatialOS} SpatialOS by Improbable. \url{https://improbable.io/spatialos}. Accessed: 2020-03-20.
-		\bibitem{pykademlia} Kademlia Python Library. \url{https://github.com/bmuller/kademlia/}. Accessed: 2020-03-20.
-		\bibitem{source} Source Engine Multiplayer Networking, Valve. \url{https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking}. Accessed: 25-3-2020.
+		\bibitem{pykademlia} \emph{Kademlia} Python Library. \url{https://github.com/bmuller/kademlia/}. Accessed: 2020-03-20.
+		\bibitem{source} \emph{Source} Engine Multiplayer Networking, Valve. \url{https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking}. Accessed: 25-3-2020.
 		\bibitem{perlin} ``Perlin Noise'' on Wikipedia. \url{https://en.wikipedia.org/wiki/Perlin_noise}. Accessed: 2019-10-17.
 		\bibitem{simplex} ``Simplex Noise'' on Wikipedia.
 		\url{https://en.wikipedia.org/wiki/Simplex_noise}. Accessed: 2019-03-27.
+		\bibitem{opendht} \emph{OpenDHT} on GitHub. \url{https://github.com/savoirfairelinux/opendht}. Accessed: 2020-04-16.
 	\end{thebibliography}
 	\cleardoublepage
 	
