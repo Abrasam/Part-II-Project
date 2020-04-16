@@ -2,6 +2,7 @@ import asyncio
 import time
 from random import randint
 
+
 class KBucket:
     def __init__(self, lower, upper, k):
         self.lower, self.upper = lower, upper
@@ -75,12 +76,7 @@ class RoutingTable:
         self.buckets[i].remove_node(node)
 
     def nearest_nodes_to(self, key):
-        candidates = [] # node for bucket in self.buckets for node in bucket
-        for bucket in self.buckets:
-            if len(candidates) < self.k:
-                candidates += bucket.nodes
-            else:
-                break
+        candidates = [node for bucket in self.buckets for node in bucket]
         candidates.sort(key=lambda x: x.id ^ key)
         return candidates[:self.k]
 
