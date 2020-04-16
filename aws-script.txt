@@ -43,9 +43,8 @@ screen -mSd vox
 screen -S vox -X stuff "python3.8 main.py $IP 25565 -i 0
 "
 PIDD=$(pgrep python3.8)
-cd ../Test\ Client
 screen -mSd client
-screen -S client -X stuff "python3.8 test_client.py 50 10 $IP 25566
+screen -S client -X stuff "python3.8 ../Test\ Client/test_client.py 50 10 $IP 25566
 "
 psrecord $PIDD --interval 1 --duration 30 --log log.txt
 nc -w 3 5.135.160.191 8000 < log.txt
