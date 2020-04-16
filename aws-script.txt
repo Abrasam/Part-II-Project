@@ -21,9 +21,9 @@ Content-Disposition: attachment; filename="userdata.txt"
 /bin/echo "$(data)" >> /tmp/testfile.txt
 sudo apt-get update && sudo apt-get upgrade
 export DEBIAN_FRONTEND=noninteractive
-apt-get install mailutils -yq
 apt-get install python3.8 python3.8-dev python3-pip -y
 python3.8 -m pip install noise
+python3.8 -m pip install psrecord
 sysctl -w net.core.rmem_max=8388608
 sysctl -w net.core.rmem_default=8388608
 sysctl -w net.core.wmem_max=8388608
