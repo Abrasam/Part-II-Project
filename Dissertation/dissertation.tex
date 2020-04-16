@@ -687,12 +687,14 @@
 	\end{figure}
 
 	\subsubsection{Analysis}
-	As can be seen each of {\tt PING}, {\tt STORE\_CHUNK} and {\tt STORE\_PLAYER} are clearly $\mathcal{O}(1)$. The plots for {\tt FIND\_NODE}, {\tt FIND\_CHUNK} and {\tt FIND\_PLAYER} exhibit a slightly different shape. These RPCs still operate in  $\mathcal{O}(1)$ time, however, because the find operations must sort the nodes it knowns of, this takes $\mathcal{O}(n\log(n))$ time, however, as the number of nodes in the routing table is capped at $160 \cdot \K{}$ ($3200$ in the common case where $\K = 20$) this is still $\mathcal{O}(1)$ as the number of nodes grows large.
+	As can be seen each of {\tt PING}, {\tt STORE\_CHUNK} and {\tt STORE\_PLAYER} are clearly $\mathcal{O}(1)$. The plots for {\tt FIND\_NODE}, {\tt FIND\_CHUNK} and {\tt FIND\_PLAYER} exhibit a slightly different shape. These RPCs still operate in  $\mathcal{O}(1)$ time, however, because the find operations must sort the nodes it knowns of, this takes $\mathcal{O}(n\log(n))$ time, however, as the number of nodes in the routing table is capped at $160 \cdot \K{}$ ($3200$ in the common case where $\K = 20$ -- used in my implementation) this is still $\mathcal{O}(1)$ as the number of nodes grows large. You can see the graph is beginning to plateau at for higher $n$.
 	\begin{figure}
 		\includegraphics[width=\textwidth]{lookupgraph.png}
 		\caption[Lookup Procedure Performance]{Number of nodes contacted by a {\tt lookup} procedure as network size increases. The \kademlia{} specification states that this should grow at a rate of $\mathcal{O}(\log{n})$, where $n$ is number of nodes. Error bars represent $\pm\sigma$ over $100$ trials.}
 		\label{fig:kadperformb}
 	\end{figure}
+	\subsection{Lookup Procedure}
+	The \kademlia{} specification clearly states that the lookup procedure must contact $\mathcal{O}(\log(n))$ nodes. I performed a test where I recorded each node that was contacted during a lookup for increasing network sizes. Figure \ref{fig:kadperformb} shows the results. As can be clearly seen, the growth fits a logarithmic curve perfectly, demonstrating that my implementation correctly adheres to this part of the standard.
 	\section{Scalability}
 		\subsection{Local Simulation}
 		\subsection{Large Scale Simulation}
