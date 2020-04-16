@@ -70,7 +70,7 @@ for i in range(num_clients):
 while True:
     for i in range(num_clients):
         clients[i].update()
-        if random.random() < 0.01 and random.random() < 0.1:
+        if random.random() < 0.01 and random.random() < 0.5:
             clients[i].move()
     time.sleep(1/20)
     print(datetime.datetime.now())
