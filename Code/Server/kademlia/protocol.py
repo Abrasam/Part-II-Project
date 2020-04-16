@@ -42,7 +42,7 @@ class KademliaNode(asyncio.DatagramProtocol):
         self.chunks = Storage()
         self.players = Storage()
         self._timeouts = {}
-        self._fails = {}
+        self._fails = {0:0}
         loop = asyncio.get_running_loop()
 
         def refresh():
