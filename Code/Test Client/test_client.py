@@ -72,3 +72,4 @@ while True:
         if random.random() < 0.01 and random.random() < 0.1:
             clients[i].move()
     time.sleep(1/20)
+    print("iter")
