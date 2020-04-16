@@ -63,7 +63,7 @@ clients = []
 
 for i in range(num_clients):
     print(f"[{i}/{num_clients}] ",end="")
-    c = Client(0,0,random.randint(0,500)*i)
+    c = Client(0,0,random.randint(1,5000)*i)
     c.move()
     clients.append(c)
 
