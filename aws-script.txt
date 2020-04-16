@@ -20,8 +20,10 @@ Content-Disposition: attachment; filename="userdata.txt"
 #!/bin/bash
 /bin/echo "$(data)" >> /tmp/testfile.txt
 sudo apt-get update && sudo apt-get upgrade
+export DEBIAN_FRONTEND=noninteractive
 apt-get install python3.8 python3.8-dev python3-pip -y
 python3.8 -m pip install noise
+python3.8 -m pip install psrecord
 sysctl -w net.core.rmem_max=8388608
 sysctl -w net.core.rmem_default=8388608
 sysctl -w net.core.wmem_max=8388608
@@ -38,7 +40,18 @@ cd Part-II-Project/Code/Server
 echo $IP
 pwd
 screen -mSd vox
-screen -S vox -X stuff "python3.8 main.py $IP 25565 -b 5.135.160.191 28015 0
+screen -S vox -X stuff "python3.8 main.py $IP 25565 -i 0
 "
+PIDD=$(pgrep python3.8)
+cd ../Test\ Client
+sleep 10
+pwd
+screen -mSd test
+screen -S test -X stuff "python3.8 test_client.py 50 1000 127.0.0.1 25566
+"
+psrecord $PIDD --interval 1 --duration 30 --log log.txt
+echo "Waiting..."
+sleep $((RANDOM % 60))
+nc -w 3 5.135.160.191 8000 < log.txt
 echo "This should be echoed when init is done."
 --//
