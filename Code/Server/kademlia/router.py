@@ -2,9 +2,6 @@ import asyncio
 import time
 from random import randint
 
-from kademlia.protocol import K
-
-
 class KBucket:
     def __init__(self, lower, upper, k):
         self.lower, self.upper = lower, upper
@@ -80,7 +77,7 @@ class RoutingTable:
     def nearest_nodes_to(self, key):
         candidates = [] # node for bucket in self.buckets for node in bucket
         for bucket in self.buckets:
-            if len(candidates) < K:
+            if len(candidates) < self.k:
                 candidates += bucket.nodes
             else:
                 break
