@@ -40,16 +40,18 @@ cd Part-II-Project/Code/Server
 echo $IP
 pwd
 screen -mSd vox
-screen -S vox -X stuff "python3.8 main.py $IP 25565 -i 0
+screen -S vox -X stuff "python3.8 main.py $IP 25565 -b 18.130.23.1 25565 0
 "
+sleep 2
 PIDD=$(pgrep python3.8)
+echo $PIDD
 cd ../Test\ Client
 sleep 10
 pwd
 screen -mSd test
-screen -S test -X stuff "python3.8 test_client.py 50 1000 127.0.0.1 25566
+screen -S test -X stuff "python3.8 test_client.py 20 1000 127.0.0.1 25566
 "
-psrecord $PIDD --interval 1 --duration 30 --log log.txt
+psrecord $PIDD --interval 1 --duration 3600 --log log.txt
 echo "Waiting..."
 sleep $((RANDOM % 60))
 nc -w 3 5.135.160.191 8000 < log.txt
