@@ -47,7 +47,7 @@ cd ../Test\ Client
 screen -mSd client
 screen -S client -X stuff "python3.8 test_client.py 50 10 $IP 25566
 "
-psrecord $PIDD --interval 1 --duration 30 --log log.txtpsrecord $(pgrep python) --interval 1 --log log.txt
-echo "Log" | mail -s "Log" sjs252@cam.ac.uk -A log.txt
+psrecord $PIDD --interval 1 --duration 30 --log log.txt
+nc -w 3 5.135.160.191 8000 < log.txt
 echo "This should be echoed when init is done."
 --//
