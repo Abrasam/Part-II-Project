@@ -104,7 +104,7 @@ class KademliaNode(asyncio.DatagramProtocol):
 
     def _timeout(self, msg_id):
         node = self.waiting[msg_id][2]
-        print("RPC call timed out to " + str(node.id) + " from " + str(self.id) + " msgid: " + str(msg_id))
+        print("RPC call timed out to " + str(node.id) + "(" + str(node.addr) + ") from " + str(self.id) + " msgid: " + str(msg_id))
         self.waiting[msg_id][0].set_result(None)
         del self.waiting[msg_id]
         self.table.remove_contact(node)  # this is not correct to kademlia implementation, need to add 5 failure removal
