@@ -49,9 +49,9 @@ class KademliaNode(asyncio.DatagramProtocol):
             print("Refreshing stale buckets and republishing kv pairs.")
             asyncio.ensure_future(self.table.refresh_buckets(self.table.get_stale_buckets()))
             self.republish_keys()
-            self.refresh = loop.call_later(3600, refresh)
+            self.refresh = loop.call_later(600, refresh)
 
-        self.refresh = loop.call_later(3600, refresh)
+        self.refresh = loop.call_later(60, refresh)
 
     def connection_made(self, transport):
         self.transport = transport
