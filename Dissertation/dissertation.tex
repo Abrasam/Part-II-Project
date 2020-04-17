@@ -82,8 +82,7 @@
 			Overseers:          & \bf Prof. Marcelo Fiore \& Dr. Amanda Prorok 
 		\end{tabular}
 	}
-	\footnotetext[1]{This word count was computed
-		by {\tt command?}
+	\footnotetext[1]{This word count was computed by {\tt texcount -1 -utf8 -sum -inc dissertation.tex}. Tables were included and all content outside of chapters $1-5$ was excluded.
 	}
 	\stepcounter{footnote}
 	
@@ -783,23 +782,32 @@
 	\section{Current Limitations}
 	\label{sec:limits}
 	\subsection{Scale}
-	I will now attempt to reason whether \voxpop{} can handle a world the size of a typical MMO with a player count to match. As a baseline for player count I will be using the MMO \emph{EVE Online} which had a peak concurrent player count $63,160$~\cite{eve} in 2011. The EVE world is sparse so I will use the \emph{World of Warcraft} world size of approximately $200km^2$, estimates vary so I have taken the highest I could find~\cite{wowsize}. Assuming each voxel in my game is $1m^3$, each chunk covers $1024m^2 \approx 0.001km^2$. Thus we would need $200,000$ chunks to represent this world. Assuming each server controls one hundred chunks we would need a network of $2000$ nodes to store this world. This is well within the capacity of the \kademlia{} network.
+	I will now attempt to reason whether \voxpop{} can handle a world the size of a typical MMO with a player count to match. As a baseline for player count I will be using the MMO \emph{EVE Online} which had a peak concurrent player count $63,160$~\cite{eve} in 2011. The EVE world is sparse so I will use the \emph{World of Warcraft} world size of approximately $200km^2$, estimates vary so I have taken the highest I could find~\cite{wowsize}. Assuming each voxel in my game is $1m^3$, each chunk covers $1024m^2 \approx 0.001km^2$. Thus we would need $200,000$ chunks to represent this world. Assuming each server controls one hundred chunks we would need a network of $2000$ nodes to store this world. This is well within the capacity of the \kademlia{} network as all RPCs have $\mathcal{O}(1)$ cost and the lookup operation grows slow ($\mathcal{O}(\log(n))$).
 	
-	Then we come to justifying that the game server component could handle this when evenly distributed. Assuming that players are evenly distributed across the world that would put $32$ players in each chunk, this is obviously going to overload the server. However, there are likely to be regions that are not currently loaded and regions which are more popular. So if we generously assume that $50\%$ of regions are unloaded, then we have $64$ players per loaded chunk and only $50$ chunks loaded per server. This is still likely to exceed the performance limitations of the mid-range machine I used in my testing.
+	Assuming that players are evenly distributed across the world that would put $32$ players in each chunk, this is obviously going to overload the server. However, there are likely to be regions that are not currently loaded and regions which are more popular. So if we generously assume that $50\%$ of regions are unloaded, then we have $64$ players per loaded chunk and only $50$ chunks loaded per server. This is still likely to exceed the performance limitations of the mid-range machine I used in my testing.
 	
 	Alternatively, assume that the network is of size $20,000$, then we have ten chunks per node and still $32$ players per chunk, this is more feasible. This approach might be realistic, consider that the peak active player count (this is not concurrent, but playing regularly) of \emph{World of Warcraft} was twelve million~\cite{wowbig}. Only $0.17\%$ of players would need to setup a server for the system to be viable. However, there is no escaping that this is a clear limitation of my approach. The fact that each chunk operates its own thread is clearly debilitating to the performance of the system. An approach used by \emph{SpatialOS}~\cite{SpatialOS} is to have chunks grouped together spatially and computations performed on the entire region of space in one thread -- this is an approach I would like to explore in my system in the future as I think it could drastically improve scalability.
 	
 	\subsection{Security}
+	\label{sec:security}
 	\kademlia{} is resistant to certain DoS attacks, the preference for old contacts ensures that flooding the system with new nodes will not cause existing nodes' state to be flushed, giving control of the network to the attacker. However, \kademlia{} remains vulnerable to various types of attack. Including but not limited to eclipse and Sybil attacks. Additionally, \kademlia{} does not prevent nodes from impersonating others when bootstrapping, creating ambiguity about who is the \emph{true} owner of a particular ID. Ultimately, a determined attacker would be able to detrimentally influence the \voxpop{} network should they so desire -- and in an MMO context, where there would be motivation to cheat, this is almost guaranteed to happen.
 	
-	Furthermore on this point, at present the game server trusts all requests coming from the player and does not attempt to verify the validity of their movements. This would be simple to implement -- simply deny a player access to a chunk if the player's position recorded in the network is not near to it.
+	Furthermore on this point, at present the game server trusts all requests coming from the player and does not attempt to verify the validity of their movements. This would be simple to implement -- store the player's state in the network and verify the what the player says is consistent with the stored state (e.g. don't allow player to move across many chunks in one movement but do allow them to move to an adjacent chunk).
 	
 	\subsection{Data Loss}
 	One significant issue with the current implementation is that when a node dies all the chunks stored within it are lost and will be regenerated by another node when they are needed. This means that anything a player has constructed within that chunk is lost. An approach I proposed as a potential extension to this project could be used to mitigate this problem. I propose that instead of having a single node responsible for each chunk, have a node and several backup nodes, periodically the main node will multicast its state to the backup nodes, should this node die, the backup nodes elect a successor and then induct a new node into the backup set. This could be done simply using the $n$ nearest nodes to the chunk's key.
 	
 	\cleardoublepage
 	\chapter{Conclusion}
+	My project set out to investigate the feasibility of creating a scalable, peer-to-peer distributed online world. The project aimed to explore the peer-to-peer approach as it differs from the more commonly used centralised, client-server model. Ultimately my project was a success, it has fulfilled the success criteria and thorough testing has revealed it to somewhat scalable.
 	
+	My evaluation exposed shortfalls in the security of the system, however. The system suffers from vulnerability to various types of attacks as noted previously. In a commercial environment with a real MMO we would wish to mitigate this to ensure fairness of the game and robustness of the service. Thus we might require some notion of trusted, or authoritative servers perhaps controlled by the developers.
+	
+	Having authoritative, centralised servers goes against the spirit of \voxpop{}. As such, I would propose that in the event of the MMO becoming unprofitable that the developers could allow the game's community to host their own authoritative servers.
+	
+	Additionally, to ensure fairness and prevent cheating, the changes required to prevent players from fabricating their in-game state discussed in \cref{sec:security} would need to be implemented. This would prevent players from being able to easily create hacked clients; note that this is a common problem with online games and not an issue with the peer-to-peer approach.
+	
+	As noted in the evaluation, the system struggles to scale to typical MMO sizes. I propose that this is due to an oversight in my design, that many disparate chunks may be processed by the same server. This means that a single server may need in excess of 100 threads performing computationally heavy processes, this is obviously not feasible except on extremely powerful machines. I propose an adjustment where chunks are clustered spatially meaning that while a single server may be responsible for hundreds of chunks, it may need only a few threads as all chunks can be simulated together due to their contiguous arrangement.
 	
 	%TC:ignore
 	\cleardoublepage
