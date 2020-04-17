@@ -44,7 +44,7 @@ public class World : MonoBehaviour {
 
         username = "Abrasam";// string.Join("",bytes);
 
-        nt = new NetworkThread(this, username, updates, events, "54.198.146.10", 25007); //5.135.160.191 28015
+        nt = new NetworkThread(this, username, updates, events, "5.135.160.191", 28016); //5.135.160.191 28015
         player.transform.position = nt.GetLocation();
         nt.Start();
     }

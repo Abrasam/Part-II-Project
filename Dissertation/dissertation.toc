@@ -55,10 +55,17 @@
 \contentsline {subsection}{\numberline {4.2.3}Lookup Procedure}{29}{subsection.4.2.3}%
 \contentsline {section}{\numberline {4.3}Scalability}{30}{section.4.3}%
 \contentsline {subsection}{\numberline {4.3.1}Local Simulation}{30}{subsection.4.3.1}%
-\contentsline {subsection}{\numberline {4.3.2}Large Scale Simulation}{30}{subsection.4.3.2}%
-\contentsline {section}{\numberline {4.4}Security}{30}{section.4.4}%
-\contentsline {section}{\numberline {4.5}Client Performance}{30}{section.4.5}%
-\contentsline {section}{\numberline {4.6}Current Limitations}{30}{section.4.6}%
-\contentsline {chapter}{\numberline {5}Conclusion}{31}{chapter.5}%
-\contentsline {chapter}{Bibliography}{33}{chapter.5}%
-\contentsline {chapter}{\numberline {A}Proposal}{35}{appendix.A}%
+\contentsline {subsubsection}{\numberline {4.3.1.1}Setup}{30}{subsubsection.4.3.1.1}%
+\contentsline {subsubsection}{\numberline {4.3.1.2}Analysis}{30}{subsubsection.4.3.1.2}%
+\contentsline {subsection}{\numberline {4.3.2}Large Scale Simulation}{33}{subsection.4.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.2.1}Setup}{33}{subsubsection.4.3.2.1}%
+\contentsline {subsubsection}{\numberline {4.3.2.2}Analysis}{34}{subsubsection.4.3.2.2}%
+\contentsline {section}{\numberline {4.4}Client}{34}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Node Failure}{35}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Current Limitations}{35}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Scale}{35}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}Security}{36}{subsection.4.6.2}%
+\contentsline {subsection}{\numberline {4.6.3}Data Loss}{36}{subsection.4.6.3}%
+\contentsline {chapter}{\numberline {5}Conclusion}{39}{chapter.5}%
+\contentsline {chapter}{Bibliography}{41}{chapter.5}%
+\contentsline {chapter}{\numberline {A}Proposal}{43}{appendix.A}%

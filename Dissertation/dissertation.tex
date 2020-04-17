@@ -131,7 +131,7 @@
 	\section{Project Summary}
 	My project explores a peer-to-peer architecture for MMOs or large scale simulations. This is in contrast to the more commonly used centralised approach. My project is build upon a distributed hash table which is used to locate in the peer-to-peer network the server responsible for handling any particular part of the world.
 	
-	My project consists of three parts: the distributed hash table which is a modified version of the \kademlia{}~\cite{kademlia} specification; the game server which runs the computation for certain segments of the world and the \unity{} client used to interact with the world. All these have been completed in adherence to the success criteria in my project proposal, as well as the evaluation client used in the evaluation stage. The project culminated in a large scale test using Amazon Web Services.
+	My project consists of three parts: the distributed hash table which is a modified version of the \kademlia{}~\cite{kademlia} specification; the game server which runs the computation for certain segments of the world and the \unity{} client used to interact with the world. All these have been completed in adherence to the success criteria in my project proposal, as well as the evaluation client used in the evaluation stage. The project culminated in a large scale test on my dedicated server.
 	
 	\section{Motivation}
 	The Massively Multiplayer Online Game (MMO) genre is very popular\footnote{\emph{World of Warcraft} -- a popular MMO -- had 7.7 million subscribers in 2019.} in modern gaming, as an increasing proportion of the populace have access to high speed broadband the prevalence of these games continues to increase. Most of these games employ a centralised client-server mode where the creators of the MMO have a relatively small number of expensive and powerful machines which they use to handle all players.
@@ -158,6 +158,7 @@
 	Prior to this project I had limited experience in implementing distributed systems, my knowledge on such systems mainly comes from the Part IB courses Concurrent and Distributed Systems and Computer Networking. Computer Networking introduced the concept of distributed hash tables (DHTs) which are used extensively in my project. Concurrent and Distributed Systems introduces most of the overarching principles of distributed systems, such as RPCs, which are essential in my project. Furthermore, my project relies on knowledge from a number of other courses, such as Part II Principles of Communication and Part IA Introduction to Graphics. I have some limited experience with 3D graphics from my own hobby programming as well.
 	
 	\section{Requirement Analysis}
+	\label{sec:req}
 	My project aims to implement a suite of software for the operation, interaction with and testing of a 3D world which is distributed over a number of peers in a peer-to-peer network. The success criteria set out in my proposal is as follows:
 	
 	\begin{enumerate}
@@ -172,7 +173,7 @@
 	
 	\begin{itemize}
 		\item \textbf{Robustness:} the system must be very robust, handling node failures with minimal disruption to the overall system, minimising disruption to users connected to the system at a given time.
-		\item \textbf{Deployment:} the implementation must run as a cloud application, being easily deployable to a large number of machines. In my testing I will be using \emph{AWS EC2} Virtual Private Servers running \emph{Ubuntu 18.04}.
+		\item \textbf{Deployment:} the implementation must run as a cloud application, being easily deployable to a large number of machines. In my testing I will be using my dedicated server running \emph{Ubuntu 18.04}.
 		\item \textbf{Decentralisation:} the implementation must be designed to be entirely decentralised, nodes in the P2P network must be entirely equal, there must be no authoritative entity in the system.
 		\item \textbf{Mutability:} the game world must emulate that of voxel-based games such as \emph{Minecraft}. As such, users must be able to edit the world and have these changes persist, users' locations must also be stored so that when they log out and back in at another time (or to a different server), they return to where they left off.
 	\end{itemize}
@@ -489,7 +490,7 @@
 	
 	\section{Client}
 	\label{sec:client}
-	The client is the user's entry point into the world, it renders the world (and other players) and allows the player to move around within it; it provides a basic physics simulation for realistic movement and collisions and it allows the user to make changes to the world by breaking and placing blocks. A screenshot of the client in action can be seen in fig \ref{fig:client}. The client was written in C\# using the \unity{} game engine.
+	The client is the user's entry point into the world, it renders the world (and other players -- rendered as grey cuboids) and allows the player to move around within it; it provides a basic physics simulation for realistic movement and collisions and it allows the user to make changes to the world by breaking and placing blocks. A screenshot of the client in action can be seen in fig \ref{fig:client}. The client was written in C\# using the \unity{} game engine.
 	
 	\begin{figure}
 		\includegraphics[width=\textwidth]{client.png}
@@ -658,16 +659,20 @@
 	Within the \kademlia{} folder we have {\tt node.py} and {\tt storage.py} which contain simple classes to represent a \kademlia{} Node and the local storage on a node respectively. {\tt router.py} contains the \K-bucket class and routing table class. {\tt protocol.py} contains the \kademlia{} RPC implementation as well as the RPC framework outlined in \cref{sec:rpcframework}. Finally, {\tt server.py} contains the high level interface for the \kademlia{} network, allowing the following operations to be performed: {\tt run()} (initialise a node), {\tt get\_chunk()} (lookup a chunk and generate it if it does not exist), {\tt get\_player()} and {\tt save\_player()} (retrieve or save player save data), {\tt generate\_chunk()} and {\tt republish\_chunk()}.
 	
 	\subsection{Test Client}
-	The test client is a single script which simply initialises a configurable number of dummy players and connects them to the network in random positions, it then moves them around randomly to simulate activity.
+	The test client is a suite of scripst which simply initialises a configurable number of dummy players and connects them to a single server or to a network in random or configurable positions, it can then move them around randomly to simulate activity.
 	
-	\textbf{MORE ON THIS PLS SAM}
+	There are three scripts, two of which connect to a single server and one which connects to the network as a whole. First we have {\tt test\_sing\_chunk.py} which connects to a single server and loads a number of players into a single chunk and then moves them around within the chunk every $\frac{1}{20}$ seconds. We also have {\tt test\_many\_chunks.py} which connects to a single server and loads a number of players into a configurable number of chunks on that server, the players are evenly distributed between chunks and then moved randomly as above.
 	
+	Finally we have {\tt test\_client.py} which connects to a server to query the DHT. It then spawns a number of dummy players who will connect to the network and move around the world, moving between chunks this time and connecting to the appropriate server by querying the DHT -- this client most accurately simulates real players and will be used in my large scale test of the system.
+		
 	\cleardoublepage
 	\chapter{Evaluation}
-	\section{Methodology}
-	This project aims to explore the viability of using a peer-to-peer network topology for a large online world with potentially thousands of players. Unfortunately I do not have access to enough machines (and indeed players) to accurately field test the project. I shall instead be performing two main types of testing to prove the viability of \voxpop{} as a MMO engine. I will be performing local simulations using simulated players (created by my test client) to demonstrate the load that a single server experiences under different scenarios. Then I will create, using AWS, a small network of around $150$ nodes which will be populated by simulated players to prove that the system is able to perform at scale.
+	My project meets the original success criteria and further goals set out in \cref{sec:req}. It has a number of limitations which will be explored in \cref{sec:limits}.
 	
-	I will also be testing the system by subjecting it to failure modes such as node failure, and demonstrating that it continues to operate correctly in these scenarios. I will perform a high-level analysis of the security of \voxpop{} and its susceptibility to various attacks. Additionally, I will be investigating the adherence of the \kademlia{} implementation to the specification.
+	\section{Methodology}
+	This project aims to explore the viability of using a peer-to-peer network topology for a large online world with potentially thousands of players. Unfortunately I do not have access to enough machines (and indeed players) to accurately field test the project. I shall instead be performing two main types of testing to prove the viability of \voxpop{} as a MMO engine. I will be performing local simulations using simulated players (created by my test client) to demonstrate the load that a single server experiences under different scenarios. Then I will create a small network of around $100$ nodes which will be populated by simulated players to prove that the system is able to perform at scale.
+	
+	I will also be testing the system by subjecting it to failure modes such as node failure, and demonstrating that it continues to operate correctly in these scenarios. I will briefly discuss the of the security of \voxpop{} and its susceptibility to various attacks. Additionally, I will be investigating the adherence of the \kademlia{} implementation to the specification.
 	
 	Finally some simple tests on the client will be performed and then I will consider the limitations that the peer-to-peer approach presents when compared to the more commonplace client-server model.
 	
@@ -696,11 +701,100 @@
 	\subsection{Lookup Procedure}
 	The \kademlia{} specification clearly states that the lookup procedure must contact $\mathcal{O}(\log(n))$ nodes. I performed a test where I recorded each node that was contacted during a lookup for increasing network sizes. Figure \ref{fig:kadperformb} shows the results. As can be clearly seen, the growth fits a logarithmic curve perfectly, demonstrating that my implementation correctly adheres to this part of the standard.
 	\section{Scalability}
-		\subsection{Local Simulation}
-		\subsection{Large Scale Simulation}
-	\section{Security}
-	\section{Client Performance}
+	It is important that we prove the system scales to a large number of players. In order to do this without needing to purchase a large number of servers I performed several tests on a single instance. This was to test the performance under several different types of player load to verify that a single server can cope with a representative number of players.
+	
+	I then created a 100 node network hosted on my dedicated server and tested it with 1000 simulated players to demonstrate the system functions correctly when deployed as a network in a large system. In this instance communication will have been slightly slower than usual due to communication being handled locally on the server, but this is acceptable as it still gives useful a lower bound on performance. I would note that to make this function correctly I had to increase the UDP and TCP buffer sizes on my server due to the high volume of traffic being exchanged internally between nodes.
+	\subsection{Local Simulation}
+	\label{sec:localsim}
+	\subsubsection{Setup}
+	I performed 4 local simulations on a single node, each was run for 1 hour with variable player loads. I ran a single \voxpop{} node on my dedicated server and connected one of my test client scripts to it to simulate player activity. The plots in figure \ref{fig:plots} show the CPU and memory usage under various scenarios.
+	\begin{figure}
+		\begin{subfigure}{0.5\textwidth}
+			\includegraphics[width=\textwidth]{plot1.png}
+			\caption{Performance (50 players/1 chunk)}
+			\label{fig:plot1}
+		\end{subfigure}
+		\begin{subfigure}{0.5\textwidth}
+			\includegraphics[width=\textwidth]{plot2.png}
+			\caption{Performance (50 players/50 chunks)}
+			\label{fig:plot2}
+		\end{subfigure}
+		\begin{subfigure}{0.5\textwidth}
+			\includegraphics[width=\textwidth]{plot3.png}
+			\caption{Performance (50 players/10 chunks)}
+			\label{fig:plot3}
+		\end{subfigure}
+		\begin{subfigure}{0.5\textwidth}
+			\includegraphics[width=\textwidth]{plot4.png}
+			\caption{Performance (100 players/10 chunks)}
+			\label{fig:plot4}
+		\end{subfigure}
+		\caption{Plots showing CPU utilization and memory usage of \voxpop{} nodes under different scenarios.}
+		\label{fig:plots}
+	\end{figure}
+	
+	\subsubsection{Analysis}
+	As can be seen from figure \ref{fig:plot1} the single thread performance is reaching $90\%$ utilization at about 50 players in a single chunk. This is fairly typical of online games and it is at around this point that \emph{Minecraft} servers begin to strain. This scenario is unlikely to be realised frequently in a deployed network running an MMO as this number of players tend not to occupy the same area concurrently.
+	
+	In figure \ref{fig:plot2} we have 50 clients connected to 50 separate chunks on the same server. This performs better as it is making use of both CPU cores on my dedicated server. In line with this expectation CPU utilisation is approximately half that of the single chunk case. This also represents an unrealistic scenario as we are unlikely to have players evenly distributed across the world so evenly, there will be likely more clustering. This test does demonstrate, however, that many chunk threads can operate concurrently without incurring a significant performance penalty.
+	
+	In figure \ref{fig:plot3} we instantiate 50 players and evenly distribute them over 10 chunks, this is a more realistic scenario and is designed to represent players playing with friends in small groups occupying the same areas. Performance here is improved over the 50 chunk case as expected, likely due to a reduction in the context-switching overhead. Averaging at around $25\%$ utilisation the system is not struggling with this scenario, suggesting more players could be supported in a similar scenario. In order to test this I performed another test by doubling the number of players while keeping the number of chunks constant, in figure \ref{fig:plot4} we have 100 players across 10 chunks, and CPU utilisation averages around $55\%$. Suggesting a linear relationship between number of players and performance when the number of chunks is kept constant.
+	
+	To verify the linearity I plotted CPU utilisation as player count was increased from one to fifty. I wrote a simple script to connect a new client every two seconds. The plot it shown in figure \ref{fig:linear50} and follows a roughly linear shape. This supports my theory that performance with constant number of chunks is proportional to the number of players connected.
+	\begin{figure}
+		\includegraphics[width=\textwidth]{linear.png}
+		\caption{Performance as player count increases ($0-50$).}
+		\label{fig:linear50}
+	\end{figure}
+
+	I did a further test using the same script, instead adding a node every second and going from one to one-hundred. The resulting plot is shown in figure \ref{fig:linear100}. The linear relationship persists up to around seventy nodes. However, we see CPU usage then plateaus at $100\%$ and memory usage starts to rise, this is indicative that the system is struggling to handle both the garbage collector and the game server computation. Thus as a lower bound we can suggest that approximately seventy players can exist on a single chunk thread before performance issues begin to arise.
+	\begin{figure}
+		\includegraphics[width=\textwidth]{linear100.png}
+		\caption{Performance as player count increases ($0-100$).}
+		\label{fig:linear100}
+	\end{figure}
+
+	Throughout this analysis the memory usage has remained approximately constant throughout the simulation, this is because memory usage is proportional to the number of chunks active and in each simulation this was constant. The memory overhead for a single chunk is below ten megabytes and consists only of the chunk data ($~260KB$) and player data ($<1KB$ per player) so this is not of major concern here. In a more complex system where there are other entities the server must keep track of such as monsters this may become a significant concern as it is for \emph{Minecraft} servers, which can typically need hundreds of gigabytes of memory to function correctly.
+	
+	\subsection{Large Scale Simulation}
+	\subsubsection{Setup}
+	To demonstrate my project functioning at scale I setup a 100 node network on my dedicated server and connected 1000 dummy players using {\tt test\_client.py} from my test client scripts. As some servers would have high load and others would have very low load depending on which chunks are loaded at any given time I found it more useful to plot the maximum CPU at any given time, as the average was very low (around half a percent). The plot is shown in figure \ref{fig:big}.
+	\begin{figure}
+		\includegraphics[width=\textwidth]{100node.png}
+		\caption{Performance of a $100$ node network with $1000$ players connected.}
+		\label{fig:big}
+	\end{figure}
+
+	\subsubsection{Analysis}
+	Initially, the utilisation is not constant as nodes are still joining the network (it takes approximately ten minutes for $1000$ nodes to join using the test client). Then we go into normal operation and the maximum load stays approximately at $10\%$, this is in line with our analysis in \cref{sec:localsim} as there would be approximately ten nodes per server on average. The system was left running for 1 hour and experienced no problems, I was able to connect with my graphical client and explore the world, viewing the dummy players teleporting around randomly. This can be seen in figure \ref{fig:dummies}.
+	\begin{figure}
+		\includegraphics[width=\textwidth]{dummies.png}
+		\caption{Screenshot of dummy players in the \voxpop{} world.}
+		\label{fig:dummies}
+	\end{figure}
+
+	\section{Client}
+	The client performs as required, the player is able to explore and interact with the world and the client is performant -- running consistently at 60FPS+ (frames per second) on both my dedicated GPU (Nvidia GeForce GTX 1650 Max-Q) and my integrated graphics (Intel Iris Plus Graphics).
+
+	\section{Node Failure}
+	The system performs correctly in the face of node failure. When the client loses connection to a node it queries the node it is using for DHT queries. This server finds the required node and discovers that it is not online. It thus performs the generate procedure (see algorithm \ref{alg:generate}) before returning the new node to the client. This takes at most a couple of seconds and produces minimal disruption to gameplay.
+	
 	\section{Current Limitations}
+	\label{sec:limits}
+	\subsection{Scale}
+	I will now attempt to reason whether \voxpop{} can handle a world the size of a typical MMO with a player count to match. As a baseline for player count I will be using the MMO \emph{EVE Online} which had a peak concurrent player count $63,160$~\cite{eve} in 2011. The EVE world is sparse so I will use the \emph{World of Warcraft} world size of approximately $200km^2$, estimates vary so I have taken the highest I could find~\cite{wowsize}. Assuming each voxel in my game is $1m^3$, each chunk covers $1024m^2 \approx 0.001km^2$. Thus we would need $200,000$ chunks to represent this world. Assuming each server controls one hundred chunks we would need a network of $2000$ nodes to store this world. This is well within the capacity of the \kademlia{} network.
+	
+	Then we come to justifying that the game server component could handle this when evenly distributed. Assuming that players are evenly distributed across the world that would put $32$ players in each chunk, this is obviously going to overload the server. However, there are likely to be regions that are not currently loaded and regions which are more popular. So if we generously assume that $50\%$ of regions are unloaded, then we have $64$ players per loaded chunk and only $50$ chunks loaded per server. This is still likely to exceed the performance limitations of the mid-range machine I used in my testing.
+	
+	Alternatively, assume that the network is of size $20,000$, then we have ten chunks per node and still $32$ players per chunk, this is more feasible. This approach might be realistic, consider that the peak active player count (this is not concurrent, but playing regularly) of \emph{World of Warcraft} was twelve million~\cite{wowbig}. Only $0.17\%$ of players would need to setup a server for the system to be viable. However, there is no escaping that this is a clear limitation of my approach. The fact that each chunk operates its own thread is clearly debilitating to the performance of the system. An approach used by \emph{SpatialOS}~\cite{SpatialOS} is to have chunks grouped together spatially and computations performed on the entire region of space in one thread -- this is an approach I would like to explore in my system in the future as I think it could drastically improve scalability.
+	
+	\subsection{Security}
+	\kademlia{} is resistant to certain DoS attacks, the preference for old contacts ensures that flooding the system with new nodes will not cause existing nodes' state to be flushed, giving control of the network to the attacker. However, \kademlia{} remains vulnerable to various types of attack. Including but not limited to eclipse and Sybil attacks. Additionally, \kademlia{} does not prevent nodes from impersonating others when bootstrapping, creating ambiguity about who is the \emph{true} owner of a particular ID. Ultimately, a determined attacker would be able to detrimentally influence the \voxpop{} network should they so desire -- and in an MMO context, where there would be motivation to cheat, this is almost guaranteed to happen.
+	
+	Furthermore on this point, at present the game server trusts all requests coming from the player and does not attempt to verify the validity of their movements. This would be simple to implement -- simply deny a player access to a chunk if the player's position recorded in the network is not near to it.
+	
+	\subsection{Data Loss}
+	One significant issue with the current implementation is that when a node dies all the chunks stored within it are lost and will be regenerated by another node when they are needed. This means that anything a player has constructed within that chunk is lost. An approach I proposed as a potential extension to this project could be used to mitigate this problem. I propose that instead of having a single node responsible for each chunk, have a node and several backup nodes, periodically the main node will multicast its state to the backup nodes, should this node die, the backup nodes elect a successor and then induct a new node into the backup set. This could be done simply using the $n$ nearest nodes to the chunk's key.
 	
 	\cleardoublepage
 	\chapter{Conclusion}
@@ -711,7 +805,7 @@
 	\begin{thebibliography}{9}
 		\bibitem{kademlia} Maymounkov, P. and Mazières, D. Kademlia: A Peer-to-peer Information System Based on the XOR Metric. \url{https://pdos.csail.mit.edu/~petar/papers/maymounkov-kademlia-lncs.pdf}. Accessed: 2019-10-16.
 		\bibitem{shard} ``Sharding'' on Wikipedia. \url{https://en.wikipedia.org/wiki/Shard_(database_architecture)}. Accessed: 2019-10-15.
-		\bibitem{clubpenguin} ``Club Penguin is shutting down''. \url{https://techcrunch.com/2017/01/31/club-penguin-is-shutting-down/}. Accessed: 2019-10-15.
+		\bibitem{clubpenguin} ``Club Penguin is shutting down'' -- TechCrunch. \url{https://techcrunch.com/2017/01/31/club-penguin-is-shutting-down/}. Accessed: 2019-10-15.
 		\bibitem{SpatialOS} SpatialOS by Improbable. \url{https://improbable.io/spatialos}. Accessed: 2020-03-20.
 		\bibitem{pykademlia} \emph{Kademlia} Python Library. \url{https://github.com/bmuller/kademlia/}. Accessed: 2020-03-20.
 		\bibitem{source} \emph{Source} Engine Multiplayer Networking, Valve. \url{https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking}. Accessed: 25-3-2020.
@@ -719,6 +813,10 @@
 		\bibitem{simplex} ``Simplex Noise'' on Wikipedia.
 		\url{https://en.wikipedia.org/wiki/Simplex_noise}. Accessed: 2019-03-27.
 		\bibitem{opendht} \emph{OpenDHT} on GitHub. \url{https://github.com/savoirfairelinux/opendht}. Accessed: 2020-04-16.
+		\bibitem{eve} ``Eve Online has over 360,000 players. 63,170 simultaneous users in January'' -- PC Gamer. \url{https://www.pcgamer.com/eve-online-has-over-360000-players-63170-simultaneous-users-in-january/}. Accessed: 2020-04-17.
+		\bibitem{wowsize} Estimation of World of Warcraft world size. \url{http://tobolds.blogspot.com/2007/01/how-big-is-azeroth.html}. Accessed: 2020-04-17.
+		\bibitem{wowbig} ``World of Warcraft Classic: Hit game goes back to basics
+		'' -- BBC News. \url{https://www.bbc.co.uk/news/technology-49448935}. Accessed: 2020-04-17.
 	\end{thebibliography}
 	\cleardoublepage
 	
