@@ -1,5 +1,6 @@
 \documentclass[10pt,twoside,notitlepage,a4paper]{report}
-
+%TC:group tabular 1 1
+%TC:group table 1 1
 \usepackage{verbatim}
 \usepackage[hidelinks]{hyperref}
 \usepackage{tabularx}
@@ -40,7 +41,7 @@
 \newcommand{\voxpop}{\emph{VoxelPopuli}}
 
 \begin{document}
-	
+	%TC:ignore
 	\bibliographystyle{plain}
 	
 	\pagestyle{empty}
@@ -125,7 +126,7 @@
 	\setcounter{page}{1}
 	\pagenumbering{arabic}
 	\pagestyle{headings}
-	
+	%TC:endignore
 	\chapter{Introduction}
 	
 	\section{Project Summary}
@@ -798,7 +799,9 @@
 	
 	\cleardoublepage
 	\chapter{Conclusion}
-
+	
+	
+	%TC:ignore
 	\cleardoublepage
 	
 	\addcontentsline{toc}{chapter}{Bibliography}
@@ -823,5 +826,5 @@
 	\appendix
 	
 	\chapter{Proposal}
-	
+	%TC:endignore
 \end{document}
