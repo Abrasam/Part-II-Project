@@ -1,4 +1,4 @@
-\documentclass[10pt,twoside,notitlepage,a4paper]{report}
+\documentclass[10pt,notitlepage,a4paper]{report}
 %TC:group tabular 1 1
 %TC:group table 1 1
 \usepackage{verbatim}
@@ -20,9 +20,6 @@
 \sloppy
 \clubpenalty1000%
 \widowpenalty1000%
-
-\addtolength{\oddsidemargin}{8mm}       % adjust margins
-\addtolength{\evensidemargin}{-8mm}
 
 \renewcommand{\baselinestretch}{1.1}    % adjust line spacing to make
 % more readable
@@ -60,40 +57,11 @@
 		2019-20
 	\end{center}
 	
-	\cleardoublepage
+	\clearpage
 	
 	\setcounter{page}{1}
 	\pagenumbering{roman}
 	\pagestyle{plain}
-	
-	\chapter*{Proforma}
-	
-	{\large
-		\begin{tabular}{ll}
-			Name:               & \bf Samuel John Sully\\
-			College:            & \bf Robinson College\\
-			Project Title:      & \bf Voxel Populi: A Decentralised Peer-to-Peer\\ 
-								& \bf Voxel-Based World\\
-			Examination:        & \bf Computer Science Tripos -- Part II, July 2020\\
-			Word Count:         & \bf 10247\footnotemark[1]\\
-			Project Originator: & \bf Samuel John Sully\\
-			Supervisor:         & \bf Prof. Jon Crowcroft\\
-			Director of Studies:& \bf Prof. Alan Mycroft\\
-			Overseers:          & \bf Prof. Marcelo Fiore \& Dr. Amanda Prorok 
-		\end{tabular}
-	}
-	\footnotetext[1]{This word count was computed by {\tt texcount -1 -utf8 -sum -inc dissertation.tex}. Tables were included and all content outside of chapters $1-5$ was excluded.
-	}
-	\stepcounter{footnote}
-	
-	\section*{Original Aims of the Project}
-	My project aimed to create a peer-to-peer 3D world using a distributed hash table (DHT), namely \kademlia{}~\cite{kademlia}. I aimed to explore this decentralised, peer-to-peer approach for Massively Multiplayer Online games (MMOs) to see if such an approach is viable. This was motivated by the advantages of the decentralised approach, such as better load balancing and longevity for the game.
-	
-	\section*{Work Completed}
-	I have completed all the work set out in my proposal, the three parts of my project are all functioning correctly. I implemented \kademlia{} with some modifications to better suit the virtual world application; I implemented the game server to run above the DHT and process the computation for a set of chunks of the world and I implemented the graphical client in \unity{} which connects to the world and allows a user to move around and interact with it. I also completed the test client which was used in the evaluation stage.
-	
-	\section*{Special Difficulties}
-	None.
 	
 	\newpage
 	\section*{Declaration}
@@ -108,7 +76,35 @@
 	
 	\noindent I, Samuel John Sully of Robinson College, am content for my dissertation to be made available to the students and staff of the University.
 	
-	\cleardoublepage
+	\clearpage
+	
+	\chapter*{Proforma}
+	
+	{\large
+		\begin{tabular}{ll}
+			Candidate Number:   & \bf Samuel John Sully\\
+			Project Title:      & \bf Voxel Populi: A Decentralised Peer-to-Peer\\ 
+			& \bf Voxel-Based World\\
+			Examination:        & \bf Computer Science Tripos -- Part II, July 2020\\
+			Word Count:         & \bf 10247\footnotemark[1]\\
+			Line Count:         & \bf 1860\footnotemark[2]\\
+			Project Originator: & \bf Self\\
+			Supervisor:         & \bf Prof. Jon Crowcroft\\
+		\end{tabular}
+	}
+	\footnotetext[1]{This word count was computed by {\tt texcount -1 -utf8 -sum -inc dissertation.tex}. Tables were included and all content outside of chapters $1-5$ was excluded.}
+	\stepcounter{footnote}
+	\footnotetext[2]{This line count was computed by {\tt cloc --exclude-dir=\_\_pycache\_\_ --exclude-lang=XML VoxelPopuli/Code}.}
+	\stepcounter{footnote}
+	
+	\section*{Original Aims of the Project}
+	My project aimed to create a peer-to-peer 3D world using a distributed hash table (DHT), namely \kademlia{}~\cite{kademlia}. I aimed to explore this decentralised, peer-to-peer approach for Massively Multiplayer Online games (MMOs) to see if such an approach is viable. This was motivated by the advantages of the decentralised approach, such as better load balancing and longevity for the game.
+	
+	\section*{Work Completed}
+	I have completed all the work set out in my proposal, the three parts of my project are all functioning correctly. I implemented \kademlia{} with some modifications to better suit the virtual world application; I implemented the game server to run above the DHT and process the computation for a set of chunks of the world and I implemented the graphical client in \unity{} which connects to the world and allows a user to move around and interact with it. I also completed the test client which was used in the evaluation stage.
+	
+	\section*{Special Difficulties}
+	None.
 	
 	\tableofcontents
 	
@@ -120,7 +116,7 @@
 	
 	\newpage
 
-	\cleardoublepage
+	\clearpage
 	
 	\setcounter{page}{1}
 	\pagenumbering{arabic}
@@ -151,7 +147,7 @@
 	
 	It's worth noting also that while my implementation of \kademlia{} is custom, I used a \kademlia{} library~\cite{pykademlia} for \python{} as a reference for a fully functioning Kademlia implementation. However, this implementation uses the approach outlined in the second Kademlia paper, while my approach uses the slightly different approach from the first paper.
 	
-	\cleardoublepage
+	\clearpage
 	\chapter{Preparation}
 	
 	\section{Starting Point}
@@ -276,7 +272,7 @@
 	\subsection{Documentation}
 	\textbf{Pending...}	
 	
-	\cleardoublepage
+	\clearpage
 	\chapter{Implementation}
 	My project consists of three parts: the bespoke \kademlia{} implementation, the game server and the client. The system works by having the client query the \kademlia{} implementation to locate the appropriate servers for a particular part of the world, then connecting to that server and `joining' the world via that server. This is visualised in figure \ref{fig:diagram1}.
 	
@@ -665,7 +661,7 @@
 	
 	Finally we have {\tt test\_client.py} which connects to a server to query the DHT. It then spawns a number of dummy players who will connect to the network and move around the world, moving between chunks this time and connecting to the appropriate server by querying the DHT -- this client most accurately simulates real players and will be used in my large scale test of the system.
 		
-	\cleardoublepage
+	\clearpage
 	\chapter{Evaluation}
 	My project meets the original success criteria and further goals set out in \cref{sec:req}. It has a number of limitations which will be explored in \cref{sec:limits}.
 	
@@ -797,7 +793,7 @@
 	\subsection{Data Loss}
 	One significant issue with the current implementation is that when a node dies all the chunks stored within it are lost and will be regenerated by another node when they are needed. This means that anything a player has constructed within that chunk is lost. An approach I proposed as a potential extension to this project could be used to mitigate this problem. I propose that instead of having a single node responsible for each chunk, have a node and several backup nodes, periodically the main node will multicast its state to the backup nodes, should this node die, the backup nodes elect a successor and then induct a new node into the backup set. This could be done simply using the $n$ nearest nodes to the chunk's key.
 	
-	\cleardoublepage
+	\clearpage
 	\chapter{Conclusion}
 	My project set out to investigate the feasibility of creating a scalable, peer-to-peer distributed online world. The project aimed to explore the peer-to-peer approach as it differs from the more commonly used centralised, client-server model. Ultimately my project was a success, it has fulfilled the success criteria and thorough testing has revealed it to somewhat scalable.
 	
@@ -810,7 +806,7 @@
 	As noted in the evaluation, the system struggles to scale to typical MMO sizes. I propose that this is due to an oversight in my design, that many disparate chunks may be processed by the same server. This means that a single server may need in excess of 100 threads performing computationally heavy processes, this is obviously not feasible except on extremely powerful machines. I propose an adjustment where chunks are clustered spatially meaning that while a single server may be responsible for hundreds of chunks, it may need only a few threads as all chunks can be simulated together due to their contiguous arrangement.
 	
 	%TC:ignore
-	\cleardoublepage
+	\clearpage
 	
 	\addcontentsline{toc}{chapter}{Bibliography}
 	\begin{thebibliography}{9}
@@ -829,7 +825,7 @@
 		\bibitem{wowbig} ``World of Warcraft Classic: Hit game goes back to basics
 		'' -- BBC News. \url{https://www.bbc.co.uk/news/technology-49448935}. Accessed: 2020-04-17.
 	\end{thebibliography}
-	\cleardoublepage
+	\clearpage
 	
 	\appendix
 	
