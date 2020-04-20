@@ -7,12 +7,12 @@
 \contentsline {figure}{\numberline {3.3}{\ignorespaces A diagram of mapping between vertices and triangles for a simplified face of a cube.\relax }}{23}{figure.caption.19}%
 \contentsline {figure}{\numberline {3.4}{\ignorespaces Directory overview of \emph {VoxelPopuli}{}.\relax }}{25}{figure.caption.20}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces RPC Performance}}{28}{figure.caption.21}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Lookup Procedure Performance}}{29}{figure.caption.22}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Plots showing CPU utilization and memory usage of \emph {VoxelPopuli}{} nodes under different scenarios.\relax }}{31}{figure.caption.23}%
-\contentsline {figure}{\numberline {4.4}{\ignorespaces Performance as player count increases ($0-50$).\relax }}{32}{figure.caption.24}%
-\contentsline {figure}{\numberline {4.5}{\ignorespaces Performance as player count increases ($0-100$).\relax }}{33}{figure.caption.25}%
-\contentsline {figure}{\numberline {4.6}{\ignorespaces Performance of a $100$ node network with $1000$ players connected.\relax }}{34}{figure.caption.26}%
-\contentsline {figure}{\numberline {4.7}{\ignorespaces Screenshot of dummy players in the \emph {VoxelPopuli}{} world.\relax }}{35}{figure.caption.27}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces RPC Performance}}{29}{figure.caption.21}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Lookup Procedure Performance}}{30}{figure.caption.22}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Plots showing CPU utilization and memory usage of \emph {VoxelPopuli}{} nodes under different scenarios.\relax }}{32}{figure.caption.23}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Performance as player count increases ($0-50$).\relax }}{33}{figure.caption.24}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Performance as player count increases ($0-100$).\relax }}{34}{figure.caption.25}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Performance of a $100$ node network with $1000$ players connected.\relax }}{35}{figure.caption.26}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Screenshot of dummy players in the \emph {VoxelPopuli}{} world.\relax }}{36}{figure.caption.27}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }

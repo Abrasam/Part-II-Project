@@ -25,7 +25,7 @@
 \contentsline {chapter}{\numberline {3}Implementation}{11}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Kademlia}{11}{section.3.1}%
 \contentsline {subsection}{\numberline {3.1.1}RPC Framework}{12}{subsection.3.1.1}%
-\contentsline {subsection}{\numberline {3.1.2}Custom RPC Specification}{14}{subsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.1.2}Custom RPC Specification}{13}{subsection.3.1.2}%
 \contentsline {subsection}{\numberline {3.1.3}Generate Procedure}{14}{subsection.3.1.3}%
 \contentsline {section}{\numberline {3.2}Game Server}{15}{section.3.2}%
 \contentsline {subsection}{\numberline {3.2.1}Server State}{15}{subsection.3.2.1}%
@@ -36,11 +36,11 @@
 \contentsline {subsection}{\numberline {3.2.4}DHT Interface}{19}{subsection.3.2.4}%
 \contentsline {subsubsection}{\numberline {3.2.4.1}Protocol}{19}{subsubsection.3.2.4.1}%
 \contentsline {section}{\numberline {3.3}Client}{19}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}Architecture}{20}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.1}Architecture}{19}{subsection.3.3.1}%
 \contentsline {subsubsection}{\numberline {3.3.1.1}Network Thread}{20}{subsubsection.3.3.1.1}%
 \contentsline {subsubsection}{\numberline {3.3.1.2}Game Thread}{22}{subsubsection.3.3.1.2}%
 \contentsline {subsection}{\numberline {3.3.2}Chunk Mesh Generation}{22}{subsection.3.3.2}%
-\contentsline {subsection}{\numberline {3.3.3}Chunk Loading \& Unloading}{24}{subsection.3.3.3}%
+\contentsline {subsection}{\numberline {3.3.3}Chunk Loading \& Unloading}{22}{subsection.3.3.3}%
 \contentsline {section}{\numberline {3.4}Overview}{24}{section.3.4}%
 \contentsline {subsection}{\numberline {3.4.1}Client}{24}{subsection.3.4.1}%
 \contentsline {subsection}{\numberline {3.4.2}Server}{25}{subsection.3.4.2}%
@@ -51,21 +51,21 @@
 \contentsline {subsection}{\numberline {4.2.1}Unit Testing}{28}{subsection.4.2.1}%
 \contentsline {subsection}{\numberline {4.2.2}RPC Testing}{28}{subsection.4.2.2}%
 \contentsline {subsubsection}{\numberline {4.2.2.1}Setup}{28}{subsubsection.4.2.2.1}%
-\contentsline {subsubsection}{\numberline {4.2.2.2}Analysis}{29}{subsubsection.4.2.2.2}%
-\contentsline {subsection}{\numberline {4.2.3}Lookup Procedure}{29}{subsection.4.2.3}%
-\contentsline {section}{\numberline {4.3}Scalability}{30}{section.4.3}%
-\contentsline {subsection}{\numberline {4.3.1}Local Simulation}{30}{subsection.4.3.1}%
-\contentsline {subsubsection}{\numberline {4.3.1.1}Setup}{30}{subsubsection.4.3.1.1}%
-\contentsline {subsubsection}{\numberline {4.3.1.2}Analysis}{30}{subsubsection.4.3.1.2}%
-\contentsline {subsection}{\numberline {4.3.2}Large Scale Simulation}{33}{subsection.4.3.2}%
-\contentsline {subsubsection}{\numberline {4.3.2.1}Setup}{33}{subsubsection.4.3.2.1}%
-\contentsline {subsubsection}{\numberline {4.3.2.2}Analysis}{34}{subsubsection.4.3.2.2}%
-\contentsline {section}{\numberline {4.4}Client}{34}{section.4.4}%
-\contentsline {section}{\numberline {4.5}Node Failure}{35}{section.4.5}%
-\contentsline {section}{\numberline {4.6}Current Limitations}{35}{section.4.6}%
-\contentsline {subsection}{\numberline {4.6.1}Scale}{35}{subsection.4.6.1}%
-\contentsline {subsection}{\numberline {4.6.2}Security}{36}{subsection.4.6.2}%
-\contentsline {subsection}{\numberline {4.6.3}Data Loss}{36}{subsection.4.6.3}%
-\contentsline {chapter}{\numberline {5}Conclusion}{38}{chapter.5}%
-\contentsline {chapter}{Bibliography}{39}{chapter.5}%
-\contentsline {chapter}{\numberline {A}Proposal}{40}{appendix.A}%
+\contentsline {subsubsection}{\numberline {4.2.2.2}Analysis}{28}{subsubsection.4.2.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}Lookup Procedure}{28}{subsection.4.2.3}%
+\contentsline {section}{\numberline {4.3}Scalability}{31}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Local Simulation}{31}{subsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.1.1}Setup}{31}{subsubsection.4.3.1.1}%
+\contentsline {subsubsection}{\numberline {4.3.1.2}Analysis}{31}{subsubsection.4.3.1.2}%
+\contentsline {subsection}{\numberline {4.3.2}Large Scale Simulation}{35}{subsection.4.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.2.1}Setup}{35}{subsubsection.4.3.2.1}%
+\contentsline {subsubsection}{\numberline {4.3.2.2}Analysis}{36}{subsubsection.4.3.2.2}%
+\contentsline {section}{\numberline {4.4}Client}{36}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Node Failure}{36}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Current Limitations}{37}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Scale}{37}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}Security}{37}{subsection.4.6.2}%
+\contentsline {subsection}{\numberline {4.6.3}Data Loss}{38}{subsection.4.6.3}%
+\contentsline {chapter}{\numberline {5}Conclusion}{39}{chapter.5}%
+\contentsline {chapter}{Bibliography}{40}{chapter.5}%
+\contentsline {chapter}{\numberline {A}Proposal}{41}{appendix.A}%

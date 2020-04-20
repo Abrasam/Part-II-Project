@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/W32TeX) (preloaded format=pdflatex 2020.1.21)  19 APR 2020 14:32
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/W32TeX) (preloaded format=pdflatex 2020.1.21)  20 APR 2020 14:17
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -7,8 +7,8 @@ entering extended mode
 LaTeX2e <2019-10-01> patch level 3
 (c:/texlive/2019/texmf-dist/tex/latex/base/report.cls
 Document Class: report 2019/10/25 v1.4k Standard LaTeX document class
-(c:/texlive/2019/texmf-dist/tex/latex/base/size10.clo
-File: size10.clo 2019/10/25 v1.4k Standard LaTeX file (size option)
+(c:/texlive/2019/texmf-dist/tex/latex/base/size12.clo
+File: size12.clo 2019/10/25 v1.4k Standard LaTeX file (size option)
 )
 \c@part=\count80
 \c@chapter=\count81
@@ -333,38 +333,57 @@ Package caption Info: wrapfig package is loaded.
 \c@subfigure=\count116
 \c@subtable=\count117
 )
-(./dissertation.aux)
+(c:/texlive/2019/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2020/01/02 v5.9 Page Geometry
+
+(c:/texlive/2019/texmf-dist/tex/generic/iftex/ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+)
+\Gm@cnth=\count118
+\Gm@cntv=\count119
+\c@Gm@tempcnt=\count120
+\Gm@bindingoffset=\dimen135
+\Gm@wd@mp=\dimen136
+\Gm@odd@mp=\dimen137
+\Gm@even@mp=\dimen138
+\Gm@layoutwidth=\dimen139
+\Gm@layoutheight=\dimen140
+\Gm@layouthoffset=\dimen141
+\Gm@layoutvoffset=\dimen142
+\Gm@dimlist=\toks23
+) (./dissertation.aux)
 \openout1 = `dissertation.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 40.
-LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
 \AtBeginShipoutBox=\box32
-Package hyperref Info: Link coloring OFF on input line 40.
- (c:/texlive/2019/texmf-dist/tex/latex/hyperref/nameref.sty
+Package hyperref Info: Link coloring OFF on input line 41.
+(c:/texlive/2019/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
+
 (c:/texlive/2019/texmf-dist/tex/latex/refcount/refcount.sty
 Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 )
 (c:/texlive/2019/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count118
+\c@section@level=\count121
 )
-LaTeX Info: Redefining \ref on input line 40.
-LaTeX Info: Redefining \pageref on input line 40.
-LaTeX Info: Redefining \nameref on input line 40.
+LaTeX Info: Redefining \ref on input line 41.
+LaTeX Info: Redefining \pageref on input line 41.
+LaTeX Info: Redefining \nameref on input line 41.
 
 (./dissertation.out) (./dissertation.out)
 \@outlinefile=\write3
@@ -373,17 +392,17 @@ LaTeX Info: Redefining \nameref on input line 40.
 
 (c:/texlive/2019/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count119
-\scratchdimen=\dimen135
+\scratchcounter=\count122
+\scratchdimen=\dimen143
 \scratchbox=\box33
-\nofMPsegments=\count120
-\nofMParguments=\count121
-\everyMPshowfont=\toks23
-\MPscratchCnt=\count122
-\MPscratchDim=\dimen136
-\MPnumerator=\count123
-\makeMPintoPDFobject=\count124
-\everyMPtoPDFconversion=\toks24
+\nofMPsegments=\count123
+\nofMParguments=\count124
+\everyMPshowfont=\toks24
+\MPscratchCnt=\count125
+\MPscratchDim=\dimen144
+\MPnumerator=\count126
+\makeMPintoPDFobject=\count127
+\everyMPtoPDFconversion=\toks25
 ) (c:/texlive/2019/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2019-12-09 v2.10 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
@@ -395,21 +414,60 @@ e
 ))
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
- [1
+
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(78.24507pt, 441.01773pt, 78.24507pt)
+* v-part:(T,H,B)=(78.24507pt, 688.5567pt, 78.24507pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=441.01773pt
+* \textheight=688.5567pt
+* \oddsidemargin=5.97508pt
+* \evensidemargin=5.97508pt
+* \topmargin=-31.02492pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=12.0pt
+* \footskip=30.0pt
+* \marginparwidth=35.0pt
+* \marginparsep=10.0pt
+* \columnsep=10.0pt
+* \skip\footins=10.8pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+[1
 
 {c:/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [1
 
 ]
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 84.
+(Font)              <14.4> on input line 85.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 84.
+(Font)              <7> on input line 85.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 84.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 95.
+(Font)              <5> on input line 96.
 
-Overfull \hbox (51.67401pt too wide) in paragraph at lines 84--99
+Underfull \hbox (badness 1248) in paragraph at lines 98--98
+[][]\OT1/cmr/m/n/10 This line count was com-puted by \OT1/cmtt/m/n/10 cloc --ex
+clude-dir=[][]pycache[][] --exclude-lang=XML
+ []
+
+
+Overfull \hbox (30.19041pt too wide) in paragraph at lines 85--100
 []
  []
 
@@ -418,7 +476,11 @@ Overfull \hbox (51.67401pt too wide) in paragraph at lines 84--99
 
 ] [3] (./dissertation.toc
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 2.
+(Font)              <12> on input line 2.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 2.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 2.
  [4
 
 ] [5])
@@ -450,7 +512,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.136 	
+l.139 	
         [1
 
 
@@ -461,607 +523,616 @@ Chapter 2.
 
 ]
 LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 1
-71.
+72.
  (c:/texlive/2019/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 171.
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 172.
 LaTeX Font Info:    Trying to load font information for OML+cmr on input line 1
-78.
+79.
 
 (c:/texlive/2019/texmf-dist/tex/latex/base/omlcmr.fd
 File: omlcmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 178.
+LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <12> not available
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 179.
  [4] [5] [6] [7]
-<minecraft.png, id=547, 1927.2pt x 1030.85126pt>
+<minecraft.png, id=543, 1927.2pt x 1030.85126pt>
 File: minecraft.png Graphic file (type png)
 <use minecraft.png>
-Package pdftex.def Info: minecraft.png  used on input line 254.
-(pdftex.def)             Requested size: 345.0pt x 184.53853pt.
+Package pdftex.def Info: minecraft.png  used on input line 255.
+(pdftex.def)             Requested size: 441.01773pt x 235.89536pt.
  [8]
 [9 <./minecraft.png>] [10]
 Chapter 3.
-<diag1.png, id=577, 800.9925pt x 443.6575pt>
+<diag1.png, id=573, 800.9925pt x 443.6575pt>
 File: diag1.png Graphic file (type png)
 <use diag1.png>
-Package pdftex.def Info: diag1.png  used on input line 280.
-(pdftex.def)             Requested size: 345.0pt x 191.09393pt.
+Package pdftex.def Info: diag1.png  used on input line 281.
+(pdftex.def)             Requested size: 441.01773pt x 244.27638pt.
 [11
 
 
-] [12 <./diag1.png>]
+]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 339.
- [13]pdfTeX warning (ext4): destination with the same identifier (name{ALG@line
-.1}) has been already used, duplicate ignored
+put line 340.
+ [12 <./diag1.png>] [13]pdfTeX warning (ext4): destination with the same identi
+fier (name{ALG@line.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.376 			\Function
+l.377 			\Function
                   {Generate}{ChunkCoordinate}pdfTeX warning (ext4): destination
  with the same identifier (name{ALG@line.2}) has been already used, duplicate i
 gnored
 <to be read again> 
                    \relax 
-l.377 				\State
+l.378 				\State
                  $key \gets \mathrm{sha1(ChunkCoordinates)}$pdfTeX warning (ext
 4): destination with the same identifier (name{ALG@line.3}) has been already us
 ed, duplicate ignored
 <to be read again> 
                    \relax 
-l.378 				\State
+l.379 				\State
                  $nodes \gets \mathrm{lookup(key)}$pdfTeX warning (ext4): desti
 nation with the same identifier (name{ALG@line.4}) has been already used, dupli
 cate ignored
 <to be read again> 
                    \relax 
-l.379 				\For
+l.380 				\For
               {$n \in nodes$}pdfTeX warning (ext4): destination with the same i
 dentifier (name{ALG@line.5}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.380 					\State
+l.381 					\State
                   Send generate request to game server at $<n.ip, n.port+1>$...
 pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.6}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.381 					\If
+l.382 					\If
               {Successful}pdfTeX warning (ext4): destination with the same iden
 tifier (name{ALG@line.7}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.382 						\State
+l.383 						\State
                    Call RPC \Call{STORE\_CHUNK}{$key, <n.ip, n.port+1>$}pdfTeX 
 warning (ext4): destination with the same identifier (name{ALG@line.8}) has bee
 n already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.383 						\State
+l.384 						\State
                    \Return SuccesspdfTeX warning (ext4): destination with the s
 ame identifier (name{ALG@line.9}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.384 					\EndIf
+l.385 					\EndIf
                  pdfTeX warning (ext4): destination with the same identifier (n
 ame{ALG@line.10}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.385 				\EndFor
+l.386 				\EndFor
                  pdfTeX warning (ext4): destination with the same identifier (n
 ame{ALG@line.11}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.386 				\State
+l.387 				\State
                  \Return FailurepdfTeX warning (ext4): destination with the sam
 e identifier (name{ALG@line.12}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.387 			\EndFunction
+l.388 			\EndFunction
                       [14pdfTeX warning (ext4): destination with the same ident
 ifier (name{ALG@line.1}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.395 	
+l.396 	
        pdfTeX warning (ext4): destination with the same identifier (name{ALG@li
 ne.2}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.395 	
+l.396 	
        pdfTeX warning (ext4): destination with the same identifier (name{ALG@li
 ne.3}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.395 	
+l.396 	
        pdfTeX warning (ext4): destination with the same identifier (name{ALG@li
 ne.4}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.395 	
+l.396 	
        pdfTeX warning (ext4): destination with the same identifier (name{ALG@li
 ne.5}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.395 	
+l.396 	
        pdfTeX warning (ext4): destination with the same identifier (name{ALG@li
 ne.6}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.395 	
+l.396 	
        pdfTeX warning (ext4): destination with the same identifier (name{ALG@li
 ne.7}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.395 	
+l.396 	
        pdfTeX warning (ext4): destination with the same identifier (name{ALG@li
 ne.8}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.395 	
+l.396 	
        pdfTeX warning (ext4): destination with the same identifier (name{ALG@li
 ne.9}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.395 	
+l.396 	
        pdfTeX warning (ext4): destination with the same identifier (name{ALG@li
 ne.10}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.395 	
+l.396 	
        pdfTeX warning (ext4): destination with the same identifier (name{ALG@li
 ne.11}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.395 	
+l.396 	
        pdfTeX warning (ext4): destination with the same identifier (name{ALG@li
 ne.12}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.395 	
+l.396 	
        pdfTeX warning (ext4): destination with the same identifier (name{ALG@li
 ne.13}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.395 	
+l.396 	
        pdfTeX warning (ext4): destination with the same identifier (name{ALG@li
 ne.14}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.395 	
+l.396 	
        ] [15] [16]
-Underfull \hbox (badness 1072) in paragraph at lines 465--465
-[]|\OT1/cmr/m/n/10 Used by clients to in-form a
+Overfull \hbox (8.16257pt too wide) in paragraph at lines 466--466
+[]|\OT1/cmr/bx/n/12 Arguments| 
  []
 
 
-Underfull \hbox (badness 2809) in paragraph at lines 465--465
-[]|\OT1/cmr/m/n/10 Player lo-ca-
+Underfull \hbox (badness 10000) in paragraph at lines 466--466
+[]|\OT1/cmr/m/n/12 Player
  []
 
 
-Underfull \hbox (badness 1072) in paragraph at lines 465--465
-[]|\OT1/cmr/m/n/10 Used by clients to in-form a
+Underfull \hbox (badness 10000) in paragraph at lines 466--466
+\OT1/cmr/m/n/12 lo-ca-tion
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--465
-[]|\OT1/cmr/m/n/10 New player
+Underfull \hbox (badness 10000) in paragraph at lines 466--466
+\OT1/cmr/m/n/12 po-si-tion
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--465
-\OT1/cmr/m/n/10 po-si-tion
+Underfull \hbox (badness 10000) in paragraph at lines 466--466
+\OT1/cmr/m/n/12 (\OML/cmm/m/it/12 x; y; z; ^^R\OT1/cmr/m/n/12 )$,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--465
-\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 x; y; z; ^^R\OT1/cmr/m/n/10 )$,
+Underfull \hbox (badness 10000) in paragraph at lines 466--466
+[]|\OT1/cmr/m/n/12 Flattened
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--465
-[]|\OT1/cmr/m/n/10 Flattened
+Underfull \hbox (badness 10000) in paragraph at lines 466--466
+[]|\OT1/cmr/m/n/12 Current
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--465
-\OT1/cmr/m/n/10 chunk data
+Underfull \hbox (badness 10000) in paragraph at lines 466--466
+\OT1/cmr/m/n/12 time as
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--465
-[]|\OT1/cmr/m/n/10 Current
+Underfull \hbox (badness 10000) in paragraph at lines 466--466
+\OT1/cmr/m/n/12 min-utes
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--465
-\OT1/cmr/m/n/10 utes from
+Underfull \hbox (badness 2409) in paragraph at lines 466--466
+\OT1/cmr/m/n/12 from mid-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--465
-\OT1/cmr/m/n/10 mid-night
+Underfull \hbox (badness 10000) in paragraph at lines 466--466
+\OT1/cmr/m/n/12 night
  []
 
 
-Underfull \hbox (badness 1484) in paragraph at lines 465--465
-\OT1/cmr/m/n/10 (ac-cu-rate to
+Underfull \hbox (badness 10000) in paragraph at lines 466--466
+\OT1/cmr/m/n/12 (ac-cu-rate
  []
 
 
-Underfull \hbox (badness 1917) in paragraph at lines 465--465
-[]|\OT1/cmr/m/n/10 Used by a client to in-form
+Underfull \hbox (badness 10000) in paragraph at lines 466--466
+[]|\OT1/cmr/m/n/12 Location
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--465
-[]|\OT1/cmr/m/n/10 Location
+Underfull \hbox (badness 10000) in paragraph at lines 466--466
+\OT1/cmr/m/n/12 of block
  []
 
 
-Underfull \hbox (badness 2894) in paragraph at lines 465--465
-\OT1/cmr/m/n/10 of block to
+Underfull \hbox (badness 5878) in paragraph at lines 466--466
+\OT1/cmr/m/n/12 to change
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 465--465
-\OT1/cmr/m/n/10 change and
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 465--465
-\OT1/cmr/m/n/10 new block
+Underfull \hbox (badness 10000) in paragraph at lines 466--466
+\OT1/cmr/m/n/12 and new
  []
 
 [17] [18]
 LaTeX Font Info:    Trying to load font information for OMS+cmtt on input line 
-485.
-LaTeX Font Info:    No file OMScmtt.fd. on input line 485.
+486.
+LaTeX Font Info:    No file OMScmtt.fd. on input line 486.
 
 
 LaTeX Font Warning: Font shape `OMS/cmtt/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
-(Font)              for symbol `textbraceleft' on input line 485.
+(Font)              for symbol `textbraceleft' on input line 486.
 
-<client.png, id=650, 1445.4pt x 813.0375pt>
+<client.png, id=646, 1445.4pt x 813.0375pt>
 File: client.png Graphic file (type png)
 <use client.png>
-Package pdftex.def Info: client.png  used on input line 492.
-(pdftex.def)             Requested size: 345.0pt x 194.05367pt.
+Package pdftex.def Info: client.png  used on input line 493.
+(pdftex.def)             Requested size: 441.01773pt x 248.06912pt.
 [19]
-Underfull \hbox (badness 4181) in paragraph at lines 521--521
-[]|\OT1/cmr/m/n/10 Player name and
+Underfull \hbox (badness 10000) in paragraph at lines 522--522
+[]|\OT1/cmr/m/n/12 Chunk co-or-
  []
 
 
-Underfull \hbox (badness 1394) in paragraph at lines 521--521
-\OT1/cmr/m/n/10 has moved so that the net-work
+Underfull \hbox (badness 10000) in paragraph at lines 522--522
+\OT1/cmr/m/n/12 di-nates, block
  []
 
 
-Underfull \hbox (badness 1515) in paragraph at lines 521--521
-[]|\OT1/cmr/m/n/10 Used by the net-work thread to
+Underfull \hbox (badness 1184) in paragraph at lines 522--522
+\OT1/cmr/m/n/12 data. (En-cap-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 521--521
-\OT1/cmr/m/n/10 block ar-ray and
+Underfull \hbox (badness 10000) in paragraph at lines 522--522
+\OT1/cmr/m/n/12 su-lated as a
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 521--521
-\OT1/cmr/m/n/10 cap-su-lated as a
+Underfull \hbox (badness 10000) in paragraph at lines 522--522
+[]|\OT1/cmr/m/n/12 Chunk co-or-di-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 522--522
+[]|\OT1/cmr/m/n/12 New player's
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 522--522
+\OT1/cmr/m/n/12 lo-ca-tion and
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 522--522
+[]|\OT1/cmr/m/n/12 The player's
  []
 
 [20 <./client.png>] [21]
-<diag2.png, id=670, 403.5075pt x 405.515pt>
+<diag2.png, id=666, 403.5075pt x 405.515pt>
 File: diag2.png Graphic file (type png)
 <use diag2.png>
-Package pdftex.def Info: diag2.png  used on input line 546.
-(pdftex.def)             Requested size: 172.5pt x 173.35945pt.
+Package pdftex.def Info: diag2.png  used on input line 547.
+(pdftex.def)             Requested size: 220.50887pt x 221.60458pt.
 pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.1}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.555 			\State
+l.556 			\State
                 blocks[][][] $\gets$ chunk block array;pdfTeX warning (ext4): d
 estination with the same identifier (name{ALG@line.2}) has been already used, d
 uplicate ignored
 <to be read again> 
                    \relax 
-l.556 			\State
+l.557 			\State
                 vertices[] $\gets$ new vec3 array;pdfTeX warning (ext4): destin
 ation with the same identifier (name{ALG@line.3}) has been already used, duplic
 ate ignored
 <to be read again> 
                    \relax 
-l.557 			\State
+l.558 			\State
                 triangles[] $\gets$ new int array;pdfTeX warning (ext4): destin
 ation with the same identifier (name{ALG@line.4}) has been already used, duplic
 ate ignored
 <to be read again> 
                    \relax 
-l.558 			\State
+l.559 			\State
                 uvs[] $\gets$ new vec3 array;pdfTeX warning (ext4): destination
  with the same identifier (name{ALG@line.5}) has been already used, duplicate i
 gnored
 <to be read again> 
                    \relax 
-l.559 			\State
+l.560 			\State
                 vertex $\gets 0$;pdfTeX warning (ext4): destination with the sa
 me identifier (name{ALG@line.6}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.560 			\For
+l.561 			\For
              {$0 \leq x <$ \tt CHUNK\_SIZE}
-LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 560.
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <12> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 561.
 pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.7}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.561 				\For
+l.562 				\For
               {$0 \leq y <$ \tt CHUNK\_SIZE}pdfTeX warning (ext4): destination 
 with the same identifier (name{ALG@line.8}) has been already used, duplicate ig
 nored
 <to be read again> 
                    \relax 
-l.562 					\For
+l.563 					\For
                {$0 \leq z <$ \tt CHUNK\_SIZE}pdfTeX warning (ext4): destination
  with the same identifier (name{ALG@line.9}) has been already used, duplicate i
 gnored
 <to be read again> 
                    \relax 
-l.563 						\For
+l.564 						\For
                 {each face}pdfTeX warning (ext4): destination with the same ide
 ntifier (name{ALG@line.10}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.564 							\If
+l.565 							\If
                 {blocks[x][y][z] is air OR\\ blocks[x][y][z] + faceNormal is...
 pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.11})
  has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.564 ... blocks[x][y][z] + faceNormal is not air}
+l.565 ... blocks[x][y][z] + faceNormal is not air}
                                                   pdfTeX warning (ext4): destin
 ation with the same identifier (name{ALG@line.12}) has been already used, dupli
 cate ignored
 <to be read again> 
                    \relax 
-l.565 								\State
+l.566 								\State
                      continue;pdfTeX warning (ext4): destination with the same 
 identifier (name{ALG@line.13}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.566 							\EndIf
+l.567 							\EndIf
                    pdfTeX warning (ext4): destination with the same identifier 
 (name{ALG@line.14}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.567 							\State
+l.568 							\State
                     add vertices for this face;pdfTeX warning (ext4): destinati
 on with the same identifier (name{ALG@line.15}) has been already used, duplicat
 e ignored
 <to be read again> 
                    \relax 
-l.568 							\State
+l.569 							\State
                     add uv coordinates for correct texture; [22] [23 <./diag2.p
 ng>]pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.
 1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.589 			\For
+l.590 			\For
              {chunk $\in$ loaded}pdfTeX warning (ext4): destination with the sa
 me identifier (name{ALG@line.2}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.590 				\If
+l.591 				\If
              {$|\mathrm{chunk.x} - \mathrm{player.chunk.x}| \geq 5$ OR $|\ma...
 pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.3}) 
 has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.591 					\State
+l.592 					\State
                   unload(chunk);pdfTeX warning (ext4): destination with the sam
 e identifier (name{ALG@line.4}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.592 				\EndIf
+l.593 				\EndIf
                 pdfTeX warning (ext4): destination with the same identifier (na
 me{ALG@line.5}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.593 			\EndFor
+l.594 			\EndFor
                 pdfTeX warning (ext4): destination with the same identifier (na
 me{ALG@line.6}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.594 			\State
+l.595 			\State
                 chunk\_position $\gets$ (player.chunk.x, player.chunk.y);pdfTeX
  warning (ext4): destination with the same identifier (name{ALG@line.7}) has be
 en already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.595 			\For
+l.596 			\For
              {$-1 \leq i \leq 1$}pdfTeX warning (ext4): destination with the sa
 me identifier (name{ALG@line.8}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.596 				\For
+l.597 				\For
               {$-1 \leq j \leq 1$}pdfTeX warning (ext4): destination with the s
 ame identifier (name{ALG@line.9}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.597 					\If
+l.598 					\If
               {chunk at chunk\_position + $(i,j)$ is not loaded}pdfTeX warning 
 (ext4): destination with the same identifier (name{ALG@line.10}) has been alrea
 dy used, duplicate ignored
 <to be read again> 
                    \relax 
-l.598 						\State
+l.599 						\State
                    s $\gets$ query\_chunk\_from\_dht(chunk\_position + $(i,j...
 pdfTeX warning (ext4): destination with the same identifier (name{ALG@line.11})
  has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.599 						\State
+l.600 						\State
                    load chunk from server s;pdfTeX warning (ext4): destination 
 with the same identifier (name{ALG@line.12}) has been already used, duplicate i
 gnored
 <to be read again> 
                    \relax 
-l.600 					\EndIf
+l.601 					\EndIf
                  pdfTeX warning (ext4): destination with the same identifier (n
 ame{ALG@line.13}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.601 				\EndFor
+l.602 				\EndFor
                  pdfTeX warning (ext4): destination with the same identifier (n
 ame{ALG@line.14}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.602 			\EndFor
-                 [24] [25] [26]
+l.603 			\EndFor
+                
+Overfull \hbox (6.03358pt too wide) in paragraph at lines 640--640
+[]|[]\OT1/cmtt/m/n/12 Controller.cs[]| 
+ []
+
+[24] [25] [26]
 Chapter 4.
 [27
 
 
 ]
-<rpcperformance.png, id=722, 462.528pt x 346.896pt>
+<rpcperformance.png, id=718, 462.528pt x 346.896pt>
 File: rpcperformance.png Graphic file (type png)
 <use rpcperformance.png>
 Package pdftex.def Info: rpcperformance.png  used on input line 685.
-(pdftex.def)             Requested size: 345.0pt x 258.76335pt.
-<lookupgraph.png, id=723, 462.528pt x 346.896pt>
+(pdftex.def)             Requested size: 441.01773pt x 330.77734pt.
+<lookupgraph.png, id=719, 462.528pt x 346.896pt>
 File: lookupgraph.png Graphic file (type png)
 <use lookupgraph.png>
 Package pdftex.def Info: lookupgraph.png  used on input line 693.
-(pdftex.def)             Requested size: 345.0pt x 258.76335pt.
- [28 <./rpcperformance.png>] [29 <./lookupgraph.png>]
+(pdftex.def)             Requested size: 441.01773pt x 330.77734pt.
+ [28] [29 <./rpcperformance.png>] [30 <./lookupgraph.png>]
 <plot1.png, id=737, 462.528pt x 346.896pt>
 File: plot1.png Graphic file (type png)
 <use plot1.png>
 Package pdftex.def Info: plot1.png  used on input line 709.
-(pdftex.def)             Requested size: 172.5pt x 129.37639pt.
+(pdftex.def)             Requested size: 220.50887pt x 165.38072pt.
 <plot2.png, id=738, 462.528pt x 346.896pt>
 File: plot2.png Graphic file (type png)
 <use plot2.png>
 Package pdftex.def Info: plot2.png  used on input line 714.
-(pdftex.def)             Requested size: 172.5pt x 129.37639pt.
+(pdftex.def)             Requested size: 220.50887pt x 165.38072pt.
 <plot3.png, id=739, 462.528pt x 346.896pt>
 File: plot3.png Graphic file (type png)
 <use plot3.png>
 Package pdftex.def Info: plot3.png  used on input line 719.
-(pdftex.def)             Requested size: 172.5pt x 129.37639pt.
+(pdftex.def)             Requested size: 220.50887pt x 165.38072pt.
 <plot4.png, id=740, 462.528pt x 346.896pt>
 File: plot4.png Graphic file (type png)
 <use plot4.png>
 Package pdftex.def Info: plot4.png  used on input line 724.
-(pdftex.def)             Requested size: 172.5pt x 129.37639pt.
+(pdftex.def)             Requested size: 220.50887pt x 165.38072pt.
 
-Overfull \hbox (2.22221pt too wide) in paragraph at lines 708--728
+Overfull \hbox (2.61108pt too wide) in paragraph at lines 708--728
 []$[]$ $[]$
  []
 
 
-Overfull \hbox (2.22221pt too wide) in paragraph at lines 708--728
+Overfull \hbox (2.61108pt too wide) in paragraph at lines 708--728
 []$ $[]$ 
  []
 
-[30] [31 <./plot1.png> <./plot2.png> <./plot3.png> <./plot4.png>]
-<linear.png, id=759, 462.528pt x 346.896pt>
+[31] [32 <./plot1.png> <./plot2.png> <./plot3.png> <./plot4.png>]
+<linear.png, id=758, 462.528pt x 346.896pt>
 File: linear.png Graphic file (type png)
 <use linear.png>
 Package pdftex.def Info: linear.png  used on input line 741.
-(pdftex.def)             Requested size: 345.0pt x 258.76335pt.
-<linear100.png, id=761, 462.528pt x 346.896pt>
+(pdftex.def)             Requested size: 441.01773pt x 330.77734pt.
+<linear100.png, id=760, 462.528pt x 346.896pt>
 File: linear100.png Graphic file (type png)
 <use linear100.png>
 Package pdftex.def Info: linear100.png  used on input line 748.
-(pdftex.def)             Requested size: 345.0pt x 258.76335pt.
- [32 <./linear.png>]
-<100node.png, id=768, 462.528pt x 346.896pt>
+(pdftex.def)             Requested size: 441.01773pt x 330.77734pt.
+ [33 <./linear.png>] [34 <./linear100.png>]
+<100node.png, id=773, 462.528pt x 346.896pt>
 File: 100node.png Graphic file (type png)
 <use 100node.png>
 Package pdftex.def Info: 100node.png  used on input line 759.
-(pdftex.def)             Requested size: 345.0pt x 258.76335pt.
-<dummies.png, id=771, 1445.4pt x 813.0375pt>
+(pdftex.def)             Requested size: 441.01773pt x 330.77734pt.
+<dummies.png, id=776, 1445.4pt x 813.0375pt>
 File: dummies.png Graphic file (type png)
 <use dummies.png>
 Package pdftex.def Info: dummies.png  used on input line 767.
-(pdftex.def)             Requested size: 345.0pt x 194.05367pt.
- [33 <./linear100.png>] [34 <./100node.png>] [35 <./dummies.png>]
-[36] [37]
+(pdftex.def)             Requested size: 441.01773pt x 248.06912pt.
+ [35 <./100node.png>] [36 <./dummies.png>]
+[37] [38]
 Chapter 5.
-[38
+[39
 
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 814--815
-[]\OT1/cmr/m/n/10 ``Sharding'' on Wikipedia. []$\OT1/cmtt/m/n/10 https : / / en
- . wikipedia . org / wiki / Shard _
- []
-
-
-Underfull \hbox (badness 3568) in paragraph at lines 818--819
-[]\OT1/cmr/m/it/10 Source \OT1/cmr/m/n/10 En-gine Mul-ti-player Net-work-ing, V
-alve. []$\OT1/cmtt/m/n/10 https : / / developer .
- []
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 818--819
-\OT1/cmtt/m/n/10 valvesoftware . com / wiki / Source _ Multiplayer _ Networking
-$[]\OT1/cmr/m/n/10 . Ac-cessed:
+[]\OT1/cmr/m/it/12 Source \OT1/cmr/m/n/12 En-gine Mul-ti-player Net-work-ing, V
+alve. []$\OT1/cmtt/m/n/12 https : / / developer .
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 820--822
-[]\OT1/cmr/m/n/10 ``Simplex Noise'' on Wikipedia. []$\OT1/cmtt/m/n/10 https : /
- / en . wikipedia . org / wiki /
+Underfull \hbox (badness 7522) in paragraph at lines 818--819
+\OT1/cmtt/m/n/12 valvesoftware . com / wiki / Source _ Multiplayer _ Networking
+$[]\OT1/cmr/m/n/12 . Ac-cessed: 25-
+ []
+
+
+Underfull \hbox (badness 2818) in paragraph at lines 820--822
+[]\OT1/cmr/m/n/12 ``Simplex Noise'' on Wikipedia. []$\OT1/cmtt/m/n/12 https : /
+ / en . wikipedia . org / wiki / Simplex _
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 823--824
-[]\OT1/cmr/m/n/10 ``Eve On-line has over 360,000 play-ers. 63,170 si-mul-ta-ne-
+[]\OT1/cmr/m/n/12 ``Eve On-line has over 360,000 play-ers. 63,170 si-mul-ta-ne-
 ous
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 823--824
-\OT1/cmr/m/n/10 users in Jan-uary'' -- PC Gamer. []$\OT1/cmtt/m/n/10 https : / 
+\OT1/cmr/m/n/12 users in Jan-uary'' -- PC Gamer. []$\OT1/cmtt/m/n/12 https : / 
 / www . pcgamer . com /
  []
 
 
-Overfull \hbox (51.08012pt too wide) in paragraph at lines 823--824
-\OT1/cmtt/m/n/10 eve-[]online-[]has-[]over-[]360000-[]players-[]63170-[]simulta
-neous-[]users-[]in-[]january/$[]\OT1/cmr/m/n/10 .
+Overfull \hbox (23.94893pt too wide) in paragraph at lines 823--824
+\OT1/cmtt/m/n/12 eve-[]online-[]has-[]over-[]360000-[]players-[]63170-[]simulta
+neous-[]users-[]in-[]january/$[]\OT1/cmr/m/n/12 .
  []
 
-[39
+[40
 
 
 ]
 Appendix A.
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 834.
-[40
+[41
 
 
 ]
@@ -1078,37 +1149,33 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 834.
  ) 
 Here is how much of TeX's memory you used:
- 9872 strings out of 492162
- 161585 string characters out of 6129062
- 252084 words of memory out of 5000000
- 13852 multiletter control sequences out of 15000+600000
- 12646 words of font info for 44 fonts, out of 8000000 for 9000
+ 10330 strings out of 492162
+ 168280 string characters out of 6129062
+ 264847 words of memory out of 5000000
+ 14305 multiletter control sequences out of 15000+600000
+ 12949 words of font info for 45 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  48i,11n,46p,1295b,470s stack positions out of 5000i,500n,10000p,200000b,80000s
-<c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/tex
-live/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/texlive/2019
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><c:/texlive/2019/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><c:/texlive/2019/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmitt10.pfb><c:/texlive/2019/texmf-dist/fonts/type1
-/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmmi7.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm
-/cmmi8.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb
-><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/texli
-ve/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb><c:/texlive/2019/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb><c:/texlive/2019/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2019/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmr8.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfo
-nts/cm/cmr9.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsl
-10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c
-:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/
-2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb><c:/texlive/2019/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmti8.pfb><c:/texlive/2019/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmtt10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmtt8.pfb>
-Output written on dissertation.pdf (50 pages, 2076311 bytes).
+<c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/tex
+live/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb><c:/texlive/20
+19/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><c:/texlive/2019/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmitt10.pfb><c:/texlive/2019/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2019/texmf-dist/fonts/type1
+/public/amsfonts/cm/cmmi12.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmmi8.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmr10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb
+><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb><c:/texli
+ve/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><c:/texlive/2019/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2019/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmsl12.pfb><c:/texlive/2019/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmsy10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmti10.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmti12.pfb><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.p
+fb><c:/texlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on dissertation.pdf (51 pages, 2025995 bytes).
 PDF statistics:
- 957 PDF objects out of 1000 (max. 8388607)
- 848 compressed objects within 9 object streams
- 216 named destinations out of 1000 (max. 500000)
+ 948 PDF objects out of 1000 (max. 8388607)
+ 842 compressed objects within 9 object streams
+ 217 named destinations out of 1000 (max. 500000)
  639 words of extra memory for PDF output out of 10000 (max. 10000000)
 
