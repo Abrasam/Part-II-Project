@@ -2,11 +2,13 @@
 
 \usepackage[hidelinks]{hyperref}
 
+
+
 \begin{document}
 	\title{Project Proposal -- Voxel Populi:\\ A Decentralised Peer-to-Peer Voxel-Based World}
 	\author{Samuel J. Sully}
 	\date{25 October 2019}
-	\maketitle
+	{\let\newpage\relax\maketitle}
 	\thispagestyle{empty}
 	
 	\noindent
@@ -14,7 +16,7 @@
 	\textbf{Director of Studies:} Prof. Alan Mycroft\\
 	\textbf{Project Overseers:} Prof. Marcelo Fiore \&  Dr. Amanda Prorok
 
-	\section{Introduction}
+	\section*{Introduction}
 	
 	The Massively Multiplayer Online game genre is popular in modern gaming, often involving thousands of concurrent players~\cite{wowstat}. These games are typically implemented using a client-server model, requiring some form of `sharding'~\cite{shard} whereby players are separated into independent instances of the same world meaning that players can only interact with others connected to the same instance (shard) as them.
 	
@@ -26,7 +28,7 @@
 	
 	One issue with this approach is that, if a rogue server operator decides to behave maliciously, they could modify their server to -- for example -- give themselves an unfair advantage when in territory managed by their server. To combat this one could include a consensus/voting system~\cite{peerreview}.
 	
-	\section{Starting Point}
+	\section*{Starting Point}
 	
 	Creation of the distributed world will rely mostly on two Part IB course:
 	\begin{itemize}
@@ -41,7 +43,7 @@
 	
 	Additionally, the Part IA course Introduction to Graphics and the Part IB course Further Graphics will be useful in the development of a simple client to connect to and interact with my distributed world, this client would likely be written using OpenGL which is covered extensively in these two courses. It will, however, be very primitive indeed as it will be only a prototype.
 	
-	\section{Substance and Structure}
+	\section*{Substance and Structure}
 	
 	My core project consists of three main parts, they are:
 	\begin{itemize}
@@ -61,9 +63,9 @@
 	
 	Finally, I will need to write a very simple test agent which connects to the server and performs some example gameplay activity, such as constructing a basic structure. This will be needed to test the performance of the system in the evaluation phase. This will be a paired down version of the above client so will require little work.
 	
-	\section{Evaluation and Success Criteria}
+	\section*{Evaluation and Success Criteria}
 	
-	\subsection{Methodology}
+	\subsection*{Methodology}
 	
 	This project's success will be gauged entirely quantitatively, no human participants will be required.\\
 	My project will be evaluated in the following ways:
@@ -74,7 +76,7 @@
 		\item I will analyse my implementation's resilience to a number of attacks/failures. Potential examples include: Byzantine Faults, Sybil Attacks, Impersonation Attacks, etc.
 	\end{itemize}
 
-	\subsection{Success Criteria}
+	\subsection*{Success Criteria}
 	
 	\begin{enumerate}
 		\item My DHT must adhere to the Kademlia specification. It is possible I will need to make some changes to fit the specification better to my needs and this is acceptable.
@@ -84,7 +86,7 @@
 		\item There must be a simple test agent which connects to and interacts with the world in some notional way to emulate the behaviour of a human user. This is for the purposes of my above quantitative evaluation methodology.
 	\end{enumerate}
 	
-	\section{Possible Extensions}
+	\section*{Possible Extensions}
 	
 	Below are a number of potential extensions to my project. This list is not exhaustive and I may choose to implement others as well as or instead of those listed below.
 	
@@ -94,7 +96,7 @@
 		\item \textbf{Further World Features:} including other gameplay, for example a basic mob~\cite{mob}, would enable me to more accurately test the performance of the system at a large scale.
 	\end{itemize}
 	
-	\section{Timetable}
+	\section*{Timetable}
 	
 	A brief outline of my plan of work is below.
 	
@@ -122,7 +124,7 @@
 		\textbf{Deliverable:} Dissertation due on 8th May.
 	\end{enumerate}
 	
-	\section{Resource Declaration}
+	\section*{Resource Declaration}
 	
 	I will be using my own computer for development, I am about to get a new computer, so I cannot comment on the exact specification yet, but I will be using the new one for the majority of the project. In the event of this failing, I have several fallback machines. Firstly my current laptop running Ubuntu 18.04 is still operational. Additionally, I have a desktop PC which is also with me at university which I can use in the event of both other computers failing. Furthermore, in the unlikely event that all of these fail I can use the MCS machines in the Computer Lab, my college computer room and my college library.
 	

@@ -1,10 +1,10 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces A screenshot of terrain from the game \emph {Minecraft}.\relax }}{9}{figure.caption.11}%
+\contentsline {figure}{\numberline {2.1}{\ignorespaces A screenshot of terrain from the game \emph {Minecraft}.\relax }}{8}{figure.caption.11}%
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {3.1}{\ignorespaces Diagram giving an overview of \emph {VoxelPopuli}{} architecture.\relax }}{12}{figure.caption.12}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces A screenshot of the \emph {VoxelPopuli}{} client connected to a world.\relax }}{20}{figure.caption.17}%
-\contentsline {figure}{\numberline {3.3}{\ignorespaces A diagram of mapping between vertices and triangles for a simplified face of a cube.\relax }}{23}{figure.caption.19}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces A screenshot of the \emph {VoxelPopuli}{} client connected to a world.\relax }}{21}{figure.caption.17}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces A diagram of mapping between vertices and triangles for a simplified face of a cube.\relax }}{22}{figure.caption.19}%
 \contentsline {figure}{\numberline {3.4}{\ignorespaces Directory overview of \emph {VoxelPopuli}{}.\relax }}{25}{figure.caption.20}%
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {4.1}{\ignorespaces RPC Performance}}{29}{figure.caption.21}%

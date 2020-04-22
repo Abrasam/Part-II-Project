@@ -12,7 +12,8 @@
 \usepackage{xcolor}
 \usepackage{wrapfig}
 \usepackage{subcaption}
-\usepackage[margin=2.75cm]{geometry}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{standalone}
 
 \crefname{section}{§}{§§}
 \Crefname{section}{§}{§§}
@@ -83,7 +84,7 @@
 	
 	{\large
 		\begin{tabular}{ll}
-			Candidate Number:   & \bf Samuel John Sully\\
+			Candidate Number:   & \bf \\
 			Project Title:      & \bf Voxel Populi: A Decentralised Peer-to-Peer\\ 
 			& \bf Voxel-Based World\\
 			Examination:        & \bf Computer Science Tripos -- Part II, July 2020\\
@@ -265,7 +266,6 @@
 	
 	\subsection{Methodology}
 	The project was broken up into discrete features, with a timeline planning to complete each in approximately $2-3$ weeks. Thus I followed the \emph{Agile} software development workflow. Each $2-3$ week sprint had a deliverable which could be tested independently and demonstrated. My sprint timetable outlined in the proposal was adapted as the projected moved forward and some parts of the project took more, or less, time than anticipated.
-	
 	
 	\subsection{Tooling}
 	I used the \emph{PyCharm} IDE for the development of the \kademlia{} implementation and my game server as these were both written in Python using version $3.8$ due to improvements made to the \emph{asyncio} library in Python $3.8$. For the client I used \unity{} with \emph{Microsoft Visual Studio 2017} for editing the \emph{C\#} scripts. \emph{Git} was used for version control, with code pushed to \emph{GitHub} regularly and further backed-up daily to both the SRCF\footnote{Student-Run Computing Facility.} and the MCS using a \emph{cron} job.
@@ -828,7 +828,7 @@
 	\clearpage
 	
 	\appendix
-	
 	\chapter{Proposal}
+	\input{../Proposal/proposal}
 	%TC:endignore
 \end{document}
