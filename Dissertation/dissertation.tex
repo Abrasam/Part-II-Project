@@ -84,11 +84,11 @@
 	
 	{\large
 		\begin{tabular}{ll}
-			Candidate Number:   & \bf \\
+			Candidate Number:   & \bf 2348D\\
 			Project Title:      & \bf Voxel Populi: A Decentralised Peer-to-Peer\\ 
 			& \bf Voxel-Based World\\
 			Examination:        & \bf Computer Science Tripos -- Part II, July 2020\\
-			Word Count:         & \bf 10247\footnotemark[1]\\
+			Word Count:         & \bf 10271\footnotemark[1]\\
 			Line Count:         & \bf 1860\footnotemark[2]\\
 			Project Originator: & \bf Self\\
 			Supervisor:         & \bf Prof. Jon Crowcroft\\
@@ -103,7 +103,7 @@
 	My project aimed to create a peer-to-peer 3D world using a distributed hash table (DHT), namely \kademlia{}~\cite{kademlia}. I aimed to explore this decentralised, peer-to-peer approach for Massively Multiplayer Online games (MMOs) to see if such an approach is viable. This was motivated by the advantages of the decentralised approach, such as better load balancing and longevity for the game.
 	
 	\section*{Work Completed}
-	I have completed all the work set out in my proposal, the three parts of my project are all functioning correctly. I implemented \kademlia{} with some modifications to better suit the virtual world application; I implemented the game server to run above the DHT and process the computation for a set of chunks of the world and I implemented the graphical client in \unity{} which connects to the world and allows a user to move around and interact with it. I also completed the test client which was used in the evaluation stage.
+	I have implemented a distributed 3D virtual world suitable for MMOs and large scale simulations. The three parts of my project are all functioning correctly. I implemented \kademlia{} with some modifications to better suit the virtual world application; I implemented the game server to run above the DHT and process the computation for a set of chunks of the world and I implemented the graphical client in \unity{} which connects to the world and allows a user to move around and interact with it. My test client demonstrated the viability of my project at scale while also providing useful data for future improvements.
 	
 	\section*{Special Difficulties}
 	None.
@@ -127,14 +127,14 @@
 	\chapter{Introduction}
 	
 	\section{Project Summary}
-	My project explores a peer-to-peer architecture for MMOs or large scale simulations. This is in contrast to the more commonly used centralised approach. My project is build upon a distributed hash table which is used to locate in the peer-to-peer network the server responsible for handling any particular part of the world.
+	My project, \voxpop{}, explores a peer-to-peer architecture for Massively Multiplayer Online Games (MMOs) or large scale simulations. This is in contrast to the more commonly used centralised approach. \voxpop{} is built upon a distributed hash table which is used to locate in the peer-to-peer network the server responsible for handling any particular part of the world.
 	
-	My project consists of three parts: the distributed hash table which is a modified version of the \kademlia{}~\cite{kademlia} specification; the game server which runs the computation for certain segments of the world and the \unity{} client used to interact with the world. All these have been completed in adherence to the success criteria in my project proposal, as well as the evaluation client used in the evaluation stage. The project culminated in a large scale test on my dedicated server.
+	My project consists of three parts: the distributed hash table which is a modified version of the \kademlia{}~\cite{kademlia} specification; the game server which runs the computation for certain segments of the world and the \unity{} client used to interact with the world. All these have been completed in adherence to the success criteria in my project proposal, as well as the evaluation client used in the evaluation stage. A large scale test of my project using my dedicated server demonstrated the project's viability and provided useful data to inform future iterations.
 	
 	\section{Motivation}
-	The Massively Multiplayer Online Game (MMO) genre is very popular\footnote{\emph{World of Warcraft} -- a popular MMO -- had 7.7 million subscribers in 2019.} in modern gaming, as an increasing proportion of the populace have access to high speed broadband the prevalence of these games continues to increase. Most of these games employ a centralised client-server mode where the creators of the MMO have a relatively small number of expensive and powerful machines which they use to handle all players.
+	The MMO genre is very popular\footnote{\emph{World of Warcraft} -- a popular MMO -- had 7.7 million subscribers in 2019.} in modern gaming, as an increasing proportion of the populace have access to high-speed broadband the prevalence of these games continues to increase. Most of these games employ a centralised client-server mode where the creators of the MMO have a relatively small number of expensive and powerful machines which they use to handle all players.
 	
-	This centralised approach often requires some form of `sharding'~\cite{shard}, whereby players are separated into separate, independent instances (`shards') of the same world. Meaning that players can only interact with others connected to the same shard. The centralised approach also means that the game creators have total authoritative control over the game.
+	This centralised approach often requires some form of `sharding'~\cite{shard}, whereby players are separated into separate, independent instances (`shards') of the same world. This means that players can only interact with others connected to the same shard. The centralised approach also means that the game creators have total authoritative control over the game.
 	
 	An alternative approach is a decentralised, peer-to-peer approach which I explore in this project. In this approach the world is separated into segments (or `chunks') and each peer in the network is responsible for handling the load for a number of chunks. This approach implicitly performs load balancing and is highly failure tolerant, as a node failure can be dealt with by simply having another take over.
 	
@@ -143,11 +143,11 @@
 	A further advantage is that the system has improved longevity. When large-scale MMOs cease to be profitable or useful for the developers, who operate the centralised servers, they often shut them down, as recently happened with the popular MMO \emph{Club Penguin}~\cite{clubpenguin} in 2017. With my approach, if we allow individuals to create their own servers to join the peer-to-peer network then, provided there exists a community dedicated to keeping the MMO running, it can continue to exist at no cost to the developers. It would even be possible to have multiple, separate networks running or even networks running modified versions of the game.
 	
 	\section{Related Works}
-	There are very few large-scale, peer-to-peer MMOs, likely due to the security issues I will present in the evaluation chapter and due to the fact that it limits the ability for the developers to monetize the MMO post-release. However, it is possible that techniques similar to mine may be used behind the scenes on a number of large-scale MMOs.
+	There are very few large-scale, peer-to-peer MMOs, likely due to the security issues I explore in the evaluation chapter and due to the fact that it limits the ability for the developers to monetise the MMO post-release. However, it is possible that techniques similar to mine may be used behind the scenes on a number of large-scale MMOs.
 	
 	One similar piece of work is \emph{SpatialOS}~\cite{SpatialOS}, this is a platform for managing online games or simulations in the cloud. It works in a similar way to my project, by splitting up the world into segments which are administrated by separate servers. \emph{SpatialOS} is produced by the startup Improbable and is still fairly new, however, it is being used in the development of a number of games.
 	
-	It's worth noting also that while my implementation of \kademlia{} is custom, I used a \kademlia{} library~\cite{pykademlia} for \python{} as a reference for a fully functioning Kademlia implementation. However, this implementation uses the approach outlined in the second Kademlia paper, while my approach uses the slightly different approach from the first paper.
+	It is worth noting also that while my implementation of \kademlia{} is custom, I used a \kademlia{} library~\cite{pykademlia} for \python{}, called \emph{PyKademlia}, as a reference for a fully functioning Kademlia implementation. The approach used in \emph{PyKademlia} follows a slightly different, later version of the \kademlia{} specification, I follow the original specification outlined in the cited paper.
 	
 	\clearpage
 	\chapter{Preparation}
@@ -180,7 +180,7 @@
 	My project is built using a DHT at its core, a DHT is a decentralised storage system based on the commonly used hash table data structure. DHTs store \textless key,value\textgreater~pairs, these are distributed among the nodes in the network, with there existing some method to partition the set of keys between the nodes, preferably in such a way that node joins or leaves require minimal changes to this partition (i.e. a node leaving does not cause the entire key-node mapping to change). The DHT maintains an \emph{overlay network} where each node maintains a set of links to other nodes in the DHT according to the topology of the network, this set of links is used in routing queries around the DHT.
 	
 	\subsection{XOR Metric}
-	The \kademlia{} specification sets out that identifiers be $160$bit integers. Nodes IDs and keys for the DHT occupy this ID space. The notion of distance between identifiers, $d(x,y)$, is given by the bitwise XOR of the two (i.e. $d(x,y) = x \oplus y$). This is a valid metric as it obeys the following properties:
+	The \kademlia{} specification sets out that identifiers be $160$bit integers. Nodes IDs and keys for the DHT occupy this ID space. The notion of distance between identifiers, $d(x,y)$, is given by the bitwise XOR of the two interpreted as an integer\footnote{This is effectively a derivation for the common prefix length of the two IDs, see the second answer given here: \url{https://stackoverflow.com/questions/25751928/kademlia-xor-metric-properties-purposes/25756389} (accessed 2020-05-01.)} (i.e. $d(x,y) = x \oplus y$). This is a valid metric as it obeys the following properties:
 	\begin{enumerate}
 		\item $d(x,x) = 0$, that is, the distance from any identifier to itself is $0$.
 		\item $d(x,y) > 0$ if $x \neq y$, that is, the  distance between any two distinct identifiers is larger than $0$.
@@ -197,7 +197,7 @@
 	\subsection{RPCs}
 	The Kademlia protocol has four RPCs: \texttt{PING}, \texttt{FIND\_NODE}, \texttt{FIND\_VALUE} and \texttt{STORE}. All other operations are built up from these four RPCs. Table \ref{tab:rpcs} details the function of each RPC. My implementation will deviate from this specification as detailed in \cref{sec:customrpc}.
 	
-	\begin{table}
+	\begin{table}[!ht]
 		\begin{tabularx}{\textwidth}{| l | X |}
 			\hline
 			\texttt{PING} & Used to check whether a node is online, upon receiving a \texttt{PING} RPC a node will reply with its ID.\\
@@ -252,7 +252,7 @@
 	
 	\section{World \& Terrain}
 	The game world will be analagous to that of \emph{Minecraft}, in that it will consist of voxels (i.e. blocks) arranged in a 3D grid. An example of \emph{Minecraft}'s terrain can be seen in figure \ref{fig:minecraft}. The \emph{Minecraft} world is broken into `chunks' each $16\times16\times256$ blocks, then each chunk is simply a 3D array of block data.
-	\begin{figure}
+	\begin{figure}[!ht]
 		\includegraphics[width=\textwidth]{minecraft.png}
 		\caption{A screenshot of terrain from the game \emph{Minecraft}.}
 		\label{fig:minecraft}
@@ -262,29 +262,26 @@
 	
 	\section{Professional Practice}
 	\subsection{Ethical Implications} %pron - persistend customisable environment
-	One ethical and legal concern is that my project would give users access to a canvas within which they could, theoretically, encode any data. This could give rise to legal issues if, for example, illegal material were encoded in world data, then the server owner on who's server that data is stored could technically be in breach of the law.
+	One ethical concern is that my project would give users access to a canvas within which they could, theoretically, encode any data. This could give rise to potential misuse by others.
 	
 	\subsection{Methodology}
-	The project was broken up into discrete features, with a timeline planning to complete each in approximately $2-3$ weeks. Thus I followed the \emph{Agile} software development workflow. Each $2-3$ week sprint had a deliverable which could be tested independently and demonstrated. My sprint timetable outlined in the proposal was adapted as the projected moved forward and some parts of the project took more, or less, time than anticipated.
+	The project was broken up into discrete features, with a timeline planning to complete each in approximately two to three weeks. Thus I followed the \emph{Agile} software development workflow. Each \emph{sprint} had a deliverable which could be tested independently and demonstrated. My sprint timetable outlined in the proposal was adapted as the projected moved forward and some parts of the project took more, or less, time than anticipated.
 	
 	\subsection{Tooling}
 	I used the \emph{PyCharm} IDE for the development of the \kademlia{} implementation and my game server as these were both written in Python using version $3.8$ due to improvements made to the \emph{asyncio} library in Python $3.8$. For the client I used \unity{} with \emph{Microsoft Visual Studio 2017} for editing the \emph{C\#} scripts. \emph{Git} was used for version control, with code pushed to \emph{GitHub} regularly and further backed-up daily to both the SRCF\footnote{Student-Run Computing Facility.} and the MCS using a \emph{cron} job.
-	
-	\subsection{Documentation}
-	\textbf{Pending...}	
 	
 	\clearpage
 	\chapter{Implementation}
 	My project consists of three parts: the bespoke \kademlia{} implementation, the game server and the client. The system works by having the client query the \kademlia{} implementation to locate the appropriate servers for a particular part of the world, then connecting to that server and `joining' the world via that server. This is visualised in figure \ref{fig:diagram1}.
 	
-	\begin{figure}
+	\begin{figure}[!ht]
 		\includegraphics[width=\textwidth]{diag1.png}
 		\caption{Diagram giving an overview of \voxpop{} architecture.}
 		\label{fig:diagram1}
 	\end{figure}
 	The client needs to connect to a single node from the \voxpop{} network, which it will use as a `stepping stone' to access the whole network via. It uses this stepping stone node to query the DHT to find the \textless IP, port\textgreater~of the game servers responsible for the chunks it needs. It then initiates connections with each of these game servers in parallel, registers the player in that chunk and downloads the world data.
 	
-	The \voxpop{} server consists of two distinct parts, the \kademlia{} node and the game server. Thus for each node in the network there are two \emph{virtual} nodes. The \kademlia{} nodes are not visible to a client. In order to query the DHT, clients connect to any game server and initiate a special type of session specifically for DHT access. The game server then performs queries to the DHT on behalf of the client. Further details of this special session are in \cref{sec:interface}. Note that for simplicity's sake the \kademlia{} node and game server bind to the same IP address with the game server port being the \kademlia{} port incremented by $1$.
+	The \voxpop{} server consists of two distinct parts, the \kademlia{} node and the game server. Thus for each node in the network there are two \emph{virtual} nodes. The \kademlia{} nodes are not visible to a client. In order to query the DHT, clients connect to any game server and initiate a special type of session specifically for DHT access. The game server then performs queries to the DHT on behalf of the client. Further details of this special session are in \cref{sec:interface}. Note that for simplicity's sake the \kademlia{} node and game server bind to the same IP address with the game server port being the \kademlia{} port incremented by one.
 	
 	\section{Kademlia}
 	This section introduces my bespoke implementation of the \kademlia{} specification. A custom implementation of \kademlia{} was necessary for two main reasons:
@@ -299,7 +296,7 @@
 	In order for \kademlia{} nodes to communicate with each other we need a method of issuing RPCs to remote machines and retrieving the results. In order to do this I used \emph{asyncio}'s \texttt{DatagramProtocol} class which is a base class for implementing protocols over UDP. This class provides overrideable methods such as \texttt{datagram\_received()} which is called when the underlying socket receives a UDP datagram. I wrote a general-purpose RPC system because at the time I was unsure how many RPCs I would need and wanted to be able to add and remove them on the fly. This proved useful when revising my \kademlia{} implementation to include the separate \texttt{STORE} and \texttt{FIND\_VALUE} RPCs.
 	
 	In order to implement the RPC framework I designed a \emph{JSON} format for RPC calls and responses (see table \ref{tab:rpcjson} for details). I created two function decorators in Python: \texttt{@rpc} and \texttt{@stub}. \texttt{@rpc} adds no special behaviour and simply marks that this method may be called remotely; \texttt{@stub} replaces the supplied method with a method which takes the same arguments and computes the JSON RPC string to be sent to the other machine, then sends this message and awaits a reply before returning the result (or \texttt{None} on a timeout), this process is outlined in algorithm \ref{alg:rpcstub}.
-	\begin{table}
+	\begin{table}[!ht]
 		\begin{tabularx}{\textwidth}{| l | X |}
 			\hline 
 			\texttt{id} & 32-bit random number to uniquely identify this RPC call.\\
@@ -320,7 +317,7 @@
 	\end{table}
 
 	Upon receiving a datagram the RPC framework decodes it as a JSON string and checks whether it is a function call or a response. In the case that it is a call, the relevant function is checked to determine if it has the \texttt{@rpc} decorator (i.e. it has been marked for remote calling) and then executes it, packaging the result up as a JSON message and returning it to the sender. If it is a response, it checks if there is a pending RPC with that ID, if so it will supply the result to that RPC call, otherwise the message is discarded. This process is detailed in algorithm \ref{alg:datagram}.
-	\begin{algorithm}
+	\begin{algorithm}[!ht]
 		\begin{algorithmic}
 			\Function{rpc\_stub}{func, to\_node, args}
 			\State {id $\gets$ randombits(32)}
@@ -340,7 +337,7 @@
 		\caption{RPC framework \texttt{@stub} decorator algorithm.}
 		\label{alg:rpcstub}
 	\end{algorithm}
-	\begin{algorithm}
+	\begin{algorithm}[!ht]
 		\begin{algorithmic}
 			\Function{datagram}{data, from}
 				\State {msg $\gets$ json\_decode(data)}
@@ -366,13 +363,13 @@
 	
 	\subsection{Custom RPC Specification}
 	\label{sec:customrpc}
-	In table \ref{tab:rpcs} I outlined the RPCs in the default \kademlia{} specification. In my implementation I have separate \texttt{STORE\_PLAYER} and \texttt{STORE\_CHUNK} RPCs as well as equivalent variants of the \texttt{FIND\_VALUE} RPCs. These replace the default \texttt{STORE} and \texttt{FIND\_VALUE} RPCs meaning we have a final specification consisting of 6 RPCs: \texttt{PING}, \texttt{FIND\_NODE}, \texttt{STORE\_PLAYER}, \texttt{STORE\_CHUNK}, \texttt{FIND\_PLAYER} and \texttt{FIND\_CHUNK}.
+	In table \ref{tab:rpcs} I outlined the RPCs in the default \kademlia{} specification. In my implementation I have separate \texttt{STORE\_PLAYER} and \texttt{STORE\_CHUNK} RPCs as well as equivalent variants of the \texttt{FIND\_VALUE} RPCs. These replace the default \texttt{STORE} and \texttt{FIND\_VALUE} RPCs meaning we have a final specification consisting of six RPCs: \texttt{PING}, \texttt{FIND\_NODE}, \texttt{STORE\_PLAYER}, \texttt{STORE\_CHUNK}, \texttt{FIND\_PLAYER} and \texttt{FIND\_CHUNK}.
 	
 	In order to accommodate these new RPCs, the lookup procedure was made polymorphic, taking the appropriate RPC as an argument. Additionally, each node now has two separate storage tables, one for player data and one for chunk data. This implementation was preferable to the alternative of running two distinct \kademlia{} networks, as this would have significant additional overhead as two separate node states would need to be maintained for each node.
 	
 	\subsection{Generate Procedure}
 	When a chunk is found not to exist in the network, it must be generated. In order to do this we need to first locate the server it should be generated on, then we need to check that server is up. Once we have confirmation that the server is running we send a request to the game server on that VoxelPopuli server to generate and initialise the node ready for players. If a node is not up we move to the next nearest node. Once the chunk is generated we must store the \textless IP address, port\textgreater~of the node it was generated on in the network so that in future when we look up this chunk we will find the correct server. Algorithm \ref{alg:generate} gives pseudocode of the generate procedure.
-	\begin{algorithm}
+	\begin{algorithm}[!ht]
 		\begin{algorithmic}
 			\Function{Generate}{ChunkCoordinate}
 				\State $key \gets \mathrm{sha1(ChunkCoordinates)}$
@@ -395,9 +392,9 @@
 	The game server is responsible for performing the computation and maintaining the state for a number of chunks concurrently. It is also responsible for providing clients with a method of querying the DHT to locate chunks in the \voxpop{} network and to retrieve player data.
 	
 	\subsection{Server State}
-	The game server state consists of a set of active client connections (and two queues for each connection, one for receiving and one for sending data) and the state for each of the chunks it is responsible for. Chunk state consists of the world data for that chunk, represented as a 3D array\footnote{The current size of a chunk is $32\times32\times32$ blocks.},  of integers ranging between $0-3$ to represent different voxel types (see table \ref{tab:blocks}); the set of players currently active in this chunk and their locations; a list of clients who are subscribed to updates on this chunk and $(x,y)$ -- the coordinates of this chunk in the world. Note here that a client may be connected to a single game server multiple times because it is connected to multiple of the chunks this server is responsible for.
+	The game server state consists of a set of active client connections (and two queues for each connection, one for receiving and one for sending data) and the state for each of the chunks it is responsible for. Chunk state consists of the world data for that chunk, represented as a 3D array\footnote{The current size of a chunk is $32\times32\times32$ blocks.},  of integers ranging between zero and three to represent different voxel types (see table \ref{tab:blocks}); the set of players currently active in this chunk and their locations; a list of clients who are subscribed to updates on this chunk and $(x,y)$ -- the coordinates of this chunk in the world. Note here that a client may be connected to a single game server multiple times because it is connected to multiple of the chunks this server is responsible for.
 	
-	\begin{table}
+	\begin{table}[!ht]
 		\centering
 		\begin{tabularx}{0.65\textwidth}{| l | l | l | l | X |}
 			\hline
@@ -433,7 +430,7 @@
 	
 	\subsubsection{Game}
 	There are a number of messages which need to be exchanged between the client and game server. These allow the client(s) to inform the server that it has performed an action updating the world's state and allow the server to inform the client(s) of these, and other, state changes. Again these are exchanged as JSON messages of the format shown in table \ref{tab:gameprotocol}.
-	\begin{table}
+	\begin{table}[!ht]
 		\centering
 		\begin{tabularx}{0.85\textwidth}{| l | l | X |}
 			\hline
@@ -444,9 +441,9 @@
 		\label{tab:gameprotocol}
 	\end{table}
 
-	The game server protocol consists of $6$ types of packet which are exchanged between clients and servers. The details of each packet are in table \ref{tab:gamepackets}. In order to signal the end of a packet each packet has a newline character appended to the end of its JSON representation. Packets are encoded as bytes using UTF-8 and then sent over a TCP socket between client and server.
+	The game server protocol consists of six types of packet which are exchanged between clients and servers. The details of each packet are in table \ref{tab:gamepackets}. In order to signal the end of a packet each packet has a newline character appended to the end of its JSON representation. Packets are encoded as bytes using UTF-8 and then sent over a TCP socket between client and server.
 
-	\begin{table}
+	\begin{table}[!ht]
 		\begin{tabularx}{\textwidth}{| l | l | X | p{2cm} |}
 			\hline
 			\bf Packet Type & \bf ID & \bf Purpose & \bf Arguments \\
@@ -483,13 +480,13 @@
 	As previously explained, in order for clients to query the DHT (and thus retrieve their saved player data and the locations of chunks in the network) they must have some method to query the DHT. In order to do this they connect to a game server and perform the DHT handshake as described in \cref{sec:handshake}. This connection is then given a dedicated thread to respond to queries to the DHT. The current protocol allows a client to either get the \textless IP, port\textgreater~ for a particular chunk (the chunk is generated if does not exist in the network) or download player save data (location primarily).
 	
 	\subsubsection{Protocol}
-	The thread process one request at a time and is not guaranteed to respond to requests issued while another request is pending. There are two packet types chunk query (type $0$) and player query (type $1$), a packet's first byte is its packet type. To query a chunk location a packet is sent consisting of a leading $0$ byte (packet type) followed by the JSON encoding of the coordinates of the chunk (as a JSON list). The server replies with the JSON list \texttt{[IP address, port]}. To query player data a packet consisting of a leading $1$ byte (packet type) followed by the JSON attribute-value pair: \texttt{\{`name':player\_name\}} where \texttt{player\_name} is the username of the player to query. The server responds with the JSON representation of the player's coordinates. If the player was not found then it returns $(0,32,0)$ (the default spawn location). Note that all the JSON strings are encoded as bytes for sending using UTF-8.
+	The thread process one request at a time and is not guaranteed to respond to requests issued while another request is pending. There are two packet types chunk query (type $0$) and player query (type $1$), a packet's first byte is its packet type. To query a chunk location a packet is sent consisting of a leading zero byte (packet type) followed by the JSON encoding of the coordinates of the chunk (as a JSON list). The server replies with the JSON list \texttt{[IP address, port]}. To query player data a packet consisting of a leading $1$ byte (packet type) followed by the JSON attribute-value pair: \texttt{\{`name':player\_name\}} where \texttt{player\_name} is the username of the player to query. The server responds with the JSON representation of the player's coordinates. If the player was not found then it returns $(0,32,0)$ (the default spawn location). Note that all the JSON strings are encoded as bytes for sending using UTF-8.
 	
 	\section{Client}
 	\label{sec:client}
 	The client is the user's entry point into the world, it renders the world (and other players -- rendered as grey cuboids) and allows the player to move around within it; it provides a basic physics simulation for realistic movement and collisions and it allows the user to make changes to the world by breaking and placing blocks. A screenshot of the client in action can be seen in fig \ref{fig:client}. The client was written in C\# using the \unity{} game engine.
 	
-	\begin{figure}
+	\begin{figure}[!ht]
 		\includegraphics[width=\textwidth]{client.png}
 		\caption{A screenshot of the \voxpop{} client connected to a world.}
 		\label{fig:client}
@@ -498,7 +495,7 @@
 	\subsection{Architecture} % talk about multithreading and packets -> updates
 	The client operates two main threads as well as a two threads (one each for receiving and sending) for each chunk it is connected to. The two main threads exist to separate long, blocking processes from the thread rendering the world, this prevents frame rate stuttering\footnote{Where the frame rate drops briefly, causing the game to appear to momentarily freeze}. The two main threads will be referred to as the \emph{network thread} and the \emph{game thread}.
 	
-	\begin{table}
+	\begin{table}[!ht]
 		\begin{tabularx}{\textwidth}{| l | X | p{3cm} |}
 			\hline
 			\bf Update Type & Purpose & Arguments \\
@@ -540,18 +537,18 @@
 	
 	\subsection{Chunk Mesh Generation}
 	\label{sec:mesh}
-	In computer graphics, a \emph{mesh} is a collection of vertices, edges and faces which make up a 3D object. For each chunk we must generate a mesh from the block array in order to render the chunk to the player. In order to do this we must construct 2 arrays; firstly, we need to compute the array of vertices in the mesh, then we need the array mapping these vertices to triangles. In order to do this, for each triangle we need the indices of the 3 vertices that make up that triangle, we then add these 3 indices to the triangles array.
+	In computer graphics, a \emph{mesh} is a collection of vertices, edges and faces which make up a 3D object. For each chunk we must generate a mesh from the block array in order to render the chunk to the player. In order to do this we must construct two arrays; firstly, we need to compute the array of vertices in the mesh, then we need the array mapping these vertices to triangles. In order to do this, for each triangle we need the indices of the three vertices that make up that triangle, we then add these three indices to the triangles array.
 	
-	\begin{figure}
+	\begin{figure}[!ht]
 		\centering
 		\includegraphics[width=0.5\textwidth]{diag2.png}
 		\caption{A diagram of mapping between vertices and triangles for a simplified face of a cube.}
 		\label{fig:mesh}
 	\end{figure}
 	
-	In order to apply textures to the faces we also need to provide a texture coordinate (often referred to as a \emph{uv} coordinate) to each vertex. This is supplied in an array too, where the indices in the vertex array correspond to the indices of the texture coordinate of that vertex in the uv array. Once we have computed our vertex, triangle and uv arrays we can supply these to unity which will be able to generate and render the mesh for us. This process is very computationally intensive, for our chunks it involves iterating over all $32^3 = 32768$ blocks and performing $6$ iterations ($1$ per face) for each block. Pseudocode for the mesh generation algorithm is supplied in algorithm \ref{alg:mesh}, this approach is based on similar methods found in various open source voxel-based games. Figure \ref{fig:mesh} shows how a face of the cube is produced by two triangles.
+	In order to apply textures to the faces we also need to provide a texture coordinate (often referred to as a \emph{uv} coordinate) to each vertex. This is supplied in an array too, where the indices in the vertex array correspond to the indices of the texture coordinate of that vertex in the uv array. Once we have computed our vertex, triangle and uv arrays we can supply these to unity which will be able to generate and render the mesh for us. This process is very computationally intensive, for our chunks it involves iterating over all $32^3 = 32768$ blocks and performing six iterations (one per face) for each block. Pseudocode for the mesh generation algorithm is supplied in algorithm \ref{alg:mesh}, this approach is based on similar methods found in various open source voxel-based games. Figure \ref{fig:mesh} shows how a face of the cube is produced by two triangles.
 	
-	\begin{algorithm}
+	\begin{algorithm}[!ht]
 		\begin{algorithmic}
 			\State blocks[][][] $\gets$ chunk block array;
 			\State vertices[] $\gets$ new vec3 array;
@@ -581,11 +578,11 @@
 	
 	\subsection{Chunk Loading \& Unloading}
 	\label{sec:loading}
-	As noted in \cref{sec:nthread} the network thread is responsible for ensuring the correct chunks are loaded, it uses the DHT query connection for this purpose. The rule for determining whether a chunk should be loaded is simple: a chunk should be loaded if it is not already loaded and it is within a $3\times3$ grid of chunks centred on the player. Similarly, a chunk should be unloaded if it is outside of a $9\times9$ grid of chunks centred on the player.
+	As noted in \cref{sec:nthread} the network thread is responsible for ensuring the correct chunks are loaded, it uses the DHT query connection for this purpose. The rule for determining whether a chunk should be loaded is simple: a chunk should be loaded if it is not already loaded and it is within a three by three grid of chunks centred on the player. Similarly, a chunk should be unloaded if it is outside of a nine by nine grid of chunks centred on the player.
 	
 	Each time the network thread processes a \texttt{PLAYER\_MOVE} update from the game thread it checks to see if there are any chunks to unload, if so it unloads them (i.e. ends the connection and sends a \texttt{CHUNK\_UNLOAD} update to the game thread). Then it checks if there are any chunks to load, if so it queries their locations using the DHT connection, connects to them and loads them (it only sends the \texttt{CHUNK\_LOAD} update when it receives the \texttt{CHUNK\_DATA} packet from the server for this chunk). This process is outlined in algorithm \ref{alg:load}.
 	
-	\begin{algorithm}
+	\begin{algorithm}[!ht]
 		\begin{algorithmic}
 			\For{chunk $\in$ loaded}
 				\If{$|\mathrm{chunk.x} - \mathrm{player.chunk.x}| \geq 5$ OR $|\mathrm{chunk.y} - \mathrm{player.chunk.y}| \geq 5$}
@@ -608,7 +605,7 @@
 	
 	\section{Overview}
 	This section provides an overview of the project and the files contained within my repository (which are shown in figure \ref{fig:dir} shows).
-	\begin{wrapfigure}{R}{5.5cm}
+	\begin{wrapfigure}[26]{R}{5.5cm}
 		\dirtree{%
 			.1 \voxpop.
 			.2 Client.
@@ -645,9 +642,9 @@
 	\subsection{Client}
 	The client takes the form of a \unity{} project. As noted, Unity allows you to assign scripts to game objects which then have methods such as \texttt{Update()} and \texttt{Start()} which are called at the appropriate times (in these cases: each frame and when the object is created respectively).
 	
-	The client has $6$ files of code, $3$ of which contains scripts able to be assigned to objects. {\tt Controller.cs} is a script assigned to the player object which takes user input and moves the player, obeying physics and collisions. {\tt WireFrame.cs} is another script applied to the player object which simply renders a wire frame cube around the block the player is looking at. {\tt World.cs} is a script applied to the (initially) world object which performs the game thread actions described in \cref{sec:gamethread}.
+	The client has six files of code, three of which contains scripts able to be assigned to objects. {\tt Controller.cs} is a script assigned to the player object which takes user input and moves the player, obeying physics and collisions. {\tt WireFrame.cs} is another script applied to the player object which simply renders a wire frame cube around the block the player is looking at. {\tt World.cs} is a script applied to the (initially) world object which performs the game thread actions described in \cref{sec:gamethread}.
 	
-	The other $3$ files contain classes and data used by the aforementioned scripts. In {\tt Chunk.cs} we have a class for chunks, these contain the chunk's block array and mesh data, and provide a number of methods for querying the contents of the chunk (such as {\tt IsSolid(Vector3 localPos)} for querying if a block is solid at position {\tt localPos} relative to the chunk). {\tt Network.cs} contains the {\tt NetworkThread} class which is used to execute the network thread as explained in \cref{sec:nthread}. Finally, {\tt Constants.cs} contains a number of constants such as the tick rate, chunk size and various pieces of data needed for mesh generation.
+	The other three files contain classes and data used by the aforementioned scripts. In {\tt Chunk.cs} we have a class for chunks, these contain the chunk's block array and mesh data, and provide a number of methods for querying the contents of the chunk (such as {\tt IsSolid(Vector3 localPos)} for querying if a block is solid at position {\tt localPos} relative to the chunk). {\tt Network.cs} contains the {\tt NetworkThread} class which is used to execute the network thread as explained in \cref{sec:nthread}. Finally, {\tt Constants.cs} contains a number of constants such as the tick rate, chunk size and various pieces of data needed for mesh generation.
 	
 	\subsection{Server}
 	The server is split into two main parts, the \kademlia{} implementation and the game server. Within the game server we have {\tt chunkthread.py} which contains the {\tt ChunkThread} class which is used to execute the chunk thread as discussed in \cref{sec:cthread}. We also have {\tt world.py} which contains classes for maintaining state about the world, namely {\tt Chunk} and {\tt Player}. We have {\tt const.py} which contains a number of important constants such as a {\tt PacketType} enumeration. Finally we have {\tt main.py} which performs the main loop of a \voxpop{} node, i.e. waiting for new connections and performing the handshake procedure from \cref{sec:handshake}. The code for the DHT interface thread (see \cref{sec:interface}) is here too.
@@ -681,7 +678,7 @@
 	\subsection{RPC Testing}
 	\subsubsection{Setup}
 	The \kademlia{} specification sets out requirements for the time complexity of each RPC, I needed to prove that my implementation adheres to these requirements. In order to do this I setup a single dedicated server and instantiated a number of \kademlia{} nodes and bootstrapped them to a network to give me a network of a known size. I then performed the relevant RPC a number of times and recorded the average time and standard deviation. The plot can be seen in figure \ref{fig:kadperforma}.
-	\begin{figure}
+	\begin{figure}[!ht]
 		\includegraphics[width=\textwidth]{rpcperformance.png}
 		\caption[RPC Performance]{Computation time of each \kademlia{} RPC as network size increases. The \kademlia{} specification states these should all be $\mathcal{O}(1)$. Error bars represent $\pm\sigma$ over $100$ trials.}
 		\label{fig:kadperforma}
@@ -689,7 +686,7 @@
 
 	\subsubsection{Analysis}
 	As can be seen each of {\tt PING}, {\tt STORE\_CHUNK} and {\tt STORE\_PLAYER} are clearly $\mathcal{O}(1)$. The plots for {\tt FIND\_NODE}, {\tt FIND\_CHUNK} and {\tt FIND\_PLAYER} exhibit a slightly different shape. These RPCs still operate in  $\mathcal{O}(1)$ time, however, because the find operations must sort the nodes it knowns of, this takes $\mathcal{O}(n\log(n))$ time, however, as the number of nodes in the routing table is capped at $160 \cdot \K{}$ ($3200$ in the common case where $\K = 20$ -- used in my implementation) this is still $\mathcal{O}(1)$ as the number of nodes grows large. You can see the graph is beginning to plateau at for higher $n$.
-	\begin{figure}
+	\begin{figure}[!ht]
 		\includegraphics[width=\textwidth]{lookupgraph.png}
 		\caption[Lookup Procedure Performance]{Number of nodes contacted by a {\tt lookup} procedure as network size increases. The \kademlia{} specification states that this should grow at a rate of $\mathcal{O}(\log{n})$, where $n$ is number of nodes. Error bars represent $\pm\sigma$ over $100$ trials.}
 		\label{fig:kadperformb}
@@ -704,7 +701,7 @@
 	\label{sec:localsim}
 	\subsubsection{Setup}
 	I performed 4 local simulations on a single node, each was run for 1 hour with variable player loads. I ran a single \voxpop{} node on my dedicated server and connected one of my test client scripts to it to simulate player activity. The plots in figure \ref{fig:plots} show the CPU and memory usage under various scenarios.
-	\begin{figure}
+	\begin{figure}[!ht]
 		\begin{subfigure}{0.5\textwidth}
 			\includegraphics[width=\textwidth]{plot1.png}
 			\caption{Performance (50 players/1 chunk)}
@@ -730,21 +727,21 @@
 	\end{figure}
 	
 	\subsubsection{Analysis}
-	As can be seen from figure \ref{fig:plot1} the single thread performance is reaching $90\%$ utilization at about 50 players in a single chunk. This is fairly typical of online games and it is at around this point that \emph{Minecraft} servers begin to strain. This scenario is unlikely to be realised frequently in a deployed network running an MMO as this number of players tend not to occupy the same area concurrently.
+	As can be seen from figure \ref{fig:plot1} the single thread performance is reaching $90\%$ utilization at about $50$ players in a single chunk. This is fairly typical of online games and it is at around this point that \emph{Minecraft} servers begin to strain. This scenario is unlikely to be realised frequently in a deployed network running an MMO as this number of players tend not to occupy the same area concurrently.
 	
-	In figure \ref{fig:plot2} we have 50 clients connected to 50 separate chunks on the same server. This performs better as it is making use of both CPU cores on my dedicated server. In line with this expectation CPU utilisation is approximately half that of the single chunk case. This also represents an unrealistic scenario as we are unlikely to have players evenly distributed across the world so evenly, there will be likely more clustering. This test does demonstrate, however, that many chunk threads can operate concurrently without incurring a significant performance penalty.
+	In figure \ref{fig:plot2} we have $50$ clients connected to $50$ separate chunks on the same server. This performs better as it is making use of both CPU cores on my dedicated server. In line with this expectation CPU utilisation is approximately half that of the single chunk case. This also represents an unrealistic scenario as we are unlikely to have players evenly distributed across the world so evenly, there will be likely more clustering. This test does demonstrate, however, that many chunk threads can operate concurrently without incurring a significant performance penalty.
 	
-	In figure \ref{fig:plot3} we instantiate 50 players and evenly distribute them over 10 chunks, this is a more realistic scenario and is designed to represent players playing with friends in small groups occupying the same areas. Performance here is improved over the 50 chunk case as expected, likely due to a reduction in the context-switching overhead. Averaging at around $25\%$ utilisation the system is not struggling with this scenario, suggesting more players could be supported in a similar scenario. In order to test this I performed another test by doubling the number of players while keeping the number of chunks constant, in figure \ref{fig:plot4} we have 100 players across 10 chunks, and CPU utilisation averages around $55\%$. Suggesting a linear relationship between number of players and performance when the number of chunks is kept constant.
+	In figure \ref{fig:plot3} we instantiate $50$ players and evenly distribute them over ten chunks, this is a more realistic scenario and is designed to represent players playing with friends in small groups occupying the same areas. Performance here is improved over the 50 chunk case as expected, likely due to a reduction in the context-switching overhead. Averaging at around $25\%$ utilisation the system is not struggling with this scenario, suggesting more players could be supported in a similar scenario. In order to test this I performed another test by doubling the number of players while keeping the number of chunks constant, in figure \ref{fig:plot4} we have $100$ players across ten chunks, and CPU utilisation averages around $55\%$. Suggesting a linear relationship between number of players and performance when the number of chunks is kept constant.
 	
 	To verify the linearity I plotted CPU utilisation as player count was increased from one to fifty. I wrote a simple script to connect a new client every two seconds. The plot it shown in figure \ref{fig:linear50} and follows a roughly linear shape. This supports my theory that performance with constant number of chunks is proportional to the number of players connected.
-	\begin{figure}
+	\begin{figure}[!ht]
 		\includegraphics[width=\textwidth]{linear.png}
 		\caption{Performance as player count increases ($0-50$).}
 		\label{fig:linear50}
 	\end{figure}
 
 	I did a further test using the same script, instead adding a node every second and going from one to one-hundred. The resulting plot is shown in figure \ref{fig:linear100}. The linear relationship persists up to around seventy nodes. However, we see CPU usage then plateaus at $100\%$ and memory usage starts to rise, this is indicative that the system is struggling to handle both the garbage collector and the game server computation. Thus as a lower bound we can suggest that approximately seventy players can exist on a single chunk thread before performance issues begin to arise.
-	\begin{figure}
+	\begin{figure}[!ht]
 		\includegraphics[width=\textwidth]{linear100.png}
 		\caption{Performance as player count increases ($0-100$).}
 		\label{fig:linear100}
@@ -754,8 +751,8 @@
 	
 	\subsection{Large Scale Simulation}
 	\subsubsection{Setup}
-	To demonstrate my project functioning at scale I setup a 100 node network on my dedicated server and connected 1000 dummy players using {\tt test\_client.py} from my test client scripts. As some servers would have high load and others would have very low load depending on which chunks are loaded at any given time I found it more useful to plot the maximum CPU at any given time, as the average was very low (around half a percent). The plot is shown in figure \ref{fig:big}.
-	\begin{figure}
+	To demonstrate my project functioning at scale I setup a $100$ node network on my dedicated server and connected $1000$ dummy players using {\tt test\_client.py} from my test client scripts. As some servers would have high load and others would have very low load depending on which chunks are loaded at any given time I found it more useful to plot the maximum CPU at any given time, as the average was very low (around half a percent). The plot is shown in figure \ref{fig:big}.
+	\begin{figure}[!ht]
 		\includegraphics[width=\textwidth]{100node.png}
 		\caption{Performance of a $100$ node network with $1000$ players connected.}
 		\label{fig:big}
@@ -763,14 +760,14 @@
 
 	\subsubsection{Analysis}
 	Initially, the utilisation is not constant as nodes are still joining the network (it takes approximately ten minutes for $1000$ nodes to join using the test client). Then we go into normal operation and the maximum load stays approximately at $10\%$, this is in line with our analysis in \cref{sec:localsim} as there would be approximately ten nodes per server on average. The system was left running for 1 hour and experienced no problems, I was able to connect with my graphical client and explore the world, viewing the dummy players teleporting around randomly. This can be seen in figure \ref{fig:dummies}.
-	\begin{figure}
+	\begin{figure}[!ht]
 		\includegraphics[width=\textwidth]{dummies.png}
 		\caption{Screenshot of dummy players in the \voxpop{} world.}
 		\label{fig:dummies}
 	\end{figure}
 
 	\section{Client}
-	The client performs as required, the player is able to explore and interact with the world and the client is performant -- running consistently at 60FPS+ (frames per second) on both my dedicated GPU (Nvidia GeForce GTX 1650 Max-Q) and my integrated graphics (Intel Iris Plus Graphics).
+	The client performs as required, the player is able to explore and interact with the world and the client is performant -- running consistently at $60$FPS+ (frames per second) on both my dedicated GPU (Nvidia GeForce GTX $1650$ Max-Q) and my integrated graphics (Intel Iris Plus Graphics).
 
 	\section{Node Failure}
 	The system performs correctly in the face of node failure. When the client loses connection to a node it queries the node it is using for DHT queries. This server finds the required node and discovers that it is not online. It thus performs the generate procedure (see algorithm \ref{alg:generate}) before returning the new node to the client. This takes at most a couple of seconds and produces minimal disruption to gameplay.
@@ -803,7 +800,7 @@
 	
 	Additionally, to ensure fairness and prevent cheating, the changes required to prevent players from fabricating their in-game state discussed in \cref{sec:security} would need to be implemented. This would prevent players from being able to easily create hacked clients; note that this is a common problem with online games and not an issue with the peer-to-peer approach.
 	
-	As noted in the evaluation, the system struggles to scale to typical MMO sizes. I propose that this is due to an oversight in my design, that many disparate chunks may be processed by the same server. This means that a single server may need in excess of 100 threads performing computationally heavy processes, this is obviously not feasible except on extremely powerful machines. I propose an adjustment where chunks are clustered spatially. Thus, while a single server may be responsible for hundreds of chunks, it may need only a few threads as clusters of chunks can be simulated together due to their contiguous arrangement.
+	As noted in the evaluation, the system struggles to scale to typical MMO sizes. I propose that this is due to an oversight in my design, that many disparate chunks may be processed by the same server. This means that a single server may need in excess of $100$ threads performing computationally heavy processes, this is obviously not feasible except on extremely powerful machines. I propose an adjustment where chunks are clustered spatially. Thus, while a single server may be responsible for hundreds of chunks, it may need only a few threads as clusters of chunks can be simulated together due to their contiguous arrangement.
 	
 	%TC:ignore
 	\clearpage
