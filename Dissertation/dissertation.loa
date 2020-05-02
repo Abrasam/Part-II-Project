@@ -1,5 +1,5 @@
 \contentsline {algorithm}{\numberline {1}{\ignorespaces RPC framework \texttt {@stub} decorator algorithm.\relax }}{12}{algorithm.1}%
 \contentsline {algorithm}{\numberline {2}{\ignorespaces Datagram handling in my JSON RPC framework.\relax }}{13}{algorithm.2}%
 \contentsline {algorithm}{\numberline {3}{\ignorespaces Generate Procedure Pseudocode.\relax }}{14}{algorithm.3}%
-\contentsline {algorithm}{\numberline {4}{\ignorespaces The mesh generation algorithm used by the client.\relax }}{21}{algorithm.4}%
+\contentsline {algorithm}{\numberline {4}{\ignorespaces The mesh generation algorithm used by the client.\relax }}{22}{algorithm.4}%
 \contentsline {algorithm}{\numberline {5}{\ignorespaces Algorithm for maintaining the correct set of loaded chunks by the client.\relax }}{22}{algorithm.5}%
