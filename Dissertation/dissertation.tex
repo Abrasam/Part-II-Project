@@ -87,7 +87,7 @@
 			Project Title:      & \bf Voxel Populi: A Decentralised Peer-to-Peer Voxel-Based\\ 
 			& \bf World\\
 			Examination:        & \bf Computer Science Tripos -- Part II, July 2020\\
-			Word Count:         & \bf 10271\footnotemark[1]\\
+			Word Count:         & \bf 10607\footnotemark[1]\\
 			Line Count:         & \bf 1860\footnotemark[2]\\
 			Project Originator: & \bf Self\\
 			Supervisor:         & \bf Prof. Jon Crowcroft\\
@@ -176,7 +176,7 @@
 	\end{itemize}
 
 	\section{Kademlia}
-	\voxpop{} is built using a DHT at its core, a DHT is a decentralised storage system based on the commonly used hash table data structure. DHTs store $\langle$ key,value$\rangle$~pairs, these are distributed among the nodes in the network, with there existing some method to partition the set of keys between the nodes, preferably in such a way that node joins or leaves require minimal changes to this partition (i.e. a node leaving does not cause the entire key-node mapping to change). The DHT maintains an \emph{overlay network} where each node maintains a set of links to other nodes in the DHT according to the topology of the network, this set of links is used in routing queries around the DHT.
+	\voxpop{} is built using a DHT at its core, a DHT is a decentralised storage system based on the commonly used hash table data structure. DHTs store $\langle$key,value$\rangle$~pairs, these are distributed among the nodes in the network, with there existing some method to partition the set of keys between the nodes, preferably in such a way that node joins or leaves require minimal changes to this partition (i.e. a node leaving does not cause the entire key-node mapping to change). The DHT maintains an \emph{overlay network} where each node maintains a set of links to other nodes in the DHT according to the topology of the network, this set of links is used in routing queries around the DHT.
 	
 	\subsection{XOR Metric}
 	The \kademlia{} specification sets out that identifiers be $160$bit integers. Nodes IDs and keys for the DHT occupy this ID space. The notion of distance between identifiers, $d(x,y)$, is given by the bitwise XOR of the two interpreted as an integer\footnote{This is effectively a derivation for the common prefix length of the two IDs, see the second answer given here: \url{https://stackoverflow.com/questions/25751928/kademlia-xor-metric-properties-purposes/25756389} (accessed 2020-05-01.)} (i.e. $d(x,y) = x \oplus y$). This is a valid metric as it obeys the following properties:
@@ -189,7 +189,7 @@
 	The set of keys which a node `owns' is given by all those which are closest to its ID using the above notion of distance\footnote{This is not strictly true, actually the \K~closest nodes all store values for that key, where \K~is a parameter of the network.}.
 	
 	\subsection{Node State}
-	Each node maintains some amount of information about other nodes in the network in order to route messages. Each node maintains a \K-bucket for each $i$ in $0 \leq i < 160$ , a \K-bucket is simply a sorted list (of length \K) of $\langle$ IP address, UDP port, node ID$\rangle$~triples of nodes from $2^i$ to $2^{i+1}-1$ (inclusive) distance away from this node. The lists are sorted by time last seen, such that the most recently seen node is at the tail of the list. This is useful later when evicting stale nodes from the \K-bucket. Note that \K~is a parameter of the network, the replication parameter.
+	Each node maintains some amount of information about other nodes in the network in order to route messages. Each node maintains a \K-bucket for each $i$ in $0 \leq i < 160$ , a \K-bucket is simply a sorted list (of length \K) of $\langle$IP address, UDP port, node ID$\rangle$~triples of nodes from $2^i$ to $2^{i+1}-1$ (inclusive) distance away from this node. The lists are sorted by time last seen, such that the most recently seen node is at the tail of the list. This is useful later when evicting stale nodes from the \K-bucket. Note that \K~is a parameter of the network, the replication parameter.
 	
 	In order to populate these \K-buckets, whenever a node receivers a message from another, it looks for the appropriate \K-bucket and, if the sender is already in the \K-bucket then it is moved to the tail of the list, otherwise it is appended to the tail of the list. If the \K-bucket is full then we send a \texttt{PING} RPC to the least recently seen node, if it fails to reply then we evict it and put the new node in instead, else we discard the new node\footnote{In my implementation, the new node is added to a queue to join the \K-bucket.}.
 	
@@ -201,11 +201,11 @@
 			\hline
 			\texttt{PING} & Used to check whether a node is online, upon receiving a \texttt{PING} RPC a node will reply with its ID.\\
 			\hline
-			\texttt{FIND\_NODE} & Takes a $160$bit integer as argument (and identifier). When a node receives a \texttt{FIND\_NODE} RPC it returns $\langle$ IP address, UDP port, node ID$\rangle$~ triples from the \K nearest nodes to the argument identifier that it knows of.\\
+			\texttt{FIND\_NODE} & Takes a $160$bit integer as argument (and identifier). When a node receives a \texttt{FIND\_NODE} RPC it returns $\langle$IP address, UDP port, node ID$\rangle$~ triples from the \K nearest nodes to the argument identifier that it knows of.\\
 			\hline
 			\texttt{FIND\_VALUE} & Behaves in the same was as \texttt{FIND\_NODE} but will return a value if it possesses one for the supplied ID.\\
 			\hline
-			\texttt{STORE} & Takes a $\langle$ key, value$\rangle$~ pair which the receiving node stores.\\
+			\texttt{STORE} & Takes a $\langle$key, value$\rangle$~ pair which the receiving node stores.\\
 			\hline
 		\end{tabularx}
 		\caption{The four \kademlia~RPCs.}
@@ -227,7 +227,7 @@
 	The procedure for retrieving a value from the DHT is similar to the node lookup procedure above, replacing the \texttt{FIND\_NODE} RPCs in the above description with \texttt{FIND\_VALUE} RPCs. Instead of returning the \K~nearest nodes it will return the value found, or some notional \texttt{NULL} value if none exists.
 	
 	\subsection{Value Storage}
-	The store value procedure consists of performing a lookup node procedure as above with the identifier being the key of the $\langle$ key, value$\rangle$~ pair to be stored. Then \texttt{STORE} RPCs with the $\langle$ key, value$\rangle$~ pair are sent to the \K~nodes returned from the lookup.
+	The store value procedure consists of performing a lookup node procedure as above with the identifier being the key of the $\langle$key, value$\rangle$~ pair to be stored. Then \texttt{STORE} RPCs with the $\langle$key, value$\rangle$~ pair are sent to the \K~nodes returned from the lookup.
 	
 	\subsection{Bootstrap}
 	Bootstrapping is the process by which a node joins the network. Because \kademlia{} routing information is implicitly learned through network activity we do not need an explicit \texttt{JOIN} method, we can simply use existing RPCs to join a network. All that we need is the IP, port and ID of any existing node in the network, this is the bootstrap node.
@@ -257,14 +257,14 @@
 		\label{fig:minecraft}
 	\end{figure}
 
-	The terrain in \emph{Minecraft} is generated procedurally, allowing for infinite worlds to be created on the fly. A common approach in procedurally generated video games is to use some form of coherent noise\footnote{Coherent noise simply means smooth pseudorandom noise which obeys the following properties: \begin{enumerate} \item The same input always gives the same output. \item A small change in the input produces a large change in the output. \item A large change in the input produces a random change in the output.\end{enumerate}} to generate a height map\footnote{Simply a 2D function or array where the value at any given point is the height of the terrain at any given point.}. I plan to use Perlin noise~\cite{perlin} (or its successor, Simplex noise~\cite{simplex}) to generate a heightmap for my world. Then I use simple rules to assign blocks at different heights different values (i.e. grass on top, followed by dirt, followed by stone) in order to produce a \emph{Minecraft}-like world. The structure of the world into chunks allows for easy segmentation across servers as each chunk can reside on a different server, additionally, by having data represented within a chunk as a 3D array this makes editing the world simple.
+	The terrain in \emph{Minecraft} is generated procedurally, allowing for infinite worlds to be created on the fly. A common approach in procedurally generated video games is to use some form of coherent noise\footnote{Coherent noise simply means smooth pseudorandom noise which obeys the following properties: \begin{enumerate} \item The same input always gives the same output. \item A small change in the input produces a small change in the output. \item A large change in the input produces a random change in the output.\end{enumerate}} to generate a height map\footnote{Simply a 2D function or array where the value at any given point is the height of the terrain at any given point.}. In \voxpop{} I use Simplex noise~\cite{simplex} to generate a heightmap for my world. Then I use simple rules to assign blocks at different heights different values (i.e. grass on top, followed by dirt, followed by stone) in order to produce a \emph{Minecraft}-like world. The structure of the world into chunks allows for easy segmentation across servers as each chunk can reside on a different server, additionally, by having data represented within a chunk as a 3D array this makes editing the world simple.
 	
 	\section{Professional Practice}
-	\subsection{Ethical Implications} %pron - persistend customisable environment
+	\subsection{Ethical Implications}
 	One legal and ethical concern is that \voxpop{} would give users access to a canvas within which they could, theoretically, encode any data. This could give rise to potential misuse by others. An interesting example is the use of \emph{Minecraft} to smuggle censored journalism into states with strict censorship laws~\cite{verge}.
 	
 	\subsection{Methodology}
-	The project was broken up into discrete features, with a timeline planning to complete each in approximately two to three weeks. Thus I followed the \emph{Agile} software development workflow. Each \emph{sprint} had a deliverable which could be tested independently and demonstrated. My sprint timetable outlined in the proposal was adapted as the projected moved forward and some parts of the project took more, or less, time than anticipated.
+	The project was broken up into discrete features, with a timeline planning to complete each in approximately two to three weeks. Thus I followed the \emph{Agile} software development workflow. Each \emph{sprint} had a deliverable which could be tested independently and demonstrated. My sprint timetable outlined in the proposal was adapted as the project moved forward and some parts of the project took more, or less, time than anticipated.
 	
 	\subsection{Tooling}
 	I used the \emph{PyCharm} IDE for the development of the \kademlia{} implementation and my game server as these were both written in Python using version $3.8$ due to improvements made to the \emph{asyncio} library in Python $3.8$. For the client I used \unity{} with \emph{Microsoft Visual Studio 2017} for editing the \emph{C\#} scripts. \emph{Git} was used for version control, with code pushed to \emph{GitHub} regularly and further backed-up daily to both the SRCF\footnote{Student-Run Computing Facility.} and the MCS using a \emph{cron} job.
@@ -278,7 +278,7 @@
 		\caption{Diagram giving an overview of \voxpop{} architecture.}
 		\label{fig:diagram1}
 	\end{figure}
-	The client needs to connect to a single node from the \voxpop{} network, which it will use as a `stepping stone' to access the whole network via. It uses this stepping stone node to query the DHT to find the $\langle$ IP, port$\rangle$~of the game servers responsible for the chunks it needs. It then initiates connections with each of these game servers in parallel, registers the player in that chunk and downloads the world data.
+	The client needs to connect to a single node from the \voxpop{} network, which it will use as a `stepping stone' to access the whole network. It uses this stepping stone node to query the DHT to find the $\langle$IP, port$\rangle$~of the game servers responsible for the chunks it needs. It then initiates connections with each of these game servers in parallel, registers the player in that chunk and downloads the world data.
 	
 	The \voxpop{} server consists of two distinct parts, the \kademlia{} node and the game server. Thus for each node in the network there are two \emph{virtual} nodes. The \kademlia{} nodes are not visible to a client. In order to query the DHT, clients connect to any game server and initiate a special type of session specifically for DHT access. The game server then performs queries to the DHT on behalf of the client. Further details of this special session are in \cref{sec:interface}. Note that for simplicity's sake the \kademlia{} node and game server bind to the same IP address with the game server port being the \kademlia{} port incremented by one.
 	
@@ -367,7 +367,7 @@
 	In order to accommodate these new RPCs, the lookup procedure was made polymorphic, taking the appropriate RPC as an argument. Additionally, each node now has two separate storage tables, one for player data and one for chunk data. This implementation was preferable to the alternative of running two distinct \kademlia{} networks, as this would have significant additional overhead as two separate node states would need to be maintained for each node.
 	
 	\subsection{Generate Procedure}
-	When a chunk is found not to exist in the network, it must be generated. In order to do this we need to first locate the server it should be generated on, then we need to check that server is up. Once we have confirmation that the server is running we send a request to the game server on that VoxelPopuli server to generate and initialise the node ready for players. If a node is down we move to the next nearest node. Once the chunk is generated we must store the $\langle$ IP address, port$\rangle$~of the node it was generated on in the network so that in future when we look up this chunk we will find the correct server. Algorithm~\ref{alg:generate} gives pseudocode of the generate procedure.
+	When a chunk is found not to exist in the network, it must be generated. In order to do this we need to first locate the server it should be generated on, then we need to check that server is up. Once we have confirmation that the server is running we send a request to the game server on that VoxelPopuli server to generate and initialise the node ready for players. If a node is down we move to the next nearest node. Once the chunk is generated we must store the $\langle$IP address, port$\rangle$~of the node it was generated on in the network so that in future when we look up this chunk we will find the correct server. Algorithm~\ref{alg:generate} gives pseudocode of the generate procedure.
 	\begin{algorithm}[!ht]
 		\begin{algorithmic}
 			\Function{Generate}{ChunkCoordinate}
@@ -395,7 +395,7 @@
 	
 	\begin{table}[!ht]
 		\centering
-		\begin{tabularx}{0.65\textwidth}{| l | l | l | l | X |}
+		\begin{tabularx}{0.52\textwidth}{| l | l | l | l | X |}
 			\hline
 			\textbf{Block Type} & Air & Stone & Grass & Dirt \\
 			\hline
@@ -411,7 +411,7 @@
 	The game server's main thread runs continuously a loop it checks if there are any new connections, in which case it will perform the handshake procedure in \cref{sec:handshake}. Furthermore, it uses \texttt{select} to get a list of sockets ready for reading or writing. Then, for each readable socket it reads all data available and adds it to the socket's buffer, if it encounters a newline character (denoting the end of a packet) it puts the packet into the receive queue associated with this socket and clears the buffer. For each writeable socket it checks if there is queued data to send and if so, attempts to send it, removing the successfully sent data from the send queue associated with that socket.
 	
 	\subsection{Protocol}
-	Here I outlines the protocol used to communicate between a \voxpop{} node and a client. It is separated into two distinct parts: the handshake procedure used to connect to a \voxpop{} node and determine the function of the connection and the game server protocol used to exchange game state between client and server each tick.
+	Here I outline the protocol used to communicate between a \voxpop{} node and a client. It is separated into two distinct parts: the handshake procedure used to connect to a \voxpop{} node and determine the function of the connection and the game server protocol used to exchange game state between client and server each tick.
 	\subsubsection{Handshake}
 	\label{sec:handshake}
 	When the server receives a new connection it waits for a JSON message from the new client, this message is decoded and it should contain a \emph{type} field. This \emph{type} field can take four different values, depending on which the server will take different actions. The possible values are:
@@ -477,7 +477,7 @@
 	
 	\subsection{DHT Interface}
 	\label{sec:interface}
-	As previously explained, in order for clients to query the DHT (and thus retrieve their saved player data and the locations of chunks in the network) they must have some method to query the DHT. In order to do this they connect to a game server and perform the DHT handshake as described in \cref{sec:handshake}. This connection is then given a dedicated thread to respond to queries to the DHT. The current protocol allows a client to either get the $\langle$ IP, port$\rangle$~ for a particular chunk (the chunk is generated if does not exist in the network) or download player save data (position primarily).
+	As previously explained, in order for clients to query the DHT (and thus retrieve their saved player data and the locations of chunks in the network) they must have some method to query the DHT. In order to do this they connect to a game server and perform the DHT handshake as described in \cref{sec:handshake}. This connection is then given a dedicated thread to respond to queries to the DHT. The current protocol allows a client to either get the $\langle$IP, port$\rangle$~ for a particular chunk (the chunk is generated if does not exist in the network) or download player save data (position primarily).
 	
 	\subsubsection{Protocol}
 	The thread process one request at a time and is not guaranteed to respond to requests issued while another request is pending. There are two packet types chunk query (type $0$) and player query (type $1$), a packet's first byte is its packet type. To query a chunk location a packet is sent consisting of a leading zero byte (packet type) followed by the JSON encoding of the coordinates of the chunk (as a JSON list). The server replies with the JSON list \texttt{[IP address, port]}. To query player data a packet consisting of a leading $1$ byte (packet type) followed by the JSON attribute-value pair: \texttt{\{`name':player\_name\}} where \texttt{player\_name} is the username of the player to query. The server responds with the JSON representation of the player's coordinates. If the player was not found then it returns $(0,32,0)$ (the default spawn position). Note that all the JSON strings are encoded as bytes for sending using UTF-8.
@@ -729,7 +729,7 @@
 	\end{figure}
 	
 	\subsubsection{Analysis}
-	As can be seen from figure~\ref{fig:plot1} the single thread performance is reaching $90\%$ utilization at about $50$ players in a single chunk. This is fairly typical of online games and it is at around this point that \emph{Minecraft} servers begin to strain. This scenario is unlikely to be realised frequently in a deployed network running an MMO as this number of players tend not to occupy the same area concurrently.
+	As can be seen from figure~\ref{fig:plot1} the single thread performance is reaching $90\%$ utilization at about $50$ players in a single chunk. This is fairly typical of online games and it is at around this point that \emph{Minecraft} servers begin to strain on the same machine. This scenario is unlikely to be realised frequently in a deployed network running an MMO as this number of players tend not to occupy the same area concurrently.
 	
 	In figure~\ref{fig:plot2} we have $50$ clients connected to $50$ separate chunks on the same server. This performs better as it is making use of both CPU cores on my dedicated server. In line with this expectation CPU utilisation is approximately half that of the single chunk case. This also represents an unrealistic scenario as we are unlikely to have players evenly distributed across the world so evenly, there will be likely more clustering. This test does demonstrate, however, that many chunk threads can operate concurrently without incurring a significant performance penalty.
 	
@@ -749,7 +749,7 @@
 		\label{fig:linear100}
 	\end{figure}
 
-	Throughout this analysis the memory usage has remained approximately constant throughout the simulation, this is because memory usage is proportional to the number of chunks active and in each simulation this was constant. The memory overhead for a single chunk is below ten megabytes and consists only of the chunk data ($\sim260$KB) and player data ($<1$KB per player) so this is not of major concern here. In a more complex system where there are other entities the server must keep track of such as monsters this may become a significant concern as it is for \emph{Minecraft} servers, which can typically need hundreds of gigabytes of memory to function correctly.
+	Throughout this analysis the memory usage has remained approximately constant throughout the simulation, this is because memory usage is proportional to the number of chunks active and in each simulation this was constant. The memory overhead for a single chunk is below ten megabytes and consists only of the chunk data ($\sim260$KB) and player data ($<1$KB per player) so this is not of major concern here. In a more complex system where there are other entities the server must keep track of such as monsters this may become a significant concern as it is for \emph{Minecraft} servers.
 	
 	\subsection{Large Scale Simulation}
 	\subsubsection{Setup}
@@ -769,7 +769,9 @@
 	\end{figure}
 
 	\section{Client}
-	The client performs as required, the player is able to explore and interact with the world and the client is performant -- running consistently at $60$FPS+ (frames per second) on both my dedicated GPU (Nvidia GeForce GTX $1650$ Max-Q) and my integrated graphics (Intel Iris Plus Graphics).
+	The client performs as required, the player is able to explore and interact with the world and the client is performant -- running consistently at $60$FPS+ (frames per second) on both my dedicated GPU (Nvidia GeForce GTX $1650$ Max-Q) and my integrated graphics (Intel Iris Plus Graphics). Furthermore, players can be seen to seamlessly transition between chunks -- not disappearing or duplicating.
+	
+	One minor issue with the client is that when making block changes there is a small delay before the change is visible. This is because upon each block change, the server resends the entire chunk. This triggers the mesh to be regenerated which takes a few frames. This could be easily resolved by using a form of `delta compression' -- where we only transmit the change to the chunk rather than resending the whole thing.
 
 	\section{Node Failure}
 	The system performs correctly in the face of node failure. When the client loses connection to a node it queries the node it is using for DHT queries. This server finds the required node and discovers that it is not online. It thus performs the generate procedure (see algorithm~\ref{alg:generate}) before returning the new node to the client. This takes at most a couple of seconds and produces minimal disruption to gameplay.
@@ -787,7 +789,7 @@
 	\label{sec:security}
 	\kademlia{} is resistant to certain DoS attacks, the preference for old contacts ensures that flooding the system with new nodes will not cause existing nodes' state to be flushed, giving control of the network to the attacker. However, \kademlia{} remains vulnerable to various types of attack. Including but not limited to eclipse and Sybil attacks. Additionally, \kademlia{} does not prevent nodes from impersonating others when bootstrapping, creating ambiguity about who is the \emph{true} owner of a particular ID. Ultimately, a determined attacker would be able to detrimentally influence the \voxpop{} network should they so desire -- and in an MMO context, where there would be motivation to cheat, this is almost guaranteed to happen.
 	
-	Furthermore on this point, at present the game server trusts all requests coming from the player and does not attempt to verify the validity of their movements. This would be simple to implement -- store the player's state in the network and verify the what the player says is consistent with the stored state (e.g. don't allow player to move across many chunks in one movement but do allow them to move to an adjacent chunk).
+	Furthermore on this point, at present the game server trusts all requests coming from the player and does not attempt to verify the validity of their movements. This would be simple to implement -- store the player's state in the network and verify the what the player says is consistent with the stored state (e.g. don't allow player to move across many chunks in one movement but do allow them to move to an adjacent chunk). Another issue with this is that the server trusts meta-requests from clients, such as generating chunks -- this could lead to an attacker exhausting the server's memory by generating many chunks.
 	
 	\subsection{Data Loss}
 	One significant issue with the current implementation is that when a node dies all the chunks stored within it are lost and will be regenerated by another node when they are needed. This means that anything a player has constructed within that chunk is lost. An approach I proposed as a potential extension to this project could be used to mitigate this problem. I propose that instead of having a single node responsible for each chunk, have a node and several backup nodes, periodically the main node will multicast its state to the backup nodes, should this node die, the backup nodes elect a successor and then induct a new node into the backup set. This could be done simply using the $n$ nearest nodes to the chunk's key.
@@ -800,7 +802,7 @@
 	
 	Having authoritative, centralised servers goes against the spirit of \voxpop{}. As such, I would propose that in the event of the MMO becoming unprofitable that the developers could allow the game's community to host their own authoritative servers. Alternatively, one could implement some sort of consensus system to improve security, this would not be perfect but would be a significant improvement and would fit more with the principles of the project. A distributed ledger could be employed to solve this problem in a way that fits with the open and peer-to-peer philosophy of \voxpop{}.
 	
-	Additionally, to ensure fairness and prevent cheating, the changes required to prevent players from fabricating their in-game state discussed in \cref{sec:security} would need to be implemented. This would prevent players from being able to easily create hacked clients; note that this is a common problem with online games and not an issue with the peer-to-peer approach.
+	Additionally, to ensure fairness and prevent cheating, the changes required to prevent players from fabricating their in-game state discussed in \cref{sec:security} would need to be implemented. This would prevent players from being able to easily create hacked clients; note that this is a common problem with online games and not an issue with the peer-to-peer approach. Further changes to sanity check player's meta-requests should also be implemented to prevent attacks such as the chunk memory exhaustion attack also discussed in \cref{sec:security}.
 	
 	As noted in the evaluation, the system requires a large number of nodes in order to scale to typical MMO sizes. One possible solution is to cluster chunks spatially. At present many spatially disparate chunks may be processed by the same server, this means that a single server may need in excess of $100$ threads performing computationally heavy processes, this is obviously not feasible except on extremely powerful machines. By clustering chunks spatially, we can reduce the computational requirement by simulating contiguous clusters of chunks together. This reduces the number of threads, meaning that while a single server may be responsible for hundreds of chunks, it may need only a few threads, one for each cluster of spatially contiguous chunks.
 	
@@ -817,7 +819,7 @@
 		\bibitem{SpatialOS} SpatialOS by Improbable. \url{https://improbable.io/spatialos}. Accessed: 2020-03-20.
 		\bibitem{pykademlia} \emph{Kademlia} Python Library. \url{https://github.com/bmuller/kademlia/}. Accessed: 2020-03-20.
 		\bibitem{source} \emph{Source} Engine Multiplayer Networking, Valve. \url{https://developer.valvesoftware.com/wiki/Source_Multiplayer_Networking}. Accessed: 25-3-2020.
-		\bibitem{perlin} ``Perlin Noise'' on Wikipedia. \url{https://en.wikipedia.org/wiki/Perlin_noise}. Accessed: 2019-10-17.
+		%\bibitem{perlin} ``Perlin Noise'' on Wikipedia. \url{https://en.wikipedia.org/wiki/Perlin_noise}. Accessed: 2019-10-17.
 		\bibitem{simplex} ``Simplex Noise'' on Wikipedia.
 		\url{https://en.wikipedia.org/wiki/Simplex_noise}. Accessed: 2019-03-27.
 		\bibitem{opendht} \emph{OpenDHT} on GitHub. \url{https://github.com/savoirfairelinux/opendht}. Accessed: 2020-04-16.
